@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VANDAAG — from longing to first step</title>
+<meta name="description" content="Turn a longing into a clear plan for today.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
+<link rel="alternate" hreflang="nl" href="../../tools/vandaag.html">
+<style>
+.tool-view{display:none}
+.tool-view.active{display:grid}
+.start-title{
+  font-size:clamp(2.6rem,10vh,5rem);
+  background:linear-gradient(172deg,#F8F0DF 12%,#E8BE7A 48%,#C89AE8 88%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 34px rgba(200,154,232,.4));
+}
+.start-how{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;justify-content:center;color:var(--text-soft);font-size:.95rem;margin:.5rem 0 1.1rem}
+.start-how b{color:var(--cream);font-weight:500}
+.start-how .sep{color:var(--gold)}
+.why-item{display:grid;grid-template-columns:2.4rem 1fr;gap:.9rem;padding:.9rem 0;border-top:1px solid rgba(196,150,230,.2)}
+.why-item:first-of-type{border-top:0;padding-top:0}
+.why-num{width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:1.15rem;color:#241335;background:linear-gradient(135deg,#F0CE92,#D8A854)}
+.why-item b{display:block;color:var(--cream);font-weight:500;margin-bottom:.15rem}
+.why-item p{color:var(--text-soft);font-size:.93rem}
+.why-src{margin-top:1rem;font-family:var(--font-display);font-style:italic;font-size:1.05rem;color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="starsky" aria-hidden="true"><i></i><i></i></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="wordmark" href="../index.html" aria-label="Vandaag">
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <circle cx="13" cy="13" r="9" stroke="#E8BE7A" stroke-width="1.4"/>
+      <path d="M13 8 v5 l3.5 3.5" stroke="#E8BE7A" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    VANDAAG
+  </a>
+  <nav class="site-nav" aria-label="Hoofdnavigatie">
+    <a href="../begin.html">Start</a>
+    <a href="../ontdek.html">Discover</a>
+    <a href="../boeken.html">Library</a>
+    <a href="../mijn-ruimte.html">My space</a>
+    <a class="lang-mini" href="../../tools/vandaag.html" hreflang="nl" lang="nl" aria-label="Wissel naar Nederlands">NL</a>
+    <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Calm</button>
+  </nav>
+</header>
+
+<main class="page page-center">
+
+  <section class="tool-view active" id="tv-start" style="justify-items:center;text-align:center;gap:.4rem">
+    <div class="rise" style="display:grid;justify-items:center;gap:.4rem">
+      <p class="eyebrow">The tool · from longing to first step</p>
+      <h1 class="start-title">Vandaag.</h1>
+      <p style="max-width:30em;color:var(--text)">Take a longing by the hand: make it clear, see it before you &mdash; and give it a first step today.</p>
+      <p class="start-how">
+        <b>choose your longing</b> <span class="sep">&rarr;</span>
+        <b>make it clear</b> <span class="sep">&rarr;</span>
+        <b>see it before you</b> <span class="sep">&rarr;</span>
+        <b>know your obstacle</b> <span class="sep">&rarr;</span>
+        <b>take the first step</b>
+      </p>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
+        <button class="btn-gold" id="startBtn">Begin &middot; 3 minutes</button>
+        <button class="btn-line" id="whyBtn">Why this helps</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tool-view" id="tv-flow">
+    <div class="flow-inner">
+      <div class="flow-progress" id="flowProgress" aria-hidden="true"></div>
+      <p class="flow-step-label" id="flowLabel"></p>
+      <h2 class="flow-q" id="flowQ"></h2>
+      <p class="flow-hint" id="flowHint"></p>
+      <div class="flow-opts" id="flowOpts"></div>
+      <button class="linkish" id="flowBack">&larr; step back</button>
+    </div>
+  </section>
+
+  <section class="tool-view" id="tv-plan">
+    <div style="display:grid;justify-items:center;gap:1rem">
+      <div class="plan-card">
+        <span class="eyebrow" id="planEyebrow"></span>
+        <div class="plan-row"><b>In a month</b><span id="planGoal"></span></div>
+        <div class="plan-row"><b>If&hellip; then&hellip;</b><span id="planIfThen"></span></div>
+        <div class="plan-row"><b>First step</b><span><span id="planStep"></span><br><span class="when" id="planWhen"></span></span></div>
+      </div>
+      <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center">
+        <button class="btn-gold" id="planNew">New plan</button>
+        <a class="btn-line" href="../mijn-ruimte.html">To My space</a>
+      </div>
+      <p class="soft" style="font-size:.88rem;text-align:center">Your plan is saved in My space &mdash; and lives on in your day.</p>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="whyOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="whyTitle">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 id="whyTitle">Why this helps</h2>
+      <button class="close-btn" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="why-item"><span class="why-num">1</span><div><b>See it before you</b><p>A vivid image of the future directs your attention. What you see clearly, you begin to recognise in your days &mdash; chances, people, moments that were already there.</p></div></div>
+    <div class="why-item"><span class="why-num">2</span><div><b>Know your obstacle</b><p>Looking honestly at what stands in the way does not shrink your longing — it strengthens it. An if-then choice gives your intention something to hold on to when the moment gets tense.</p></div></div>
+    <div class="why-item"><span class="why-num">3</span><div><b>Take the first step</b><p>One small deed today opens the door. Movement feeds trust &mdash; and trust feeds movement.</p></div></div>
+    <p class="why-src">Gentle with your dreams, concrete with your days.</p>
+  </div>
+</div>
+<footer class="site-footer">
+  <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
+    Finding Vandaag valuable? Treat us to a coffee</a></p>
+  <p>&copy; 2026 VANDAAG &middot; made with care</p>
+  <p>Vandaag is not a substitute for medical or psychological care.</p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../../data/routes.js"></script>
+<script src="../../js/basis.js"></script>
+<script>
+(function(){
+  const DOMAINS = {
+    energie:{label:"More energy",goals:["I sleep before 11 pm and wake up rested","I move for half an hour three times a week","My evenings are more than couch and screen"],steps:["Set an alarm now for tonight’s bedtime","Plan three walks in your calendar right now","Lay out your sports clothes for tomorrow morning"]},
+    werk:{label:"Different or better work",goals:["My CV and profile are sharp and up to date","I have talked to two people about their field","I know which role I truly want"],steps:["Block 15 minutes in your calendar to open your CV","Message one person now to meet for coffee","Note three things later that matter to you in work"]},
+    verbinding:{label:"More connection",goals:["I have one real conversation a week, phone away","I have had the conversation I keep postponing","I see friends in real life more often again"],steps:["Message one person now: when will we meet?","Choose a moment and place now for that one conversation","Agree: phones away during dinner tonight"]},
+    geld:{label:"Money in order",goals:["I know what comes in and goes out each month","An amount moves to savings automatically","That one financial thing is finally arranged"],steps:["Open your banking app today and review last month","Set up an automatic transfer — small is fine","Call or email today about that one thing"]},
+    leren:{label:"Learning something new",goals:["I practise ten minutes four times a week","The first lesson or module is done","I have someone to learn together with"],steps:["Put ten minutes of practice in today’s calendar","Look up the course tonight and sign up","Ask someone today to join you"]},
+    gezond:{label:"Living healthier",goals:["I don’t drink alcohol on weekdays","I cook fresh more often than I order","That doctor’s or dentist’s appointment has happened"],steps:["Set a reminder now to call for that appointment","Choose now what you will cook fresh tomorrow","Make tonight your first alcohol-free evening"]},
+    project:{label:"Own project or dream",goals:["I work on it at two fixed moments a week","The first rough version exists","Three people have seen it"],steps:["Block 25 minutes in your calendar for this week","Create the folder or document today","Tell one person today what you are working on"]},
+  };
+  const OBSTACLES = {
+    "No time":["If my day fills up, I take my step right after lunch — five minutes counts too.","If I only have room in the evening, I take my step before turning on the TV.","If something comes up, I reschedule my step immediately — I don’t cancel it."],
+    "Too tired at night":["If I come home tired, I only do the first two minutes — starting counts.","If the couch calls, I take my step first and then sit down.","If today really doesn’t work, I put my step in tomorrow morning’s calendar right now."],
+    "Doubt it will work":["If doubt rises, I think of something hard I did manage before.","If I think ‘this will come to nothing’, I take the step right away — small proof softens big doubt.","If I keep weighing, I say out loud: I only have to try."],
+    "I forget":["If I pick up my phone later, I first set a reminder for my step.","If I come home, something lies in plain sight to remind me — put it there now.","If I forget today anyway, tomorrow at breakfast is my fixed catch-up moment."],
+    "Others take all my attention":["If someone asks something of me, I say: sure — after my quarter hour.","If home is busy, my step has one fixed moment of its own — choose that moment now.","If I erase myself again, I remember: fifteen minutes for me costs no one anything."],
+  };
+  const WHEN = ["Right now","This afternoon","Tonight"];
+
+  const views = document.querySelectorAll(".tool-view");
+  function show(id){
+    views.forEach(function(v){ v.classList.toggle("active", v.id === id); });
+    const f = document.getElementById(id).querySelector("button, a");
+    if(f) f.focus({preventScroll:true});
+  }
+
+  const flowProgress = document.getElementById("flowProgress");
+  const flowLabel = document.getElementById("flowLabel");
+  const flowQ = document.getElementById("flowQ");
+  const flowHint = document.getElementById("flowHint");
+  const flowOpts = document.getElementById("flowOpts");
+  const flowBack = document.getElementById("flowBack");
+  const TOTAL = 6;
+  let step = 0, plan = {};
+
+  function renderProgress(){
+    flowProgress.innerHTML = "";
+    for(let i=0;i<TOTAL;i++){
+      const d = document.createElement("i");
+      if(i < step) d.className = "done";
+      flowProgress.appendChild(d);
+    }
+  }
+  function opts(list, cls, cb){
+    flowOpts.innerHTML = "";
+    flowOpts.className = "flow-opts" + (cls ? " " + cls : "");
+    list.forEach(function(item){
+      const b = document.createElement("button");
+      b.className = "opt" + (cls === "wrap" ? " pill-opt" : "");
+      b.textContent = item;
+      b.addEventListener("click", function(e){
+        if(!V.isCalm()) V.dust.burst(e.clientX || innerWidth/2, e.clientY || innerHeight/2);
+        cb(item);
+      });
+      flowOpts.appendChild(b);
+    });
+  }
+  function setHead(label, q, hint){
+    flowLabel.textContent = label;
+    flowQ.textContent = q;
+    flowHint.textContent = hint || "";
+  }
+  function renderStep(){
+    renderProgress();
+    flowBack.style.visibility = step === 0 ? "hidden" : "visible";
+    if(step === 0){
+      setHead("Step 1 · the longing", "What do you want to bring closer?", "Choose what calls loudest right now.");
+      opts(Object.values(DOMAINS).map(function(d){return d.label;}), "wrap", function(label){
+        plan.domainKey = Object.keys(DOMAINS).find(function(k){return DOMAINS[k].label === label;});
+        plan.domain = label;
+        step = 1; renderStep();
+      });
+    } else if(step === 1){
+      setHead("Step 2 · making it clear", "What will be different in a month?", "A longing gains power once it has a face.");
+      opts(DOMAINS[plan.domainKey].goals, "", function(goal){ plan.goal = goal; step = 2; renderStep(); });
+    } else if(step === 2){
+      setHead("Step 3 · see it before you", "", "");
+      flowOpts.className = "flow-opts";
+      flowOpts.innerHTML =
+        '<p class="vis-goal">\u201C' + plan.goal + '\u201D</p>' +
+        '<p class="flow-hint">Close your eyes. Count calmly to ten. See that day before you: where are you, what do you feel, what is different? Let the image be fully real for a moment.</p>' +
+        '<button class="btn-gold" id="visDone" style="justify-self:center;margin-top:.4rem">I have seen it</button>';
+      document.getElementById("visDone").addEventListener("click", function(){ step = 3; renderStep(); });
+    } else if(step === 3){
+      setHead("Step 4 · looking honestly", "What might get in the way?", "Whoever knows their obstacle need not fear it.");
+      opts(Object.keys(OBSTACLES), "", function(ob){ plan.obstacle = ob; step = 4; renderStep(); });
+    } else if(step === 4){
+      setHead("Step 5 · the if-then choice", "Choose your answer to that obstacle.", "One sentence you will not have to invent in the moment itself.");
+      opts(OBSTACLES[plan.obstacle], "", function(it){ plan.ifthen = it; step = 5; renderStep(); });
+    } else if(step === 5){
+      setHead("Step 6 · the first step", "What will you do today?", "Small enough to truly do today.");
+      opts(DOMAINS[plan.domainKey].steps, "", function(st){
+        plan.step = st;
+        setHead("Step 6 · the first step", "When?", "");
+        opts(WHEN, "wrap", function(w){ plan.when = w; finishPlan(); });
+      });
+    }
+  }
+  function stepBack(){
+    if(step === 0){ show("tv-start"); return; }
+    step--; renderStep();
+  }
+  flowBack.addEventListener("click", stepBack);
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Escape") return;
+    const open = Array.prototype.slice.call(document.querySelectorAll(".overlay")).find(function(ov){return !ov.hidden;});
+    if(open) return;
+    if(document.getElementById("tv-flow").classList.contains("active")) stepBack();
+    else if(document.getElementById("tv-plan").classList.contains("active")) show("tv-start");
+  });
+
+  function finishPlan(){
+    document.getElementById("planEyebrow").textContent = "Your plan · " + plan.domain.toLowerCase();
+    document.getElementById("planGoal").textContent = plan.goal + ".";
+    document.getElementById("planIfThen").textContent = plan.ifthen;
+    document.getElementById("planStep").textContent = plan.step + ".";
+    document.getElementById("planWhen").textContent = plan.when;
+    V.saveItem("Plan · " + plan.domain + " \u00B7 " + plan.when,
+      plan.step + ". Goal: " + plan.goal.toLowerCase() + ".");
+    show("tv-plan");
+    V.toast("Your plan is ready. The first step is yours.");
+    if(!V.isCalm()) V.dust.burst(innerWidth/2, innerHeight/2.4);
+  }
+  document.getElementById("startBtn").addEventListener("click", function(){ step = 0; plan = {}; renderStep(); show("tv-flow"); });
+  document.getElementById("planNew").addEventListener("click", function(){ step = 0; plan = {}; renderStep(); show("tv-flow"); });
+  document.getElementById("whyBtn").addEventListener("click", function(){ V.openOverlay(document.getElementById("whyOverlay")); });
+})();
+</script>
+</body>
+</html>

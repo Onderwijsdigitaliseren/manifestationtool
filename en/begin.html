@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I want to manifest something — VANDAAG</title>
+<meta name="description" content="Three gentle questions point you to a route that fits your longing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="alternate" hreflang="nl" href="../begin.html">
+
+</head>
+<body>
+
+<div class="starsky" aria-hidden="true"><i></i><i></i></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Vandaag">
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <circle cx="13" cy="13" r="9" stroke="#E8BE7A" stroke-width="1.4"/>
+      <path d="M13 8 v5 l3.5 3.5" stroke="#E8BE7A" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    VANDAAG
+  </a>
+  <nav class="site-nav" aria-label="Hoofdnavigatie">
+    <a href="begin.html" aria-current="page">Start</a>
+    <a href="ontdek.html">Discover</a>
+    <a href="boeken.html">Library</a>
+    <a href="mijn-ruimte.html">My space</a>
+    <a class="lang-mini" href="../begin.html" hreflang="nl" lang="nl" aria-label="Wissel naar Nederlands">NL</a>
+    <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Calm</button>
+  </nav>
+</header>
+
+<main class="page page-center">
+  <div class="flow-inner rise">
+    <p class="eyebrow">I want to manifest something</p>
+    <h1 class="flow-q" id="bq">Where are you now?</h1>
+    <p class="flow-hint" id="bh">Three gentle questions point you to a route. There is no wrong answer.</p>
+    <div class="flow-progress" id="bprog" aria-hidden="true"></div>
+    <div class="flow-opts" id="bopts"></div>
+  </div>
+</main>
+<footer class="site-footer">
+  <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
+    Finding Vandaag valuable? Treat us to a coffee</a></p>
+  <p>&copy; 2026 VANDAAG &middot; made with care</p>
+  <p>Vandaag is not a substitute for medical or psychological care.</p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../data/routes.js"></script>
+<script src="../js/basis.js"></script>
+<script>
+(function(){
+  const R = window.ROUTES_EN;
+  const QUESTIONS = [
+    { q:"What draws you most right now?",
+      opts:[["Images \u2014 I want to see it before me",{verbeelding:2}],
+            ["Feeling \u2014 what is truly mine?",{kompas:2}],
+            ["Movement \u2014 I want to do something",{schepping:2}]]},
+    { q:"What usually stands between you and your longing?",
+      opts:[["Doubting myself",{krachtbron:2}],
+            ["I keep looking the same way",{spiegel:2}],
+            ["Impatience \u2014 trouble trusting",{ontvangst:2}]]},
+    { q:"How do you prefer to begin?",
+      opts:[["In stillness",{kompas:1,ontvangst:1}],
+            ["With my imagination",{verbeelding:1,spiegel:1}],
+            ["With a step, today",{schepping:1,krachtbron:1}]]}
+  ];
+  let step = 0, scores = {verbeelding:0,kompas:0,krachtbron:0,spiegel:0,ontvangst:0,schepping:0};
+  const bq = document.getElementById("bq"), bh = document.getElementById("bh");
+  const bopts = document.getElementById("bopts"), bprog = document.getElementById("bprog");
+  function prog(){
+    bprog.innerHTML = "";
+    for(let i=0;i<QUESTIONS.length;i++){
+      const d = document.createElement("i");
+      if(i<step) d.className = "done";
+      bprog.appendChild(d);
+    }
+  }
+  function render(){
+    prog();
+    if(step < QUESTIONS.length){
+      const Q = QUESTIONS[step];
+      bq.textContent = Q.q;
+      bh.textContent = step === 0 ? "Three gentle questions point you to a route. There is no wrong answer." : "";
+      bopts.innerHTML = "";
+      Q.opts.forEach(function(pair){
+        const b = document.createElement("button");
+        b.className = "opt"; b.textContent = pair[0];
+        b.addEventListener("click", function(e){
+          Object.entries(pair[1]).forEach(function(kv){ scores[kv[0]] += kv[1]; });
+          if(!V.isCalm()) V.dust.burst(e.clientX, e.clientY);
+          step++; render();
+        });
+        bopts.appendChild(b);
+      });
+    } else {
+      const best = Object.entries(scores).sort(function(a,b){return b[1]-a[1];})[0][0];
+      const r = R[best];
+      V.saveItem("Suggestion", "Route to explore: " + r.naam);
+      bq.textContent = r.naam;
+      bh.textContent = r.essence + " A direction, not a verdict — you may always cross over.";
+      bopts.innerHTML = "";
+      const open = document.createElement("a");
+      open.className = "btn-gold"; open.href = "routes/" + r.slug + ".html";
+      open.textContent = "Explore this route";
+      const tool = document.createElement("a");
+      tool.className = "btn-line"; tool.href = "tools/vandaag.html";
+      tool.textContent = "Prefer to get practical? Open the tool";
+      const again = document.createElement("button");
+      again.className = "linkish"; again.textContent = "Start over";
+      again.addEventListener("click", function(){ step = 0; scores = {verbeelding:0,kompas:0,krachtbron:0,spiegel:0,ontvangst:0,schepping:0}; render(); });
+      bopts.append(open, tool, again);
+      V.toast("A route is waiting for you.");
+    }
+  }
+  render();
+})();
+</script>
+</body>
+</html>

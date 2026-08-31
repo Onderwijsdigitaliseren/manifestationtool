@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De Ontvangstruimte — VANDAAG</title>
+<meta name="description" content="Waarderen wat er is, opent de deur voor wat komt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="alternate" hreflang="en" href="../en/routes/ontvangst.html">
+
+</head>
+<body>
+
+<div class="starsky" aria-hidden="true"><i></i><i></i></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="wordmark" href="../index.html" aria-label="Vandaag">
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <circle cx="13" cy="13" r="9" stroke="#E8BE7A" stroke-width="1.4"/>
+      <path d="M13 8 v5 l3.5 3.5" stroke="#E8BE7A" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    VANDAAG
+  </a>
+  <nav class="site-nav" aria-label="Hoofdnavigatie">
+    <a href="../begin.html">Begin</a>
+    <a href="../ontdek.html" aria-current="page">Ontdek</a>
+    <a href="../boeken.html">Boeken</a>
+    <a href="../mijn-ruimte.html">Mijn ruimte</a>
+    <a class="lang-mini" href="../en/routes/ontvangst.html" hreflang="en" lang="en" aria-label="Switch to English">EN</a>
+    <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Rust</button>
+  </nav>
+</header>
+
+<main class="page" style="max-width:46rem">
+  <div class="route-hero rise">
+    <div class="route-emblem"><div class="medal"><svg viewBox="0 0 120 90" fill="none"><rect x="30" y="34" width="15" height="48" rx="4" fill="#3A2A68" stroke="#6E5AA0" stroke-width="1.6"/><rect x="75" y="34" width="15" height="48" rx="4" fill="#3A2A68" stroke="#6E5AA0" stroke-width="1.6"/><rect x="20" y="20" width="80" height="16" rx="6" fill="#4E3A88" stroke="#6E5AA0" stroke-width="1.6"/><path d="M36 46 h4 M35 58 h5 M80 50 h5 M81 64 h4" stroke="#E8BE7A" stroke-width="2" stroke-linecap="round"/><circle cx="26" cy="82" r="6" fill="#E8BE7A" opacity=".35"/><circle cx="26" cy="82" r="2.4" fill="#F6E7C6"/><circle cx="94" cy="82" r="6" fill="#E8BE7A" opacity=".35"/><circle cx="94" cy="82" r="2.4" fill="#F6E7C6"/><ellipse cx="60" cy="80" rx="20" ry="4" fill="#C89AE8" opacity=".2"/></svg></div></div>
+    <p class="eyebrow">Route</p>
+    <h1 id="rNaam" style="font-size:clamp(2rem,6vh,3rem)"></h1>
+    <p class="route-essence" id="rEssence"></p>
+    <p class="route-body" id="rUitleg"></p>
+  </div>
+
+  <div class="exercise-box" id="oefening">
+    <p class="eyebrow" id="exTitle" style="margin-bottom:.8rem"></p>
+    <p class="ex-step-count" id="exCount"></p>
+    <p class="ex-text" id="exText"></p>
+    <div class="ex-choices" id="exChoices" hidden></div>
+    <div class="ex-actions" id="exActions"></div>
+  </div>
+
+  <div class="route-links">
+    <a class="btn-line" href="../ontdek.html">&larr; Alle routes</a>
+    <a class="btn-line" href="../boeken.html">De visie erachter</a>
+    <a class="btn-gold" href="../tools/vandaag.html">Maak het praktisch</a>
+  </div>
+</main>
+<footer class="site-footer">
+  <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
+    Vind je Vandaag waardevol? Trakteer op een koffie</a></p>
+  <p>&copy; 2026 VANDAAG &middot; gemaakt met aandacht</p>
+  <p>Vandaag is geen vervanging van medische of psychologische zorg.</p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../data/routes.js"></script>
+<script src="../js/basis.js"></script>
+<script>
+(function(){
+  const r = window.ROUTES["ontvangst"];
+  document.getElementById("rNaam").textContent = r.naam;
+  document.getElementById("rEssence").textContent = "\u201C" + r.essence + "\u201D";
+  document.getElementById("rUitleg").textContent = r.uitleg;
+  document.getElementById("exTitle").textContent = "Oefening \u00B7 " + r.ex.title + " \u00B7 \u00B13 min";
+
+  const count = document.getElementById("exCount");
+  const text = document.getElementById("exText");
+  const choices = document.getElementById("exChoices");
+  const actions = document.getElementById("exActions");
+  let step = -1;
+
+  function render(){
+    const total = r.ex.steps.length + 1;
+    choices.hidden = true; actions.innerHTML = "";
+    if(step < 0){
+      count.textContent = "";
+      text.textContent = "Drie stappen, \u00E9\u00E9n keuze. Neem er even de tijd voor.";
+      const b = document.createElement("button");
+      b.className = "btn-gold"; b.textContent = "Begin de oefening";
+      b.addEventListener("click", function(){ step = 0; render(); });
+      actions.appendChild(b);
+    } else if(step < r.ex.steps.length){
+      count.textContent = "Stap " + (step+1) + " van " + total;
+      text.textContent = r.ex.steps[step];
+      if(step > 0){
+        const back = document.createElement("button");
+        back.className = "btn-line"; back.textContent = "Terug";
+        back.addEventListener("click", function(){ step--; render(); });
+        actions.appendChild(back);
+      }
+      const next = document.createElement("button");
+      next.className = "btn-gold"; next.textContent = "Volgende";
+      next.addEventListener("click", function(){ step++; render(); });
+      actions.appendChild(next);
+    } else {
+      count.textContent = "Tot slot";
+      text.textContent = r.ex.choiceQ;
+      choices.innerHTML = "";
+      r.ex.choices.forEach(function(c){
+        const b = document.createElement("button");
+        b.className = "opt pill-opt"; b.style.animation = "none"; b.textContent = c;
+        b.addEventListener("click", function(e){
+          V.saveItem("Oefening \u00B7 " + r.naam, r.ex.title + " \u2014 " + c);
+          V.toast("Mooi. Het staat in Mijn ruimte.");
+          if(!V.isCalm()) V.dust.burst(e.clientX, e.clientY);
+          step = -1; render();
+        });
+        choices.appendChild(b);
+      });
+      choices.hidden = false;
+    }
+  }
+  render();
+  if(location.hash === "#oefening"){
+    document.getElementById("oefening").scrollIntoView({behavior:"auto", block:"center"});
+  }
+})();
+</script>
+</body>
+</html>

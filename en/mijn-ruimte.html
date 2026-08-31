@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My space — VANDAAG</title>
+<meta name="description" content="What you choose and plan gathers here — only in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="alternate" hreflang="nl" href="../mijn-ruimte.html">
+
+</head>
+<body>
+
+<div class="starsky" aria-hidden="true"><i></i><i></i></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Vandaag">
+    <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <circle cx="13" cy="13" r="9" stroke="#E8BE7A" stroke-width="1.4"/>
+      <path d="M13 8 v5 l3.5 3.5" stroke="#E8BE7A" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    VANDAAG
+  </a>
+  <nav class="site-nav" aria-label="Hoofdnavigatie">
+    <a href="begin.html">Start</a>
+    <a href="ontdek.html">Discover</a>
+    <a href="boeken.html">Library</a>
+    <a href="mijn-ruimte.html" aria-current="page">My space</a>
+    <a class="lang-mini" href="../mijn-ruimte.html" hreflang="nl" lang="nl" aria-label="Wissel naar Nederlands">NL</a>
+    <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Calm</button>
+  </nav>
+</header>
+
+<main class="page" style="max-width:44rem">
+  <div class="page-head rise">
+    <p class="eyebrow">My space</p>
+    <h1>What you set in motion.</h1>
+    <p>Plans, practices and suggestions gather here &mdash; only in your browser, visible to no one else.</p>
+  </div>
+  <div id="ruimteContent"></div>
+  <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:1.8rem">
+    <a class="btn-gold" href="tools/vandaag.html">Make a plan</a>
+    <a class="btn-line" href="ontdek.html">Do a practice</a>
+    <button class="linkish" id="wisBtn">Clear everything</button>
+  </div>
+</main>
+<footer class="site-footer">
+  <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
+    Finding Vandaag valuable? Treat us to a coffee</a></p>
+  <p>&copy; 2026 VANDAAG &middot; made with care</p>
+  <p>Vandaag is not a substitute for medical or psychological care.</p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../data/routes.js"></script>
+<script src="../js/basis.js"></script>
+<script>
+(function(){
+  const el = document.getElementById("ruimteContent");
+  function render(){
+    const items = V.getItems();
+    if(!items.length){
+      el.innerHTML = '<p class="space-empty" style="text-align:center">Still empty. Make a plan or do a practice \u2014 what you choose appears here.</p>';
+      return;
+    }
+    const ul = document.createElement("ul"); ul.className = "space-list";
+    items.slice().reverse().forEach(function(it){
+      const li = document.createElement("li"); li.className = "space-item";
+      const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = it.tag;
+      const pEl = document.createElement("p"); pEl.textContent = it.text;
+      const tEl = document.createElement("time"); tEl.textContent = it.time;
+      li.append(tag,pEl,tEl); ul.appendChild(li);
+    });
+    el.innerHTML = ""; el.appendChild(ul);
+  }
+  document.getElementById("wisBtn").addEventListener("click", function(){
+    V.store.set("items", []);
+    render();
+    V.toast("Your space is empty again.");
+  });
+  render();
+})();
+</script>
+</body>
+</html>
