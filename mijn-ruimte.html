@@ -7,10 +7,22 @@
 <meta name="description" content="Wat je kiest en plant, verzamelt zich hier — alleen in jouw browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/stijl.css">
 <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-<link rel="alternate" hreflang="en" href="en/mijn-ruimte.html">
+<link rel="canonical" href="https://www.manifestationtool.nl/mijn-ruimte.html">
+<link rel="alternate" hreflang="nl" href="https://www.manifestationtool.nl/mijn-ruimte.html">
+<link rel="alternate" hreflang="en" href="https://www.manifestationtool.nl/en/mijn-ruimte.html">
+<link rel="alternate" hreflang="x-default" href="https://www.manifestationtool.nl/mijn-ruimte.html">
+<meta name="theme-color" content="#F5C7B0">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VANDAAG">
+<meta property="og:title" content="Mijn ruimte — VANDAAG">
+<meta property="og:description" content="Wat je kiest en plant, verzamelt zich hier — alleen in jouw browser.">
+<meta property="og:url" content="https://www.manifestationtool.nl/mijn-ruimte.html">
+<meta property="og:image" content="https://www.manifestationtool.nl/assets/og-nl.png">
+<meta property="og:locale" content="nl_NL">
+<meta name="twitter:card" content="summary_large_image">
 
 </head>
 <body>
@@ -19,9 +31,9 @@
 <canvas id="dust" aria-hidden="true"></canvas>
 <header class="site-header">
   <a class="wordmark" href="index.html" aria-label="Vandaag">
-    <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-      <circle cx="13" cy="13" r="9" stroke="#E8BE7A" stroke-width="1.4"/>
-      <path d="M13 8 v5 l3.5 3.5" stroke="#E8BE7A" stroke-width="1.4" stroke-linecap="round"/>
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M6.5 18 a6.5 6.5 0 0 1 13 0" fill="#F6CF8E" stroke="#9A5A22" stroke-width="1.4"/>
+      <path d="M2.5 18 h21 M13 4.5 v3 M4.6 9.2 l2.1 2.1 M21.4 9.2 l-2.1 2.1 M7 21.5 h12" stroke="#9A5A22" stroke-width="1.4" stroke-linecap="round"/>
     </svg>
     VANDAAG
   </a>
@@ -42,7 +54,7 @@
     <p>Plannen, oefeningen en adviezen verzamelen zich hier &mdash; alleen in jouw browser, voor niemand anders zichtbaar.</p>
   </div>
   <div id="ruimteContent"></div>
-  <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:1.8rem">
+  <div class="space-actions">
     <a class="btn-gold" href="tools/vandaag.html">Maak een plan</a>
     <a class="btn-line" href="ontdek.html">Doe een oefening</a>
     <button class="linkish" id="wisBtn">Alles wissen</button>
@@ -64,6 +76,7 @@
   const el = document.getElementById("ruimteContent");
   function render(){
     const items = V.getItems();
+    document.getElementById("wisBtn").hidden = !items.length;
     if(!items.length){
       el.innerHTML = '<p class="space-empty" style="text-align:center">Nog leeg. Maak een plan of doe een oefening \u2014 wat je kiest, verschijnt hier.</p>';
       return;
@@ -78,7 +91,17 @@
     });
     el.innerHTML = ""; el.appendChild(ul);
   }
-  document.getElementById("wisBtn").addEventListener("click", function(){
+  const wis = document.getElementById("wisBtn");
+  let armed = false, armTimer = null;
+  function disarm(){ armed = false; wis.textContent = "Alles wissen"; wis.classList.remove("armed"); }
+  wis.addEventListener("click", function(){
+    if(!V.getItems().length) return;
+    if(!armed){
+      armed = true; wis.textContent = "Zeker weten? Tik nog eens"; wis.classList.add("armed");
+      clearTimeout(armTimer); armTimer = setTimeout(disarm, 4000);
+      return;
+    }
+    clearTimeout(armTimer); disarm();
     V.store.set("items", []);
     render();
     V.toast("Je ruimte is weer leeg.");

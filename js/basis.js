@@ -1,5 +1,5 @@
 /* ============================================================
-   VANDAAG — gedeelde basis (rust, sterrenstof, toast, opslag)
+   VANDAAG / TODAY — gedeelde basis (rust, lichtstof, toast, opslag)
    ============================================================ */
 "use strict";
 /* >>> Pas hier je Ko-fi-adres aan (één plek voor de hele site): */
@@ -22,7 +22,7 @@ window.V = (function(){
   };
   function saveItem(tag, text){
     const items = store.get("items", []);
-    items.push({tag, text, time:new Date().toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})});
+    items.push({tag, text, time:new Date().toLocaleString((document.documentElement.lang||"nl").indexOf("en")===0 ? "en-GB" : "nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})});
     store.set("items", items);
   }
   function getItems(){ return store.get("items", []); }
@@ -80,7 +80,7 @@ window.V = (function(){
         p.x += p.vx; p.y += p.vy; p.life -= 0.011;
         if(p.life<=0){ parts.splice(i,1); continue; }
         ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle = "rgba("+(p.r>1.4?"216,180,240":"240,206,146")+","+(p.life*0.8).toFixed(3)+")";
+        ctx.fillStyle = "rgba("+(p.r>1.4?"226,140,120":"236,160,60")+","+(p.life*0.8).toFixed(3)+")";
         ctx.fill();
       }
       raf = requestAnimationFrame(tick);
