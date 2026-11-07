@@ -7,9 +7,9 @@
 <meta name="description" content="Make a moodboard of photos, words, colours and clippings. Everything stays in your own browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/stijl.css">
-<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&family=Allura&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
 <link rel="canonical" href="https://www.manifestationtool.nl/en/tools/moodboard.html">
 <link rel="alternate" hreflang="nl" href="https://www.manifestationtool.nl/tools/moodboard.html">
 <link rel="alternate" hreflang="en" href="https://www.manifestationtool.nl/en/tools/moodboard.html">
@@ -90,6 +90,47 @@
   border:1px solid var(--line);border-radius:14px;padding:.7rem .9rem;background:#fff;resize:vertical}
 .own .row{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.6rem}
 .file-in{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+[hidden]{display:none!important}
+/* inspiratiebronnen, kaartjes, lettertypen */
+.panel-wide{width:min(34rem,100%)}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}
+.tabs .chip[aria-selected="true"]{border-color:var(--gold-strong);background:var(--gold-light);font-weight:600}
+.fontrow{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+.fontrow .chip{font-size:1rem;padding:.3rem .8rem}
+.fontrow .chip[data-font="script"]{font-family:var(--font-script);font-size:1.3rem;padding:.1rem .8rem}
+.fontrow .chip[data-font="serif"]{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.1rem}
+.fontrow .chip[data-font="sans"]{font-family:var(--font-body);letter-spacing:.2em;text-transform:uppercase;font-size:.78rem}
+.fontrow .chip[data-font="caps"]{font-family:"Cinzel",var(--font-display);letter-spacing:.08em;font-size:.86rem}
+.groep{font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--violet);font-weight:600;margin:1.2rem 0 .3rem}
+.pick .opt.m{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.05rem}
+.pick .opt.src{font-family:var(--font-display);font-weight:600;font-size:1rem;text-align:left;width:100%;display:flex;gap:.6rem;align-items:baseline}
+.pick .opt.src small{font-family:var(--font-body);font-weight:600;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--violet);flex:none}
+.deck{display:grid;place-items:center;padding:.6rem 0 .2rem;perspective:900px}
+.kaart{width:min(16rem,80vw);aspect-ratio:3/4.3;border-radius:14px;display:grid;place-items:center;text-align:center;padding:1.2rem}
+.kaart.rug{border:1px solid rgba(154,90,34,.5);background:
+  radial-gradient(circle at 50% 50%, rgba(255,255,255,.35), transparent 60%),
+  repeating-linear-gradient(45deg, rgba(200,132,47,.14) 0 6px, transparent 6px 14px),
+  linear-gradient(160deg,#F6CF8E,#E8B070);cursor:pointer;color:var(--deep);box-shadow:0 18px 36px -22px rgba(120,60,40,.7);transition:transform .4s var(--ease)}
+.kaart.rug:hover{transform:translateY(-4px) rotate(-1deg)}
+.kaart.rug span{font-family:"Cinzel",var(--font-display);letter-spacing:.14em;font-size:.82rem;border:1px solid rgba(154,90,34,.5);border-radius:10px;padding:.9rem 1rem;background:rgba(255,250,243,.55)}
+.kaart.voor{background:linear-gradient(165deg,#FFFCF6,#FBF0E0);border:1px solid var(--line);outline:1px solid rgba(200,132,47,.5);outline-offset:-8px;
+  box-shadow:0 18px 36px -22px rgba(120,60,40,.7);align-content:center;gap:.6rem;animation:flip .6s var(--ease)}
+@keyframes flip{from{transform:rotateY(90deg);opacity:0}to{transform:none;opacity:1}}
+html.reduced .kaart.voor{animation:none}
+.kaart.voor b{font-family:"Cinzel",var(--font-display);letter-spacing:.16em;font-size:.78rem;color:var(--gold);font-weight:600}
+.kaart.voor p{margin:0;font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.25rem;line-height:1.25;color:var(--deep)}
+/* kaartje op het vel */
+.item.kaart .vlak{background:linear-gradient(165deg,#FFFCF6,#FBF0E0);border:1px solid rgba(170,105,75,.3);border-radius:4.5%;display:grid;align-content:center;gap:5%;text-align:center;box-shadow:0 4px 14px -6px rgba(60,30,20,.35);position:relative}
+.item.kaart .vlak::before{content:"";position:absolute;inset:5%;border:1px solid rgba(200,132,47,.5);border-radius:3%;pointer-events:none}
+.item.kaart b{font-family:"Cinzel",var(--font-display);letter-spacing:.16em;color:#9A5A22;font-weight:600;display:block}
+.item.kaart p{margin:0;font-family:var(--font-display);font-style:italic;font-weight:600;line-height:1.22;color:#4A2F2A;padding:0 8%}
+/* lettertypen voor zinnen en woorden */
+.item.quote p,.item.woord p{color:#4A2F2A}
+.item p.f-script{font-family:var(--font-script);font-style:normal;font-weight:400;line-height:1.05}
+.item p.f-serif{font-family:var(--font-display);font-style:italic;font-weight:600;line-height:1.2}
+.item p.f-sans{font-family:var(--font-body);font-style:normal;font-weight:500;letter-spacing:.22em;text-transform:uppercase;line-height:1.35}
+.item p.f-caps{font-family:"Cinzel",var(--font-display);font-style:normal;font-weight:600;letter-spacing:.08em;line-height:1.3}
+.item.woord p{white-space:normal}
 /* foto bewerken */
 .edit-panel{width:min(36rem,100%)}
 .crop-wrap{position:relative;background:#2A1714;border-radius:14px;overflow:hidden;display:grid;place-items:center;height:min(52svh,26rem);touch-action:none;user-select:none;-webkit-user-select:none}
@@ -127,7 +168,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <div class="starsky" aria-hidden="true"><i></i><i></i></div>
 <canvas id="dust" aria-hidden="true"></canvas>
 <header class="site-header">
-  <a class="wordmark" href="../index.html" aria-label="Today">
+  <a class="wordmark" href="../../index.html" aria-label="Today">
     <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
       <path d="M6.5 18 a6.5 6.5 0 0 1 13 0" fill="#F6CF8E" stroke="#9A5A22" stroke-width="1.4"/>
       <path d="M2.5 18 h21 M13 4.5 v3 M4.6 9.2 l2.1 2.1 M21.4 9.2 l-2.1 2.1 M7 21.5 h12" stroke="#9A5A22" stroke-width="1.4" stroke-linecap="round"/>
@@ -135,10 +176,10 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     TODAY
   </a>
   <nav class="site-nav" aria-label="Main navigation">
-    <a href="../begin.html">Start</a>
-    <a href="../ontdek.html">Discover</a>
-    <a href="../boeken.html">Library</a>
-    <a href="../mijn-ruimte.html">My space</a>
+    <a href="../../begin.html">Start</a>
+    <a href="../../ontdek.html">Discover</a>
+    <a href="../../boeken.html">Library</a>
+    <a href="../../mijn-ruimte.html">My space</a>
     <a class="lang-mini" href="../../tools/moodboard.html" hreflang="nl" lang="nl" aria-label="Schakel naar Nederlands">NL</a>
     <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Calm</button>
   </nav>
@@ -178,16 +219,30 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   <button data-act="rotl" aria-label="Rotate left">&#8634;</button>
   <button data-act="rotr" aria-label="Rotate right">&#8635;</button>
   <button data-act="front" aria-label="Bring to front">&#8679;</button>
+  <button data-act="font" id="fontBtn" aria-label="Change lettering" hidden style="font-family:var(--font-display);font-size:1.05rem">Aa</button>
   <button data-act="edit" id="editBtn" aria-label="Crop, cut or rotate photo" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7 3v14h14M3 7h14v14"/></svg></button>
   <button data-act="del" class="del" aria-label="Remove">&times;</button>
 </div>
 
 <!-- quotes -->
 <div class="overlay" id="ovQuote" hidden role="dialog" aria-modal="true" aria-labelledby="ovQuoteH">
-  <div class="panel">
+  <div class="panel panel-wide">
     <div class="panel-head"><h2 id="ovQuoteH">A line to keep close</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="tabs" id="quoteTabs" role="tablist" aria-label="Sources of inspiration"></div>
+    <div class="fontrow" data-fonts="quote" role="group" aria-label="Lettering"><span class="edit-lbl">Lettering</span></div>
+    <div id="kaartZone" hidden>
+      <div class="deck" id="deck">
+        <button class="kaart rug" id="deckDraw" aria-label="Draw a card"><span>Draw a card</span></button>
+        <div class="kaart voor" id="kaartVoor" hidden><b id="kaartTitel"></b><p id="kaartTekst"></p></div>
+      </div>
+      <p class="edit-hint">Tap the deck. The card that comes is the card for now.</p>
+      <div class="panel-actions" style="justify-content:center">
+        <button class="btn-line" id="deckAgain" hidden>Draw again</button>
+        <button class="btn-gold" id="deckAdd" hidden>On the sheet</button>
+      </div>
+    </div>
     <div class="pick" id="quoteList"></div>
-    <div class="own">
+    <div class="own" id="quoteOwnZone">
       <label for="quoteOwn">Or your own words</label>
       <textarea id="quoteOwn" rows="2" maxlength="140" placeholder="Write your own line here&hellip;"></textarea>
       <div class="row"><button class="btn-gold" id="quoteOwnBtn">On the sheet</button></div>
@@ -199,7 +254,11 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <div class="overlay" id="ovWoord" hidden role="dialog" aria-modal="true" aria-labelledby="ovWoordH">
   <div class="panel">
     <div class="panel-head"><h2 id="ovWoordH">One word</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="fontrow" data-fonts="woord" role="group" aria-label="Lettering"><span class="edit-lbl">Lettering</span></div>
     <div class="pick" id="woordList"></div>
+    <h4 class="groep">To meditate on</h4>
+    <p class="soft" style="font-size:.9rem;margin-bottom:.6rem">Short lines to breathe with. Read them slowly, one at a time.</p>
+    <div class="pick" id="mantraList"></div>
     <div class="own">
       <label for="woordOwn">Or your own word</label>
       <input id="woordOwn" maxlength="24" placeholder="For example: freedom">
@@ -292,13 +351,16 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 </footer>
 
 <div class="toast" id="toast" role="status"></div>
-<script src="../data/routes.js"></script>
-<script src="../js/basis.js"></script>
+<script src="../../data/routes.js"></script>
+<script src="../../js/basis.js"></script>
 <script>
 (function(){
   "use strict";
   const T = {"toastAdded": "Placed on the sheet.", "toastImgFail": "This photo could not be loaded.", "toastEmpty": "The sheet is empty again.", "toastFirst": "Place something on the sheet first.", "toastSaved": "Saved as an image.", "toastEdited": "Photo updated.", "leeg": "Clear the sheet", "leegSure": "Sure? Tap again", "tagKijk": "Moodboard", "kijkSaved": "A viewing moment with my moodboard", "fileName": "today-moodboard.png"};
-  const QUOTES = ["What I see clearly gains direction.", "I am allowed to want this.", "A small step in the right direction, every day.", "Much is already good. More is welcome.", "I trust what I feel and do what I can.", "Rest is not standing still.", "I am almost there — and I am already here.", "What is mine finds me.", "Gentle with myself, clear about what I want.", "Today counts.", "I do not have to do this alone.", "Big things may start small."];
+  const SOURCES = [{"id": "kaart", "label": "Card", "items": []}, {"id": "routes", "label": "The six routes", "items": []}, {"id": "visies", "label": "From the visions", "items": ["Images come before change.", "Beneath thinking lies a quieter knowing.", "The edge of what you dare lies where your belief in yourself ends.", "It is rarely the world that pinches — often it is the lens.", "Valuing what is opens what comes.", "The invisible becomes visible in small, repeated steps."]}, {"id": "dank", "label": "Gratitude", "items": ["Much is already good. More is welcome.", "What I value grows.", "Today there was light, warm water and a greeting. That counts.", "I look back and see how much has already come.", "Thank you. For this. Exactly this.", "Abundance begins with noticing."]}, {"id": "moed", "label": "Courage & trust", "items": ["I am allowed to want this.", "I do not need to be certain to begin.", "What I did once, I can do again.", "I trust what I feel and do what I can.", "The first step need not be big — only real.", "I keep walking, even with trembling knees."]}, {"id": "rust", "label": "Calm & softness", "items": ["Rest is not standing still.", "I am allowed to go slowly.", "Gentle with myself, clear about what I want.", "Not everything has to happen today.", "I put down what is not mine.", "Breathe in. Let go. That is enough for now."]}, {"id": "ontvang", "label": "Abundance & receiving", "items": ["What is mine finds me.", "I make room and let it come.", "I am almost there — and I am already here.", "There is enough. For me too.", "I receive with open hands.", "Good things are already on their way."]}, {"id": "vandaag", "label": "Today", "items": ["Today counts.", "What I see clearly gains direction.", "A small step in the right direction, every day.", "Big things may start small.", "I do not have to do this alone.", "This is my place, this is my time."]}];
+  const CARDS = [["Imagination", "See it clearly once. Today asks no more."], ["Compass", "Place a hand on your chest. What matters now?"], ["Source", "You have done something hard before. Bring that strength."], ["Mirror", "Is it always true? Or only today?"], ["Receiving", "Name three things already here. Stay with one."], ["Creation", "Smaller than ten minutes. Which step is that?"], ["Calm", "Nothing is required. Breathe three times, then we will see."], ["Thanks", "Look back. See how much has already come."], ["Courage", "Begin before you feel ready."], ["Trust", "What you seek is seeking you too."], ["Softness", "Speak to yourself today as to a friend."], ["Direction", "One thing at a time. Which thing?"], ["Light", "Seek out one moment of light today. Literally."], ["Space", "Put down what is not yours."], ["Patience", "Some things grow in the dark. Let them."], ["Play", "Do something small purely for the joy of it."], ["Connection", "Tell one person. Saying it makes it real."], ["Home", "Where do you feel most yourself? Go there more often."], ["Letting go", "Not everything must be held. What may fall?"], ["Abundance", "There is enough. Look again — for you too."], ["Attention", "What you give attention to grows. Choose well."], ["Beginning", "The drawer is open. Leave it open."], ["Silence", "Listen for half a minute. What was already there?"], ["Joy", "Which small thing made you glad today? Do it again tomorrow."], ["Today", "Not tomorrow, not someday. Today counts."]];
+  const MANTRAS = ["I am enough", "Breathe in, let go", "I may be here", "All in its own time", "I choose gentle", "Here and now", "I trust the way", "There is room", "I am already on my way", "Let come what comes", "Calm within me", "I open my hands"];
+  const FONT_NAMES = {"script": "Handwritten", "serif": "Classic", "sans": "Clean", "caps": "Stately"};
   const WORDS = ["Calm", "Abundance", "Love", "Courage", "Trust", "Freedom", "Light", "Growth", "Grateful", "Home", "Energy", "Softness", "Direction", "Joy", "Connection", "Space"];
   const TITLES = ["My today", "This is what I see", "On my way", "My space", "This year", "This is how it feels"];
   const COLORS = ["#F4C7C3","#F7D9B0","#F6CF8E","#FFF4DC","#CFE0C8","#C9DCEA","#D9C7E6","#D98C6A","#F2EBDD","#F2B6A0","#8FA58A","#9DB4C9","#6A2E48","#E3D1B4","#B9731F","#4A2F2A"];
@@ -377,10 +439,17 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     if(it.type === "foto"){ const im = new Image(); im.src = it.src; im.alt = ""; im.draggable = false; if(it.shaped){ im.style.boxShadow = "none"; im.style.borderRadius = "0"; } el.appendChild(im); }
     else if(it.type === "knipsel"){ el.innerHTML = STICKERS[it.key] || ""; }
     else if(it.type === "kleur"){ const d = document.createElement("div"); d.style.background = it.color; d.style.height = (w * it.ar) + "px"; el.appendChild(d); }
+    else if(it.type === "kaart"){
+      const v = document.createElement("div"); v.className = "vlak"; v.style.height = (w * 1.4) + "px";
+      const b = document.createElement("b"); b.textContent = it.title; b.style.fontSize = (w*.07) + "px";
+      const q = document.createElement("p"); q.textContent = it.text; q.style.fontSize = (w*.105) + "px";
+      v.appendChild(b); v.appendChild(q); el.appendChild(v);
+    }
     else {
       const p = document.createElement("p"); p.textContent = it.text;
-      const k = it.type === "quote" ? .085 : it.type === "woord" ? .3 : .26;
-      p.style.fontSize = (w * k) + "px";
+      const f = it.font || (it.type === "quote" ? "serif" : "script");
+      p.className = "f-" + f;
+      p.style.fontSize = (w * fontK(it.type, f)) + "px";
       if(it.type === "woord") p.style.color = it.color || "#6A2E48";
       el.appendChild(p);
     }
@@ -389,11 +458,19 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     if(!forView && it.id === selId) el.classList.add("sel");
     return el;
   }
+  // lettergrootte als deel van de breedte, per soort en lettertype
+  function fontK(type, f){
+    if(type === "titel") return .26;
+    if(type === "quote") return {script:.12, serif:.085, sans:.062, caps:.066}[f] || .085;
+    return {script:.3, serif:.2, sans:.14, caps:.15}[f] || .3;
+  }
+  const FONT_ORDER = ["script","serif","sans","caps"];
   function selectEl(){
     board.querySelectorAll(".item").forEach(e=>e.classList.toggle("sel", e.dataset.id === selId));
     document.getElementById("selbar").hidden = !selId;
     const cur = items.find(i=>i.id === selId);
     document.getElementById("editBtn").hidden = !(cur && cur.type === "foto");
+    document.getElementById("fontBtn").hidden = !(cur && (cur.type === "quote" || cur.type === "woord"));
   }
   function add(it){
     it.id = uid();
@@ -446,6 +523,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
       case "front": items.splice(i,1); items.push(it); break;
       case "del": items.splice(i,1); selId = null; break;
       case "edit": openEdit(it); return;
+      case "font": { const f = it.font || (it.type === "quote" ? "serif" : "script"); it.font = FONT_ORDER[(FONT_ORDER.indexOf(f)+1) % FONT_ORDER.length]; break; }
     }
     render(); save();
   });
@@ -494,8 +572,55 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
       list.appendChild(b);
     });
   }
-  fillPick("quoteList", QUOTES, "q", q=>add({type:"quote", text:q, w:.46}));
-  fillPick("woordList", WORDS, "w", w=>add({type:"woord", text:w, w:.3, color:COLORS[12]}));
+  // gekozen lettertype per paneel (blijft staan tot je het wisselt)
+  const pickedFont = {quote:"serif", woord:"script"};
+  document.querySelectorAll(".fontrow").forEach(row=>{
+    const kind = row.dataset.fonts;
+    FONT_ORDER.forEach(f=>{
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.dataset.font = f; b.textContent = FONT_NAMES[f];
+      b.setAttribute("aria-pressed", String(pickedFont[kind] === f));
+      b.addEventListener("click", ()=>{ pickedFont[kind] = f; row.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", String(c === b))); });
+      row.appendChild(b);
+    });
+  });
+  // inspiratiebronnen als tabbladen
+  const tabs = document.getElementById("quoteTabs"), kaartZone = document.getElementById("kaartZone"), quoteList = document.getElementById("quoteList");
+  let curSrc = SOURCES[0].id;
+  function showSrc(id){
+    curSrc = id;
+    tabs.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-selected", String(c.dataset.src === id)));
+    const src = SOURCES.find(x=>x.id === id);
+    kaartZone.hidden = id !== "kaart"; quoteList.hidden = id === "kaart";
+    document.getElementById("quoteOwnZone").hidden = id === "kaart";
+    if(id === "kaart") return;
+    const items = id === "routes" ? routeLines() : src.items;
+    fillPick("quoteList", items, "q", q=>add({type:"quote", text:q, w:.46, font:pickedFont.quote}));
+  }
+  SOURCES.forEach(src=>{
+    const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.dataset.src = src.id; b.setAttribute("role","tab"); b.textContent = src.label;
+    b.addEventListener("click", ()=>showSrc(src.id)); tabs.appendChild(b);
+  });
+  function routeLines(){
+    const R = (document.documentElement.lang || "nl").indexOf("en") === 0 ? (window.ROUTES_EN || {}) : (window.ROUTES || {});
+    return Object.keys(R).map(k=>R[k].essence).filter(Boolean);
+  }
+  showSrc(curSrc);
+  // kaartjes trekken
+  let deck = [], drawn = null;
+  const kaartVoor = document.getElementById("kaartVoor"), deckDraw = document.getElementById("deckDraw");
+  function drawCard(){
+    if(!deck.length) deck = CARDS.slice().sort(()=>Math.random()-.5);
+    drawn = deck.pop();
+    document.getElementById("kaartTitel").textContent = drawn[0]; document.getElementById("kaartTekst").textContent = drawn[1];
+    deckDraw.hidden = true; kaartVoor.hidden = false;
+    kaartVoor.style.animation = "none"; void kaartVoor.offsetWidth; kaartVoor.style.animation = "";
+    document.getElementById("deckAgain").hidden = false; document.getElementById("deckAdd").hidden = false;
+  }
+  deckDraw.addEventListener("click", drawCard);
+  document.getElementById("deckAgain").addEventListener("click", drawCard);
+  document.getElementById("deckAdd").addEventListener("click", ()=>{ if(drawn){ add({type:"kaart", title:drawn[0], text:drawn[1], w:.34}); closeAll(); } });
+  fillPick("woordList", WORDS, "w", w=>add({type:"woord", text:w, w:.3, color:COLORS[12], font:pickedFont.woord}));
+  fillPick("mantraList", MANTRAS, "m", w=>add({type:"woord", text:w, w:.4, color:COLORS[12], font:pickedFont.woord === "script" ? "serif" : pickedFont.woord}));
   fillPick("titelList", TITLES, "w", t=>{ items = items.filter(i=>i.type !== "titel"); add({type:"titel", text:t, w:.6, x:.5, y:.04, rot:0}); });
   const kl = document.getElementById("kleurList");
   COLORS.forEach(c=>{
@@ -521,8 +646,8 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     document.getElementById(btnId).addEventListener("click", go);
     inp.addEventListener("keydown", e=>{ if(e.key === "Enter" && inp.tagName === "INPUT"){ e.preventDefault(); go(); } });
   }
-  own("quoteOwn","quoteOwnBtn", v=>add({type:"quote", text:v, w:.46}));
-  own("woordOwn","woordOwnBtn", v=>add({type:"woord", text:v, w:.3, color:COLORS[12]}));
+  own("quoteOwn","quoteOwnBtn", v=>add({type:"quote", text:v, w:.46, font:pickedFont.quote}));
+  own("woordOwn","woordOwnBtn", v=>add({type:"woord", text:v, w:.3, color:COLORS[12], font:pickedFont.woord}));
   own("titelOwn","titelOwnBtn", v=>{ items = items.filter(i=>i.type !== "titel"); add({type:"titel", text:v, w:.6, x:.5, y:.04, rot:0}); });
 
   /* ---------- foto bewerken: bijsnijden, knippen, draaien ---------- */
@@ -682,15 +807,33 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
         ctx.drawImage(im, -w/2, 0, w, h);
       } else if(it.type === "kleur"){
         ctx.fillStyle = it.color; roundRect(ctx, -w/2, 0, w, w*it.ar, 8); ctx.fill();
+      } else if(it.type === "kaart"){
+        const h = w * 1.4;
+        ctx.shadowColor = "rgba(60,30,20,.3)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 5;
+        const g = ctx.createLinearGradient(-w/2, 0, w/2, h); g.addColorStop(0, "#FFFCF6"); g.addColorStop(1, "#FBF0E0");
+        ctx.fillStyle = g; roundRect(ctx, -w/2, 0, w, h, w*.045); ctx.fill();
+        ctx.shadowColor = "transparent";
+        ctx.strokeStyle = "rgba(170,105,75,.3)"; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.strokeStyle = "rgba(200,132,47,.5)"; roundRect(ctx, -w/2 + w*.05, h*.05, w*.9, h*.9, w*.03); ctx.stroke();
+        ctx.textAlign = "center"; ctx.textBaseline = "top";
+        const tfs = w*.07; ctx.font = "600 " + tfs + "px Cinzel, Cormorant, serif"; ctx.fillStyle = "#9A5A22";
+        const qfs = w*.105; ctx.font = "italic 600 " + qfs + "px Cormorant, Georgia, serif";
+        const lines = wrap(ctx, it.text, w*.78), lh = qfs*1.22;
+        const total = tfs*1.3 + h*.05 + lines.length*lh, y0 = (h - total)/2;
+        ctx.font = "600 " + tfs + "px Cinzel, Cormorant, serif"; ctx.fillStyle = "#9A5A22"; spaced(ctx, it.title, 0, y0, tfs*.16);
+        ctx.font = "italic 600 " + qfs + "px Cormorant, Georgia, serif"; ctx.fillStyle = "#4A2F2A";
+        lines.forEach((ln, i)=>ctx.fillText(ln, 0, y0 + tfs*1.3 + h*.05 + i*lh));
       } else {
-        const k = it.type === "quote" ? .085 : it.type === "woord" ? .3 : .26;
-        const fs = w * k;
-        ctx.font = (it.type === "quote" ? "italic 600 " + fs + "px Cormorant, Georgia, serif" : "400 " + fs + "px Allura, cursive");
+        const f = it.type === "titel" ? "script" : (it.font || (it.type === "quote" ? "serif" : "script"));
+        const fs = w * fontK(it.type, f);
+        ctx.font = {script:"400 " + fs + "px Allura, cursive", serif:"italic 600 " + fs + "px Cormorant, Georgia, serif", sans:"500 " + fs + "px Jost, sans-serif", caps:"600 " + fs + "px Cinzel, Cormorant, serif"}[f];
         ctx.fillStyle = it.type === "quote" ? "#4A2F2A" : (it.type === "woord" ? (it.color||"#6A2E48") : "#6A2E48");
         ctx.textAlign = "center"; ctx.textBaseline = "top";
-        const lines = it.type === "quote" ? wrap(ctx, it.text, w) : [it.text];
-        const lh = fs * (it.type === "quote" ? 1.2 : 1.1);
-        lines.forEach((ln, i)=>ctx.fillText(ln, 0, i*lh));
+        const text = f === "sans" ? it.text.toUpperCase() : it.text;
+        const sp = f === "sans" ? fs*.22 : f === "caps" ? fs*.08 : 0;
+        const lines = it.type === "titel" ? [text] : wrapSp(ctx, text, w, sp);
+        const lh = fs * ({script:1.05, serif:1.2, sans:1.35, caps:1.3}[f]);
+        lines.forEach((ln, i)=>spaced(ctx, ln, 0, i*lh, sp));
       }
       ctx.restore();
     }
@@ -700,6 +843,21 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   }
   function loadImg(src){ return new Promise((res, rej)=>{ const im = new Image(); im.onload = ()=>res(im); im.onerror = rej; im.src = src; }); }
   function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  // tekst met letterafstand (canvas kent geen letter-spacing in alle browsers)
+  function spaced(ctx, text, x, y, sp){
+    if(!sp){ ctx.fillText(text, x, y); return; }
+    const total = measureSp(ctx, text, sp); let cx = x - total/2;
+    ctx.save(); ctx.textAlign = "left";
+    for(const ch of text){ ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; }
+    ctx.restore();
+  }
+  function measureSp(ctx, text, sp){ let t = 0; for(const ch of text) t += ctx.measureText(ch).width + sp; return t - sp; }
+  function wrapSp(ctx, text, maxW, sp){
+    if(!sp) return wrap(ctx, text, maxW);
+    const words = text.split(/\s+/), lines = []; let line = "";
+    words.forEach(wd=>{ const t = line ? line + " " + wd : wd; if(measureSp(ctx, t, sp) > maxW && line){ lines.push(line); line = wd; } else line = t; });
+    if(line) lines.push(line); return lines;
+  }
   function wrap(ctx, text, maxW){
     const words = text.split(/\s+/), lines = []; let line = "";
     words.forEach(wd=>{ const t = line ? line + " " + wd : wd; if(ctx.measureText(t).width > maxW && line){ lines.push(line); line = wd; } else line = t; });
