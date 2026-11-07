@@ -90,6 +90,25 @@
   border:1px solid var(--line);border-radius:14px;padding:.7rem .9rem;background:#fff;resize:vertical}
 .own .row{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.6rem}
 .file-in{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+/* foto bewerken */
+.edit-panel{width:min(36rem,100%)}
+.crop-wrap{position:relative;background:#2A1714;border-radius:14px;overflow:hidden;display:grid;place-items:center;height:min(52svh,26rem);touch-action:none;user-select:none;-webkit-user-select:none}
+.crop-wrap img{display:block;max-width:100%;max-height:100%;pointer-events:none;transition:transform .25s}
+#cropBox{position:absolute;box-shadow:0 0 0 9999px rgba(42,23,20,.62);outline:1.5px solid #F6CF8E;cursor:move;touch-action:none}
+#cropBox i{position:absolute;width:22px;height:22px;background:#F6CF8E;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+#cropBox i[data-h="nw"]{left:-11px;top:-11px;cursor:nwse-resize}
+#cropBox i[data-h="ne"]{right:-11px;top:-11px;cursor:nesw-resize}
+#cropBox i[data-h="sw"]{left:-11px;bottom:-11px;cursor:nesw-resize}
+#cropBox i[data-h="se"]{right:-11px;bottom:-11px;cursor:nwse-resize}
+.edit-hint{font-size:.85rem;color:var(--text-soft);margin:.6rem 0 .8rem;text-align:center}
+.edit-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.55rem}
+.edit-lbl{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;min-width:5.2rem}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.35rem .75rem;font-size:.84rem;color:var(--deep)}
+.chip[aria-pressed="true"]{border-color:var(--gold-strong);background:var(--gold-light);font-weight:600}
+#rotFine{flex:1;min-width:7rem;accent-color:var(--gold-strong)}
+#rotOut{font-size:.85rem;color:var(--text-soft);min-width:2.6rem;text-align:right}
+.edit-panel .panel-actions{display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1rem;align-items:center}
+.toast{bottom:4.6rem}
 /* kijkmoment */
 #kijk{position:fixed;inset:0;z-index:300;background:#FFF9F0;display:grid;place-items:center;padding:1rem;cursor:pointer}
 #kijk[hidden]{display:none}
@@ -159,6 +178,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   <button data-act="rotl" aria-label="Rotate left">&#8634;</button>
   <button data-act="rotr" aria-label="Rotate right">&#8635;</button>
   <button data-act="front" aria-label="Bring to front">&#8679;</button>
+  <button data-act="edit" id="editBtn" aria-label="Crop, cut or rotate photo" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7 3v14h14M3 7h14v14"/></svg></button>
   <button data-act="del" class="del" aria-label="Remove">&times;</button>
 </div>
 
@@ -218,6 +238,46 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   </div>
 </div>
 
+<!-- foto bewerken -->
+<div class="overlay" id="ovEdit" hidden role="dialog" aria-modal="true" aria-labelledby="ovEditH">
+  <div class="panel edit-panel">
+    <div class="panel-head"><h2 id="ovEditH">Edit photo</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="crop-wrap" id="cropWrap">
+      <img id="cropImg" alt="" draggable="false">
+      <div id="cropBox"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div>
+    </div>
+    <p class="edit-hint">Drag the frame or its corners to crop.</p>
+    <div class="edit-row" role="group" aria-label="Shape">
+      <span class="edit-lbl">Shape</span>
+      <button class="chip" data-shape="rect" aria-pressed="true">Rectangle</button>
+      <button class="chip" data-shape="round" aria-pressed="false">Rounded</button>
+      <button class="chip" data-shape="oval" aria-pressed="false">Oval</button>
+      <button class="chip" data-shape="circle" aria-pressed="false">Circle</button>
+      <button class="chip" data-shape="arch" aria-pressed="false">Arch</button>
+    </div>
+    <div class="edit-row" role="group" aria-label="Ratio">
+      <span class="edit-lbl">Ratio</span>
+      <button class="chip" data-ratio="0" aria-pressed="true">Free</button>
+      <button class="chip" data-ratio="1" aria-pressed="false">1:1</button>
+      <button class="chip" data-ratio="1.25" aria-pressed="false">4:5</button>
+      <button class="chip" data-ratio="0.75" aria-pressed="false">4:3</button>
+      <button class="chip" data-ratio="0.5625" aria-pressed="false">16:9</button>
+    </div>
+    <div class="edit-row">
+      <span class="edit-lbl">Rotate</span>
+      <button class="chip" id="rot90l" aria-label="Quarter turn left">&#8634; 90&deg;</button>
+      <button class="chip" id="rot90r" aria-label="Quarter turn right">&#8635; 90&deg;</button>
+      <input type="range" id="rotFine" min="-45" max="45" value="0" step="1" aria-label="Fine rotate">
+      <output id="rotOut" for="rotFine">0&deg;</output>
+    </div>
+    <div class="panel-actions">
+      <button class="linkish" id="editReset">Back to original</button>
+      <button class="btn-line" data-close>Cancel</button>
+      <button class="btn-gold" id="editApply">Apply</button>
+    </div>
+  </div>
+</div>
+
 <div id="kijk" hidden>
   <div class="vel" id="kijkVel"></div>
   <p class="adem">Look calmly. Breathe. Tap to go back.</p>
@@ -237,7 +297,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <script>
 (function(){
   "use strict";
-  const T = {"toastAdded": "Placed on the sheet.", "toastImgFail": "This photo could not be loaded.", "toastEmpty": "The sheet is empty again.", "toastFirst": "Place something on the sheet first.", "toastSaved": "Saved as an image.", "leeg": "Clear the sheet", "leegSure": "Sure? Tap again", "tagKijk": "Moodboard", "kijkSaved": "A viewing moment with my moodboard", "fileName": "today-moodboard.png"};
+  const T = {"toastAdded": "Placed on the sheet.", "toastImgFail": "This photo could not be loaded.", "toastEmpty": "The sheet is empty again.", "toastFirst": "Place something on the sheet first.", "toastSaved": "Saved as an image.", "toastEdited": "Photo updated.", "leeg": "Clear the sheet", "leegSure": "Sure? Tap again", "tagKijk": "Moodboard", "kijkSaved": "A viewing moment with my moodboard", "fileName": "today-moodboard.png"};
   const QUOTES = ["What I see clearly gains direction.", "I am allowed to want this.", "A small step in the right direction, every day.", "Much is already good. More is welcome.", "I trust what I feel and do what I can.", "Rest is not standing still.", "I am almost there — and I am already here.", "What is mine finds me.", "Gentle with myself, clear about what I want.", "Today counts.", "I do not have to do this alone.", "Big things may start small."];
   const WORDS = ["Calm", "Abundance", "Love", "Courage", "Trust", "Freedom", "Light", "Growth", "Grateful", "Home", "Energy", "Softness", "Direction", "Joy", "Connection", "Space"];
   const TITLES = ["My today", "This is what I see", "On my way", "My space", "This year", "This is how it feels"];
@@ -314,7 +374,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     el.className = "item " + it.type; el.dataset.id = it.id;
     const w = it.w * bw;
     el.style.width = w + "px";
-    if(it.type === "foto"){ const im = new Image(); im.src = it.src; im.alt = ""; im.draggable = false; el.appendChild(im); }
+    if(it.type === "foto"){ const im = new Image(); im.src = it.src; im.alt = ""; im.draggable = false; if(it.shaped){ im.style.boxShadow = "none"; im.style.borderRadius = "0"; } el.appendChild(im); }
     else if(it.type === "knipsel"){ el.innerHTML = STICKERS[it.key] || ""; }
     else if(it.type === "kleur"){ const d = document.createElement("div"); d.style.background = it.color; d.style.height = (w * it.ar) + "px"; el.appendChild(d); }
     else {
@@ -332,6 +392,8 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   function selectEl(){
     board.querySelectorAll(".item").forEach(e=>e.classList.toggle("sel", e.dataset.id === selId));
     document.getElementById("selbar").hidden = !selId;
+    const cur = items.find(i=>i.id === selId);
+    document.getElementById("editBtn").hidden = !(cur && cur.type === "foto");
   }
   function add(it){
     it.id = uid();
@@ -383,6 +445,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
       case "rotr": it.rot = (it.rot||0) + 6; break;
       case "front": items.splice(i,1); items.push(it); break;
       case "del": items.splice(i,1); selId = null; break;
+      case "edit": openEdit(it); return;
     }
     render(); save();
   });
@@ -462,6 +525,120 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   own("woordOwn","woordOwnBtn", v=>add({type:"woord", text:v, w:.3, color:COLORS[12]}));
   own("titelOwn","titelOwnBtn", v=>{ items = items.filter(i=>i.type !== "titel"); add({type:"titel", text:v, w:.6, x:.5, y:.04, rot:0}); });
 
+  /* ---------- foto bewerken: bijsnijden, knippen, draaien ---------- */
+  const E = {it:null, img:null, crop:null, shape:"rect", ratio:0, quarter:0, fine:0};
+  const cropWrap = document.getElementById("cropWrap"), cropImg = document.getElementById("cropImg"), cropBox = document.getElementById("cropBox");
+  const rotFine = document.getElementById("rotFine"), rotOut = document.getElementById("rotOut");
+  function openEdit(it){
+    E.it = it; E.shape = "rect"; E.ratio = 0; E.quarter = 0; E.fine = 0;
+    if(!it.orig) it.orig = it.src;            // origineel één keer bewaren, zodat je altijd terug kunt
+    rotFine.value = 0; rotOut.textContent = "0°";
+    setPressed("[data-shape]", "rect"); setPressed("[data-ratio]", "0");
+    loadImg(it.orig).then(im=>{
+      E.img = im; cropImg.src = it.orig; cropImg.style.transform = "";
+      E.crop = {x:0, y:0, w:1, h:1};
+      V.openOverlay(ov("ovEdit"));
+      requestAnimationFrame(layoutCrop);
+    });
+  }
+  function setPressed(sel, val){ document.querySelectorAll(sel).forEach(b=>b.setAttribute("aria-pressed", String((b.dataset.shape||b.dataset.ratio) === val))); }
+  // weergave van de afbeelding in het kader (na 90°-draai zijn breedte en hoogte verwisseld)
+  function imgRect(){
+    const r = cropImg.getBoundingClientRect(), w = cropWrap.getBoundingClientRect();
+    const odd = E.quarter % 2 === 1;
+    const dw = odd ? r.height : r.width, dh = odd ? r.width : r.height;
+    return {left:r.left - w.left + (r.width - dw)/2, top:r.top - w.top + (r.height - dh)/2, w:dw, h:dh};
+  }
+  function fitImg(){
+    const odd = E.quarter % 2 === 1;
+    const W = cropWrap.clientWidth, H = cropWrap.clientHeight;
+    const iw = odd ? E.img.height : E.img.width, ih = odd ? E.img.width : E.img.height;
+    const sc = Math.min(W/iw, H/ih) * .92;
+    cropImg.style.maxWidth = "none"; cropImg.style.maxHeight = "none";
+    // we zetten de ongedraaide maat zó dat de gedraaide versie past
+    cropImg.style.width = (odd ? ih*sc : iw*sc) + "px"; cropImg.style.height = (odd ? iw*sc : ih*sc) + "px";
+    cropImg.style.transform = "rotate(" + (E.quarter*90 + E.fine) + "deg)";
+  }
+  function layoutCrop(){
+    if(!E.img) return;
+    fitImg();
+    const R = imgRect(), c = E.crop;
+    cropBox.style.left = (R.left + c.x*R.w) + "px"; cropBox.style.top = (R.top + c.y*R.h) + "px";
+    cropBox.style.width = (c.w*R.w) + "px"; cropBox.style.height = (c.h*R.h) + "px";
+    cropBox.style.borderRadius = E.shape === "circle" || E.shape === "oval" ? "50%" : E.shape === "round" ? "14px" : E.shape === "arch" ? "50% 50% 10px 10px / " + Math.min(50, 50*(c.w*R.w)/(c.h*R.h)) + "% " + Math.min(50, 50*(c.w*R.w)/(c.h*R.h)) + "% 10px 10px" : "0";
+  }
+  function applyRatio(){
+    const r = E.shape === "circle" ? 1 : E.ratio; if(!r) return;
+    const R = imgRect(), c = E.crop;
+    // houd het midden, pas hoogte aan de breedte aan (in pixels), dan terug naar fracties
+    const cx = c.x + c.w/2, cy = c.y + c.h/2;
+    let wpx = c.w*R.w, hpx = wpx*r;
+    if(hpx > R.h){ hpx = R.h*.96; wpx = hpx/r; }
+    c.w = wpx/R.w; c.h = hpx/R.h;
+    c.x = Math.min(1-c.w, Math.max(0, cx - c.w/2)); c.y = Math.min(1-c.h, Math.max(0, cy - c.h/2));
+  }
+  document.querySelectorAll("[data-shape]").forEach(b=>b.addEventListener("click", ()=>{ E.shape = b.dataset.shape; setPressed("[data-shape]", E.shape); applyRatio(); layoutCrop(); }));
+  document.querySelectorAll("[data-ratio]").forEach(b=>b.addEventListener("click", ()=>{ E.ratio = parseFloat(b.dataset.ratio); setPressed("[data-ratio]", b.dataset.ratio); applyRatio(); layoutCrop(); }));
+  document.getElementById("rot90l").addEventListener("click", ()=>{ E.quarter = (E.quarter+3)%4; E.crop = {x:0,y:0,w:1,h:1}; fitImg(); applyRatio(); layoutCrop(); });
+  document.getElementById("rot90r").addEventListener("click", ()=>{ E.quarter = (E.quarter+1)%4; E.crop = {x:0,y:0,w:1,h:1}; fitImg(); applyRatio(); layoutCrop(); });
+  rotFine.addEventListener("input", ()=>{ E.fine = parseInt(rotFine.value,10)||0; rotOut.textContent = E.fine + "°"; layoutCrop(); });
+  document.getElementById("editReset").addEventListener("click", ()=>{ if(E.it) openEdit(E.it); });
+  window.addEventListener("resize", ()=>{ if(!ov("ovEdit").hidden) layoutCrop(); });
+
+  // slepen van kader en hoeken
+  let cd = null;
+  cropBox.addEventListener("pointerdown", e=>{
+    const R = imgRect(), c = E.crop;
+    cd = {h:e.target.dataset.h || "move", sx:e.clientX, sy:e.clientY, c:{...c}, R};
+    cropBox.setPointerCapture(e.pointerId); e.preventDefault(); e.stopPropagation();
+  });
+  cropBox.addEventListener("pointermove", e=>{
+    if(!cd) return;
+    const dx = (e.clientX - cd.sx)/cd.R.w, dy = (e.clientY - cd.sy)/cd.R.h, o = cd.c, c = E.crop;
+    const r = E.shape === "circle" ? 1 : E.ratio, k = cd.R.w/cd.R.h; // r: hoogte/breedte in px; k zet breedtefractie om naar hoogtefractie
+    const min = .08;
+    if(cd.h === "move"){
+      c.x = Math.min(1-o.w, Math.max(0, o.x+dx)); c.y = Math.min(1-o.h, Math.max(0, o.y+dy));
+    } else {
+      let x1 = o.x, y1 = o.y, x2 = o.x+o.w, y2 = o.y+o.h;
+      if(cd.h.includes("w")) x1 = Math.min(x2-min, Math.max(0, o.x+dx)); else x2 = Math.max(x1+min, Math.min(1, o.x+o.w+dx));
+      if(cd.h.includes("n")) y1 = Math.min(y2-min, Math.max(0, o.y+dy)); else y2 = Math.max(y1+min, Math.min(1, o.y+o.h+dy));
+      if(r){ // hoogte volgt breedte
+        const w = x2-x1; let h = w*k*r;
+        if(cd.h.includes("n")){ y1 = y2-h; if(y1<0){ y1=0; h=y2; const w2=h/(k*r); if(cd.h.includes("w")) x1=x2-w2; else x2=x1+w2; } }
+        else { y2 = y1+h; if(y2>1){ y2=1; h=1-y1; const w2=h/(k*r); if(cd.h.includes("w")) x1=x2-w2; else x2=x1+w2; } }
+      }
+      c.x = x1; c.y = y1; c.w = x2-x1; c.h = y2-y1;
+    }
+    layoutCrop();
+  });
+  const cropEnd = ()=>{ cd = null; };
+  cropBox.addEventListener("pointerup", cropEnd); cropBox.addEventListener("pointercancel", cropEnd);
+
+  document.getElementById("editApply").addEventListener("click", ()=>{
+    const it = E.it, im = E.img, c = E.crop; if(!it || !im) return;
+    // 1. draai het origineel naar een tussencanvas (90°-stappen + fijn), 2. snij uit, 3. knip in vorm
+    const odd = E.quarter % 2 === 1, rw = odd ? im.height : im.width, rh = odd ? im.width : im.height;
+    const rot = document.createElement("canvas"); rot.width = rw; rot.height = rh;
+    const rc = rot.getContext("2d");
+    rc.translate(rw/2, rh/2); rc.rotate((E.quarter*90 + E.fine) * Math.PI/180); rc.drawImage(im, -im.width/2, -im.height/2);
+    const sx = c.x*rw, sy = c.y*rh, sw = Math.max(1, c.w*rw), sh = Math.max(1, c.h*rh);
+    const out = document.createElement("canvas"); out.width = Math.round(sw); out.height = Math.round(sh);
+    const oc = out.getContext("2d");
+    const w = out.width, h = out.height;
+    oc.beginPath();
+    if(E.shape === "circle" || E.shape === "oval") oc.ellipse(w/2, h/2, w/2, h/2, 0, 0, Math.PI*2);
+    else if(E.shape === "round") roundRect(oc, 0, 0, w, h, Math.min(w,h)*.08);
+    else if(E.shape === "arch"){ const r = Math.min(w/2, h/2); oc.moveTo(0,h); oc.lineTo(0,r); oc.arc(w/2, r, w/2, Math.PI, 0); oc.lineTo(w,h); oc.closePath(); }
+    else oc.rect(0,0,w,h);
+    oc.clip();
+    oc.drawImage(rot, sx, sy, sw, sh, 0, 0, w, h);
+    const transparent = E.shape !== "rect";
+    it.src = transparent ? out.toDataURL("image/png") : out.toDataURL("image/jpeg", .88);
+    it.ar = h/w; it.shaped = transparent;
+    closeAll(); render(); save(); V.toast(T.toastEdited);
+  });
+
   /* ---------- leegmaken (twee tikken) ---------- */
   const leeg = document.getElementById("leegBtn");
   let armed = false, armT = null;
@@ -501,7 +678,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
         const src = it.type === "foto" ? it.src : "data:image/svg+xml;charset=utf-8," + encodeURIComponent(STICKERS[it.key].replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" '));
         const im = await loadImg(src);
         const h = it.type === "foto" ? w * it.ar : w;
-        if(it.type === "foto"){ ctx.shadowColor = "rgba(60,30,20,.3)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6; }
+        if(it.type === "foto" && !it.shaped){ ctx.shadowColor = "rgba(60,30,20,.3)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6; }
         ctx.drawImage(im, -w/2, 0, w, h);
       } else if(it.type === "kleur"){
         ctx.fillStyle = it.color; roundRect(ctx, -w/2, 0, w, w*it.ar, 8); ctx.fill();
