@@ -10,7 +10,7 @@ npm of buildproces.
 - `en/` … volledige Engelse versie
 - `css/`, `js/`, `data/`, `assets/` … gedeeld door beide talen
 - `routes/` … zes routes met oefeningen
-- `tools/` … de drieminutentool (`vandaag.html`, Engels: `en/tools/today.html`) en de Verbeeldingsstudio (preview)
+- `tools/` … de drieminutentool (`vandaag.html`, Engels: `en/tools/today.html`), het moodboard (`moodboard.html`, IndexedDB, alleen lokaal), Traagzand (`traagzand.html`, Engels: `en/tools/slowsand.html`) en de Verbeeldingsstudio (preview)
 - `404.html`, `sitemap.xml`, `robots.txt` … voor GitHub Pages en zoekmachines
 
 ## Stijl

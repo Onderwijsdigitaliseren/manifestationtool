@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moodboard — see it before you</title>
+<meta name="description" content="Make a moodboard of photos, words, colours and clippings. Everything stays in your own browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="canonical" href="https://www.manifestationtool.nl/en/tools/moodboard.html">
+<link rel="alternate" hreflang="nl" href="https://www.manifestationtool.nl/tools/moodboard.html">
+<link rel="alternate" hreflang="en" href="https://www.manifestationtool.nl/en/tools/moodboard.html">
+<link rel="alternate" hreflang="x-default" href="https://www.manifestationtool.nl/tools/moodboard.html">
+<meta name="theme-color" content="#F5C7B0">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TODAY">
+<meta property="og:title" content="Moodboard — see it before you">
+<meta property="og:description" content="Make a moodboard of photos, words, colours and clippings. Everything stays in your own browser.">
+<meta property="og:url" content="https://www.manifestationtool.nl/en/tools/moodboard.html">
+<meta property="og:image" content="https://www.manifestationtool.nl/assets/og-en.png">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Moodboard: een wit vel in het midden, een rij toevoegknoppen eronder.
+   Alles wat je toevoegt blijft in je eigen browser (IndexedDB). */
+.mb-page{padding-bottom:1rem}
+.mb-head{text-align:center;max-width:40rem;margin:0 auto 1rem}
+.mb-head h1{font-size:clamp(1.8rem,5vh,2.6rem);margin:.3rem 0 .3rem;
+  background:linear-gradient(168deg,#6A2E48 8%,#B24A2C 55%,#B9731F 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mb-head p{color:var(--text);font-size:.98rem}
+.mb-stage{display:grid;place-items:center}
+#board{
+  position:relative;background:#fff;width:min(100%,calc((100svh - 19rem) * 0.8));aspect-ratio:4/5;
+  border-radius:6px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;
+  box-shadow:0 30px 60px -30px rgba(120,60,40,.6), 0 0 0 1px rgba(170,105,75,.18);
+}
+#board.empty::before{
+  content:attr(data-empty);position:absolute;inset:0;display:grid;place-items:center;padding:2rem;text-align:center;
+  font-family:var(--font-display);font-style:italic;font-weight:600;font-size:clamp(1.1rem,3vw,1.5rem);color:#B9A08F;pointer-events:none;
+}
+.item{position:absolute;left:0;top:0;transform-origin:center;cursor:grab;will-change:transform}
+.item:active{cursor:grabbing}
+.item.sel{outline:2px dashed var(--gold-strong);outline-offset:4px}
+.item img,.item svg{display:block;width:100%;height:auto;pointer-events:none}
+.item img{border-radius:3px;box-shadow:0 4px 14px -6px rgba(60,30,20,.35)}
+.item.kleur div{width:100%;border-radius:4px;box-shadow:0 4px 14px -8px rgba(60,30,20,.35)}
+.item.quote p{margin:0;font-family:var(--font-display);font-style:italic;font-weight:600;color:#4A2F2A;text-align:center;line-height:1.2;overflow-wrap:break-word}
+.item.woord p{margin:0;font-family:var(--font-script);font-weight:400;line-height:1.1;text-align:center;white-space:nowrap}
+.item.titel p{margin:0;font-family:var(--font-script);font-weight:400;line-height:1.05;text-align:center;color:#6A2E48;white-space:nowrap}
+.mb-bar{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1rem auto 0;max-width:46rem}
+.mb-bar button{
+  border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(8px);border-radius:999px;
+  padding:.55rem 1rem;color:var(--deep);font-weight:500;font-size:.9rem;display:inline-flex;align-items:center;gap:.4rem;
+  transition:border-color .3s,box-shadow .3s;
+}
+.mb-bar button:hover{border-color:var(--gold-strong);box-shadow:0 0 20px -6px rgba(200,132,47,.6)}
+.mb-bar button svg{width:1.05rem;height:1.05rem}
+.mb-bar.second button{font-size:.82rem;padding:.42rem .85rem;color:var(--text-soft)}
+#selbar{
+  position:fixed;left:50%;bottom:1.2rem;transform:translate(-50%,0);z-index:120;
+  display:flex;gap:.3rem;padding:.4rem;border-radius:999px;background:var(--deep);
+  box-shadow:0 14px 30px -12px rgba(80,35,25,.8);
+}
+#selbar[hidden]{display:none}
+#selbar button{
+  width:2.5rem;height:2.5rem;border-radius:50%;border:0;background:transparent;color:#FFF3DC;
+  display:grid;place-items:center;font-size:1.1rem;font-weight:600;
+}
+#selbar button:hover{background:rgba(255,255,255,.12)}
+#selbar button.del{color:#F7A58F}
+/* overlays met keuzes */
+.pick{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.pick .opt{animation:none;font-size:.95rem;padding:.7rem 1rem}
+.pick .opt.q{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.05rem;text-align:left;width:100%}
+.pick .opt.w{font-family:var(--font-script);font-size:1.6rem;padding:.3rem 1rem}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(3.2rem,1fr));gap:.6rem}
+.swatch{aspect-ratio:1;border-radius:14px;border:2px solid rgba(255,255,255,.9);box-shadow:0 6px 16px -8px rgba(60,30,20,.5);cursor:pointer;transition:transform .3s var(--ease)}
+.swatch:hover,.swatch:focus-visible{transform:translateY(-3px)}
+.stickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(5rem,1fr));gap:.6rem}
+.sticker{border:1px solid var(--line);border-radius:16px;background:#fff;padding:.6rem;cursor:pointer;display:grid;gap:.3rem;place-items:center;transition:border-color .3s,transform .3s var(--ease)}
+.sticker:hover,.sticker:focus-visible{border-color:var(--gold-strong);transform:translateY(-3px)}
+.sticker svg{width:100%;height:auto}
+.sticker span{font-size:.72rem;color:var(--text-soft)}
+.own{margin-top:1rem;border-top:1px solid var(--line);padding-top:1rem}
+.own label{display:block;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.4rem}
+.own textarea,.own input{width:100%;font:inherit;font-family:var(--font-display);font-size:1.15rem;font-weight:600;color:var(--deep);
+  border:1px solid var(--line);border-radius:14px;padding:.7rem .9rem;background:#fff;resize:vertical}
+.own .row{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.6rem}
+.file-in{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+/* kijkmoment */
+#kijk{position:fixed;inset:0;z-index:300;background:#FFF9F0;display:grid;place-items:center;padding:1rem;cursor:pointer}
+#kijk[hidden]{display:none}
+#kijk .vel{background:#fff;aspect-ratio:4/5;height:min(96svh,calc(96vw * 1.25));position:relative;overflow:hidden;border-radius:6px;box-shadow:0 30px 60px -30px rgba(120,60,40,.5)}
+#kijk .adem{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);font-family:var(--font-display);font-style:italic;font-weight:600;color:var(--text-soft);font-size:1.05rem;white-space:nowrap;animation:adem 7s ease-in-out infinite}
+@keyframes adem{0%,100%{opacity:.35}50%{opacity:1}}
+html.reduced #kijk .adem{animation:none;opacity:.8}
+@media (max-width:700px){
+  #board{width:min(100%,calc((100svh - 21rem) * 0.8))}
+  .mb-bar button{font-size:.84rem;padding:.5rem .8rem}
+}
+</style>
+</head>
+<body>
+
+<div class="starsky" aria-hidden="true"><i></i><i></i></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="wordmark" href="../index.html" aria-label="Today">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M6.5 18 a6.5 6.5 0 0 1 13 0" fill="#F6CF8E" stroke="#9A5A22" stroke-width="1.4"/>
+      <path d="M2.5 18 h21 M13 4.5 v3 M4.6 9.2 l2.1 2.1 M21.4 9.2 l-2.1 2.1 M7 21.5 h12" stroke="#9A5A22" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    TODAY
+  </a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="../begin.html">Start</a>
+    <a href="../ontdek.html">Discover</a>
+    <a href="../boeken.html">Library</a>
+    <a href="../mijn-ruimte.html">My space</a>
+    <a class="lang-mini" href="../../tools/moodboard.html" hreflang="nl" lang="nl" aria-label="Schakel naar Nederlands">NL</a>
+    <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Calm</button>
+  </nav>
+</header>
+
+<main class="page mb-page">
+  <div class="mb-head rise">
+    <p class="eyebrow">Moodboard &middot; see it before you</p>
+    <h1>A white sheet for what you long for.</h1>
+    <p>Lay down what your longing evokes: photos, a line, a colour, a few words. Drag, turn, enlarge &mdash; and look at it for a moment every day.</p>
+  </div>
+
+  <div class="mb-stage">
+    <div id="board" class="empty" data-empty="Still empty. Choose below what you want to lay down first." aria-label="Moodboard"></div>
+  </div>
+
+  <div class="mb-bar" role="toolbar" aria-label="Add">
+    <button id="addFoto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16 l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg>Photo</button>
+    <button id="addQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 7 q-3 1 -3 5 v5 h5 v-5 h-3 q0 -2 2 -3 Z M16 7 q-3 1 -3 5 v5 h5 v-5 h-3 q0 -2 2 -3 Z"/></svg>Line</button>
+    <button id="addWoord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 18 L9 6 l5 12 M6 14 h6 M16 10 c3 -1 5 1 4 4 c-1 3 -5 3 -4 0 c1 -2 4 -2 4 0"/></svg>Word</button>
+    <button id="addKleur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor"/><circle cx="12.5" cy="7.5" r="1.3" fill="currentColor"/><circle cx="16" cy="10.5" r="1.3" fill="currentColor"/><path d="M12 20.5 c-2 -3 1 -4 2 -5 c1 -1 1 -3 -1 -3"/></svg>Colour</button>
+    <button id="addKnipsel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 l2.2 5.6 5.8 2.2 -5.8 2.2 -2.2 5.6 -2.2 -5.6 -5.8 -2.2 5.8 -2.2 Z"/><path d="M19 17 l.9 2.1 2.1 .9 -2.1 .9 -.9 2.1 -.9 -2.1 -2.1 -.9 2.1 -.9 Z"/></svg>Clipping</button>
+    <button id="addTitel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 6 h16 M12 6 v13 M8 19 h8"/></svg>Title</button>
+  </div>
+  <div class="mb-bar second">
+    <button id="kijkBtn">Viewing moment</button>
+    <button id="exportBtn">Save as image</button>
+    <button id="leegBtn" class="linkish" hidden>Clear the sheet</button>
+  </div>
+  <p class="space-note" style="text-align:center;max-width:36rem;margin:1rem auto 0">Your moodboard stays in this browser, on this device only &mdash; visible to no one else. Save it as an image to use as a wallpaper on your phone.</p>
+  <input class="file-in" type="file" id="fileIn" accept="image/*" multiple aria-hidden="true" tabindex="-1">
+</main>
+
+<div id="selbar" hidden aria-label="Selected element">
+  <button data-act="smaller" aria-label="Smaller">&minus;</button>
+  <button data-act="bigger" aria-label="Bigger">+</button>
+  <button data-act="rotl" aria-label="Rotate left">&#8634;</button>
+  <button data-act="rotr" aria-label="Rotate right">&#8635;</button>
+  <button data-act="front" aria-label="Bring to front">&#8679;</button>
+  <button data-act="del" class="del" aria-label="Remove">&times;</button>
+</div>
+
+<!-- quotes -->
+<div class="overlay" id="ovQuote" hidden role="dialog" aria-modal="true" aria-labelledby="ovQuoteH">
+  <div class="panel">
+    <div class="panel-head"><h2 id="ovQuoteH">A line to keep close</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="pick" id="quoteList"></div>
+    <div class="own">
+      <label for="quoteOwn">Or your own words</label>
+      <textarea id="quoteOwn" rows="2" maxlength="140" placeholder="Write your own line here&hellip;"></textarea>
+      <div class="row"><button class="btn-gold" id="quoteOwnBtn">On the sheet</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- woorden -->
+<div class="overlay" id="ovWoord" hidden role="dialog" aria-modal="true" aria-labelledby="ovWoordH">
+  <div class="panel">
+    <div class="panel-head"><h2 id="ovWoordH">One word</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="pick" id="woordList"></div>
+    <div class="own">
+      <label for="woordOwn">Or your own word</label>
+      <input id="woordOwn" maxlength="24" placeholder="For example: freedom">
+      <div class="row"><button class="btn-gold" id="woordOwnBtn">On the sheet</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- titel -->
+<div class="overlay" id="ovTitel" hidden role="dialog" aria-modal="true" aria-labelledby="ovTitelH">
+  <div class="panel">
+    <div class="panel-head"><h2 id="ovTitelH">A title for your sheet</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="pick" id="titelList"></div>
+    <div class="own">
+      <label for="titelOwn">Or your own title</label>
+      <input id="titelOwn" maxlength="30" placeholder="For example: My 2027">
+      <div class="row"><button class="btn-gold" id="titelOwnBtn">On the sheet</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- kleuren -->
+<div class="overlay" id="ovKleur" hidden role="dialog" aria-modal="true" aria-labelledby="ovKleurH">
+  <div class="panel">
+    <div class="panel-head"><h2 id="ovKleurH">A colour</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <p class="soft" style="margin-bottom:1rem;font-size:.95rem">Choose a colour that fits your longing. You can make it bigger or smaller afterwards.</p>
+    <div class="swatches" id="kleurList"></div>
+  </div>
+</div>
+
+<!-- knipsels -->
+<div class="overlay" id="ovKnipsel" hidden role="dialog" aria-modal="true" aria-labelledby="ovKnipselH">
+  <div class="panel">
+    <div class="panel-head"><h2 id="ovKnipselH">A clipping</h2><button class="close-btn" data-close aria-label="Close">&times;</button></div>
+    <div class="stickers" id="knipselList"></div>
+  </div>
+</div>
+
+<div id="kijk" hidden>
+  <div class="vel" id="kijkVel"></div>
+  <p class="adem">Look calmly. Breathe. Tap to go back.</p>
+</div>
+
+<footer class="site-footer">
+  <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
+    Finding Today valuable? Treat us to a coffee</a></p>
+  <p>&copy; 2026 TODAY &middot; made with care</p>
+  <p>Today is not a substitute for medical or psychological care.</p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../data/routes.js"></script>
+<script src="../js/basis.js"></script>
+<script>
+(function(){
+  "use strict";
+  const T = {"toastAdded": "Placed on the sheet.", "toastImgFail": "This photo could not be loaded.", "toastEmpty": "The sheet is empty again.", "toastFirst": "Place something on the sheet first.", "toastSaved": "Saved as an image.", "leeg": "Clear the sheet", "leegSure": "Sure? Tap again", "tagKijk": "Moodboard", "kijkSaved": "A viewing moment with my moodboard", "fileName": "today-moodboard.png"};
+  const QUOTES = ["What I see clearly gains direction.", "I am allowed to want this.", "A small step in the right direction, every day.", "Much is already good. More is welcome.", "I trust what I feel and do what I can.", "Rest is not standing still.", "I am almost there — and I am already here.", "What is mine finds me.", "Gentle with myself, clear about what I want.", "Today counts.", "I do not have to do this alone.", "Big things may start small."];
+  const WORDS = ["Calm", "Abundance", "Love", "Courage", "Trust", "Freedom", "Light", "Growth", "Grateful", "Home", "Energy", "Softness", "Direction", "Joy", "Connection", "Space"];
+  const TITLES = ["My today", "This is what I see", "On my way", "My space", "This year", "This is how it feels"];
+  const COLORS = ["#F4C7C3","#F7D9B0","#F6CF8E","#FFF4DC","#CFE0C8","#C9DCEA","#D9C7E6","#D98C6A","#F2EBDD","#F2B6A0","#8FA58A","#9DB4C9","#6A2E48","#E3D1B4","#B9731F","#4A2F2A"];
+  const STICKERS = {
+    zon:'<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="52" r="20" fill="#F6CF8E" stroke="#B9731F" stroke-width="2.4"/><path d="M50 10v12M50 82v10M12 52h12M76 52h12M22 24l8 8M70 24l-8 8M22 80l8-8M70 80l-8-8" stroke="#B9731F" stroke-width="2.6" stroke-linecap="round"/></svg>',
+    kristal:'<svg viewBox="0 0 100 100" fill="none"><path d="M40 88 L36 44 L50 10 L64 44 L60 88 Z" fill="#D9C7E6" stroke="#7B5798" stroke-width="2.2" stroke-linejoin="round"/><path d="M50 10 V88 M36 44 L50 52 L64 44" stroke="#7B5798" stroke-width="1.2" opacity=".6"/><path d="M18 88 L20 66 L28 54 L36 66 L36 88 Z" fill="#F4C7C3" stroke="#B24A2C" stroke-width="2" stroke-linejoin="round"/><path d="M64 88 L66 62 L74 50 L82 62 L80 88 Z" fill="#E8DDF0" stroke="#7B5798" stroke-width="2" stroke-linejoin="round"/></svg>',
+    kaars:'<svg viewBox="0 0 100 100" fill="none"><path d="M50 18 c-7 10 -8 16 -3 22 c3 -3 5 -6 6 -10 c3 5 4 9 1 14 c7 -4 8 -14 -4 -26 Z" fill="#F6CF8E" stroke="#B9731F" stroke-width="2"/><rect x="34" y="46" width="32" height="40" rx="5" fill="#FFF4DC" stroke="#B9731F" stroke-width="2.2"/><path d="M50 40v6" stroke="#4A2F2A" stroke-width="2.2" stroke-linecap="round"/><path d="M38 52 q4 6 0 12" stroke="#F4C7C3" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    veer:'<svg viewBox="0 0 100 100" fill="none"><path d="M70 12 C 40 20 24 50 20 88" stroke="#B9731F" stroke-width="2.4" stroke-linecap="round"/><path d="M70 12 C 80 40 62 68 28 76 C 18 60 36 26 70 12 Z" fill="#F7D9B0" stroke="#B9731F" stroke-width="2" stroke-linejoin="round"/><path d="M60 24 L 34 60 M66 36 L 40 66 M56 18 L 30 50" stroke="#B9731F" stroke-width="1.2" opacity=".6"/></svg>',
+    bloem:'<svg viewBox="0 0 100 100" fill="none"><path d="M50 90 C 50 70 46 60 36 48" stroke="#8FA58A" stroke-width="2.6" stroke-linecap="round"/><path d="M44 72 c-10 -2 -16 2 -20 10 c10 2 16 -2 20 -10 Z" fill="#CFE0C8" stroke="#8FA58A" stroke-width="2"/><g transform="translate(40 36)"><ellipse cx="0" cy="-16" rx="7" ry="13" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.8"/><ellipse cx="15" cy="-5" rx="7" ry="13" transform="rotate(72 15 -5)" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.8"/><ellipse cx="9" cy="13" rx="7" ry="13" transform="rotate(144 9 13)" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.8"/><ellipse cx="-9" cy="13" rx="7" ry="13" transform="rotate(216 -9 13)" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.8"/><ellipse cx="-15" cy="-5" rx="7" ry="13" transform="rotate(288 -15 -5)" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.8"/><circle r="6" fill="#F6CF8E" stroke="#B9731F" stroke-width="1.8"/></g></svg>',
+    sprankel:'<svg viewBox="0 0 100 100" fill="none"><path d="M46 14 l7 22 22 7 -22 7 -7 22 -7 -22 -22 -7 22 -7 Z" fill="#F6CF8E" stroke="#B9731F" stroke-width="2" stroke-linejoin="round"/><path d="M78 60 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3 Z" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.8" stroke-linejoin="round"/><path d="M20 70 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 Z" fill="#D9C7E6" stroke="#7B5798" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+    hart:'<svg viewBox="0 0 100 100" fill="none"><path d="M50 84 C 20 64 10 48 14 32 C 18 18 38 14 50 30 C 62 14 82 18 86 32 C 90 48 80 64 50 84 Z" fill="#F4C7C3" stroke="#B24A2C" stroke-width="2.2" stroke-linejoin="round"/><path d="M26 34 q4 -8 12 -8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".9"/></svg>',
+    vlinder:'<svg viewBox="0 0 100 100" fill="none"><path d="M50 36 C 40 14 12 12 12 34 C 12 48 30 54 46 50 Z" fill="#D9C7E6" stroke="#7B5798" stroke-width="2" stroke-linejoin="round"/><path d="M50 36 C 60 14 88 12 88 34 C 88 48 70 54 54 50 Z" fill="#D9C7E6" stroke="#7B5798" stroke-width="2" stroke-linejoin="round"/><path d="M48 52 C 36 52 22 60 26 74 C 30 84 44 78 50 64 Z" fill="#F4C7C3" stroke="#B24A2C" stroke-width="2" stroke-linejoin="round"/><path d="M52 52 C 64 52 78 60 74 74 C 70 84 56 78 50 64 Z" fill="#F4C7C3" stroke="#B24A2C" stroke-width="2" stroke-linejoin="round"/><path d="M50 34 V 70 M50 34 l-6 -10 M50 34 l6 -10" stroke="#4A2F2A" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    boek:'<svg viewBox="0 0 100 100" fill="none"><path d="M14 24 Q 32 16 50 24 V 80 Q 32 72 14 80 Z" fill="#FFF4DC" stroke="#B9731F" stroke-width="2.2" stroke-linejoin="round"/><path d="M50 24 Q 68 16 86 24 V 80 Q 68 72 50 80 Z" fill="#FFF4DC" stroke="#B9731F" stroke-width="2.2" stroke-linejoin="round"/><path d="M22 36 h18 M22 46 h16 M22 56 h18 M60 36 h18 M60 46 h14 M60 56 h18" stroke="#B9731F" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg>',
+    kopje:'<svg viewBox="0 0 100 100" fill="none"><path d="M24 42 H 70 V 60 A 23 23 0 0 1 47 83 A 23 23 0 0 1 24 60 Z" fill="#FFF4DC" stroke="#B9731F" stroke-width="2.2" stroke-linejoin="round"/><path d="M70 48 h6 a9 9 0 0 1 0 18 h-8" stroke="#B9731F" stroke-width="2.2" stroke-linecap="round"/><path d="M38 32 q-5 -7 0 -14 M48 32 q-5 -8 0 -16 M58 32 q-5 -7 0 -14" stroke="#D98C6A" stroke-width="2" stroke-linecap="round"/><path d="M18 90 H 82" stroke="#B9731F" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    maan:'<svg viewBox="0 0 100 100" fill="none"><path d="M60 14 A 38 38 0 1 0 86 62 A 30 30 0 0 1 60 14 Z" fill="#F6CF8E" stroke="#B9731F" stroke-width="2.2" stroke-linejoin="round"/><path d="M26 22 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 Z" fill="#F4C7C3" stroke="#B24A2C" stroke-width="1.4"/></svg>',
+    sleutel:'<svg viewBox="0 0 100 100" fill="none"><circle cx="34" cy="34" r="18" fill="#F6CF8E" stroke="#B9731F" stroke-width="2.4"/><circle cx="34" cy="34" r="7" fill="#fff" stroke="#B9731F" stroke-width="2"/><path d="M47 47 L 84 84 M74 74 l6 -6 M66 66 l6 -6" stroke="#B9731F" stroke-width="3" stroke-linecap="round"/></svg>'
+  };
+  const STICKER_NAMES = {"zon": "Sun", "kristal": "Crystals", "kaars": "Candle", "veer": "Feather", "bloem": "Flower", "sprankel": "Sparkles", "hart": "Heart", "vlinder": "Butterfly", "boek": "Journal", "kopje": "Cup", "maan": "Moon", "sleutel": "Key"};
+
+  /* ---------- opslag: IndexedDB met geheugen-terugval ---------- */
+  const DB = (function(){
+    let db = null, mem = null;
+    function open(){
+      return new Promise(res=>{
+        if(!("indexedDB" in window)) return res(null);
+        try{
+          const r = indexedDB.open("vandaag-moodboard", 1);
+          r.onupgradeneeded = ()=>{ r.result.createObjectStore("kv"); };
+          r.onsuccess = ()=>res(r.result);
+          r.onerror = ()=>res(null);
+        }catch(e){ res(null); }
+      });
+    }
+    return {
+      async get(){
+        if(mem) return mem;
+        db = db || await open();
+        if(!db) return null;
+        return new Promise(res=>{
+          try{
+            const tx = db.transaction("kv","readonly").objectStore("kv").get("board");
+            tx.onsuccess = ()=>res(tx.result || null); tx.onerror = ()=>res(null);
+          }catch(e){ res(null); }
+        });
+      },
+      async set(v){
+        mem = v;
+        db = db || await open();
+        if(!db) return;
+        try{ db.transaction("kv","readwrite").objectStore("kv").put(v,"board"); }catch(e){}
+      }
+    };
+  })();
+
+  /* ---------- staat ---------- */
+  const board = document.getElementById("board");
+  let items = [];      // {id,type,x,y,w,rot,src?,ar?,text?,color?,key?}
+  let selId = null;
+  const uid = ()=>Math.random().toString(36).slice(2,9);
+  const BW = ()=>board.clientWidth, BH = ()=>board.clientHeight;
+  const save = ()=>DB.set({v:1, items});
+
+  /* ---------- renderen ---------- */
+  function render(){
+    board.innerHTML = "";
+    board.classList.toggle("empty", !items.length);
+    document.getElementById("leegBtn").hidden = !items.length;
+    items.forEach(it=>board.appendChild(makeEl(it, BW(), BH())));
+    selectEl();
+  }
+  function makeEl(it, bw, bh, forView){
+    const el = document.createElement("div");
+    el.className = "item " + it.type; el.dataset.id = it.id;
+    const w = it.w * bw;
+    el.style.width = w + "px";
+    if(it.type === "foto"){ const im = new Image(); im.src = it.src; im.alt = ""; im.draggable = false; el.appendChild(im); }
+    else if(it.type === "knipsel"){ el.innerHTML = STICKERS[it.key] || ""; }
+    else if(it.type === "kleur"){ const d = document.createElement("div"); d.style.background = it.color; d.style.height = (w * it.ar) + "px"; el.appendChild(d); }
+    else {
+      const p = document.createElement("p"); p.textContent = it.text;
+      const k = it.type === "quote" ? .085 : it.type === "woord" ? .3 : .26;
+      p.style.fontSize = (w * k) + "px";
+      if(it.type === "woord") p.style.color = it.color || "#6A2E48";
+      el.appendChild(p);
+    }
+    el.style.transform = "translate(" + (it.x*bw - w/2) + "px," + (it.y*bh) + "px) rotate(" + (it.rot||0) + "deg)";
+    el.style.transformOrigin = "50% 0";
+    if(!forView && it.id === selId) el.classList.add("sel");
+    return el;
+  }
+  function selectEl(){
+    board.querySelectorAll(".item").forEach(e=>e.classList.toggle("sel", e.dataset.id === selId));
+    document.getElementById("selbar").hidden = !selId;
+  }
+  function add(it){
+    it.id = uid();
+    if(it.x == null){
+      // vaste plekken op het vel, zodat nieuwe dingen elkaar niet meteen overlappen
+      const SLOTS = [[.3,.14],[.7,.2],[.5,.42],[.25,.58],[.75,.6],[.5,.78],[.22,.34],[.78,.4],[.35,.9],[.68,.86]];
+      const n = items.filter(i=>i.type !== "titel").length;
+      const sl = SLOTS[n % SLOTS.length];
+      it.x = sl[0] + (Math.random()-.5)*.06; it.y = sl[1] + (Math.random()-.5)*.04;
+    }
+    if(it.rot == null) it.rot = Math.round((Math.random()-.5)*8);
+    items.push(it); selId = it.id;
+    render(); save();
+    V.toast(T.toastAdded);
+  }
+
+  /* ---------- slepen ---------- */
+  let drag = null;
+  board.addEventListener("pointerdown", e=>{
+    const el = e.target.closest(".item");
+    if(!el){ selId = null; selectEl(); return; }
+    const it = items.find(i=>i.id === el.dataset.id); if(!it) return;
+    selId = it.id; selectEl();
+    drag = {it, sx:e.clientX, sy:e.clientY, ox:it.x, oy:it.y, moved:false};
+    board.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  board.addEventListener("pointermove", e=>{
+    if(!drag) return;
+    const dx = (e.clientX - drag.sx)/BW(), dy = (e.clientY - drag.sy)/BH();
+    if(Math.abs(dx)+Math.abs(dy) > .004) drag.moved = true;
+    drag.it.x = Math.min(1.05, Math.max(-.05, drag.ox + dx));
+    drag.it.y = Math.min(1.02, Math.max(-.05, drag.oy + dy));
+    const el = board.querySelector('[data-id="'+drag.it.id+'"]');
+    if(el){ const w = drag.it.w*BW(); el.style.transform = "translate(" + (drag.it.x*BW() - w/2) + "px," + (drag.it.y*BH()) + "px) rotate(" + (drag.it.rot||0) + "deg)"; }
+  });
+  const endDrag = ()=>{ if(drag){ if(drag.moved) save(); drag = null; } };
+  board.addEventListener("pointerup", endDrag); board.addEventListener("pointercancel", endDrag);
+
+  /* ---------- selectiebalk ---------- */
+  document.getElementById("selbar").addEventListener("click", e=>{
+    const b = e.target.closest("button"); if(!b || !selId) return;
+    const i = items.findIndex(x=>x.id === selId); if(i < 0) return;
+    const it = items[i];
+    switch(b.dataset.act){
+      case "smaller": it.w = Math.max(.06, it.w*.85); break;
+      case "bigger": it.w = Math.min(1.1, it.w*1.18); break;
+      case "rotl": it.rot = (it.rot||0) - 6; break;
+      case "rotr": it.rot = (it.rot||0) + 6; break;
+      case "front": items.splice(i,1); items.push(it); break;
+      case "del": items.splice(i,1); selId = null; break;
+    }
+    render(); save();
+  });
+  document.addEventListener("keydown", e=>{
+    if((e.key === "Delete" || e.key === "Backspace") && selId && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+      items = items.filter(x=>x.id !== selId); selId = null; render(); save();
+    }
+  });
+
+  /* ---------- foto's ---------- */
+  const fileIn = document.getElementById("fileIn");
+  document.getElementById("addFoto").addEventListener("click", ()=>fileIn.click());
+  fileIn.addEventListener("change", async ()=>{
+    const files = Array.from(fileIn.files || []).slice(0,6);
+    for(const f of files){
+      try{ const r = await shrink(f); add({type:"foto", src:r.src, ar:r.ar, w:.38}); }
+      catch(e){ V.toast(T.toastImgFail); }
+    }
+    fileIn.value = "";
+  });
+  function shrink(file){
+    return new Promise((res, rej)=>{
+      const url = URL.createObjectURL(file), im = new Image();
+      im.onload = ()=>{
+        const max = 1100, s = Math.min(1, max/Math.max(im.width, im.height));
+        const c = document.createElement("canvas"); c.width = Math.round(im.width*s); c.height = Math.round(im.height*s);
+        c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+        URL.revokeObjectURL(url);
+        res({src:c.toDataURL("image/jpeg", .86), ar:c.height/c.width});
+      };
+      im.onerror = ()=>{ URL.revokeObjectURL(url); rej(); };
+      im.src = url;
+    });
+  }
+
+  /* ---------- keuzepanelen ---------- */
+  const ov = id=>document.getElementById(id);
+  const openOv = o=>{ V.openOverlay(o); };
+  const closeAll = ()=>document.querySelectorAll(".overlay").forEach(o=>{ if(!o.hidden) V.closeOverlay(o); });
+  function fillPick(listId, arr, cls, onPick, render){
+    const list = document.getElementById(listId); list.innerHTML = "";
+    arr.forEach(v=>{
+      const b = document.createElement("button"); b.type = "button"; b.className = "opt " + cls;
+      if(render) render(b, v); else b.textContent = v;
+      b.addEventListener("click", ()=>{ onPick(v); closeAll(); });
+      list.appendChild(b);
+    });
+  }
+  fillPick("quoteList", QUOTES, "q", q=>add({type:"quote", text:q, w:.46}));
+  fillPick("woordList", WORDS, "w", w=>add({type:"woord", text:w, w:.3, color:COLORS[12]}));
+  fillPick("titelList", TITLES, "w", t=>{ items = items.filter(i=>i.type !== "titel"); add({type:"titel", text:t, w:.6, x:.5, y:.04, rot:0}); });
+  const kl = document.getElementById("kleurList");
+  COLORS.forEach(c=>{
+    const b = document.createElement("button"); b.type = "button"; b.className = "swatch"; b.style.background = c; b.setAttribute("aria-label", c);
+    b.addEventListener("click", ()=>{ add({type:"kleur", color:c, ar:[1,.62,1.4][Math.floor(Math.random()*3)], w:.2}); closeAll(); });
+    kl.appendChild(b);
+  });
+  const sl = document.getElementById("knipselList");
+  Object.keys(STICKERS).forEach(k=>{
+    const b = document.createElement("button"); b.type = "button"; b.className = "sticker";
+    b.innerHTML = STICKERS[k] + "<span>" + (STICKER_NAMES[k]||k) + "</span>";
+    b.addEventListener("click", ()=>{ add({type:"knipsel", key:k, w:.17}); closeAll(); });
+    sl.appendChild(b);
+  });
+  document.getElementById("addQuote").addEventListener("click", ()=>openOv(ov("ovQuote")));
+  document.getElementById("addWoord").addEventListener("click", ()=>openOv(ov("ovWoord")));
+  document.getElementById("addTitel").addEventListener("click", ()=>openOv(ov("ovTitel")));
+  document.getElementById("addKleur").addEventListener("click", ()=>openOv(ov("ovKleur")));
+  document.getElementById("addKnipsel").addEventListener("click", ()=>openOv(ov("ovKnipsel")));
+  function own(inputId, btnId, fn){
+    const inp = document.getElementById(inputId);
+    const go = ()=>{ const v = inp.value.trim(); if(!v) return; fn(v); inp.value = ""; closeAll(); };
+    document.getElementById(btnId).addEventListener("click", go);
+    inp.addEventListener("keydown", e=>{ if(e.key === "Enter" && inp.tagName === "INPUT"){ e.preventDefault(); go(); } });
+  }
+  own("quoteOwn","quoteOwnBtn", v=>add({type:"quote", text:v, w:.46}));
+  own("woordOwn","woordOwnBtn", v=>add({type:"woord", text:v, w:.3, color:COLORS[12]}));
+  own("titelOwn","titelOwnBtn", v=>{ items = items.filter(i=>i.type !== "titel"); add({type:"titel", text:v, w:.6, x:.5, y:.04, rot:0}); });
+
+  /* ---------- leegmaken (twee tikken) ---------- */
+  const leeg = document.getElementById("leegBtn");
+  let armed = false, armT = null;
+  const disarm = ()=>{ armed = false; leeg.textContent = T.leeg; leeg.classList.remove("armed"); };
+  leeg.addEventListener("click", ()=>{
+    if(!armed){ armed = true; leeg.textContent = T.leegSure; leeg.classList.add("armed"); clearTimeout(armT); armT = setTimeout(disarm, 4000); return; }
+    clearTimeout(armT); disarm(); items = []; selId = null; render(); save(); V.toast(T.toastEmpty);
+  });
+
+  /* ---------- kijkmoment ---------- */
+  const kijk = document.getElementById("kijk"), vel = document.getElementById("kijkVel");
+  document.getElementById("kijkBtn").addEventListener("click", ()=>{
+    if(!items.length){ V.toast(T.toastFirst); return; }
+    kijk.hidden = false;
+    vel.innerHTML = "";
+    const bw = vel.clientWidth, bh = vel.clientHeight;
+    items.forEach(it=>vel.appendChild(makeEl(it, bw, bh, true)));
+    V.saveItem(T.tagKijk, T.kijkSaved);
+  });
+  kijk.addEventListener("click", ()=>{ kijk.hidden = true; });
+  document.addEventListener("keydown", e=>{ if(e.key === "Escape") kijk.hidden = true; });
+
+  /* ---------- bewaren als afbeelding ---------- */
+  document.getElementById("exportBtn").addEventListener("click", async ()=>{
+    if(!items.length){ V.toast(T.toastFirst); return; }
+    try{ await exportBoard(); }catch(e){ V.toast(T.toastImgFail); }
+  });
+  async function exportBoard(){
+    try{ await document.fonts.ready; }catch(e){}
+    const W = 1200, H = 1500, c = document.createElement("canvas"); c.width = W; c.height = H;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#fff"; ctx.fillRect(0,0,W,H);
+    for(const it of items){
+      const w = it.w * W, cx = it.x * W, top = it.y * H;
+      ctx.save(); ctx.translate(cx, top); ctx.rotate((it.rot||0) * Math.PI/180);
+      if(it.type === "foto" || it.type === "knipsel"){
+        const src = it.type === "foto" ? it.src : "data:image/svg+xml;charset=utf-8," + encodeURIComponent(STICKERS[it.key].replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" '));
+        const im = await loadImg(src);
+        const h = it.type === "foto" ? w * it.ar : w;
+        if(it.type === "foto"){ ctx.shadowColor = "rgba(60,30,20,.3)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6; }
+        ctx.drawImage(im, -w/2, 0, w, h);
+      } else if(it.type === "kleur"){
+        ctx.fillStyle = it.color; roundRect(ctx, -w/2, 0, w, w*it.ar, 8); ctx.fill();
+      } else {
+        const k = it.type === "quote" ? .085 : it.type === "woord" ? .3 : .26;
+        const fs = w * k;
+        ctx.font = (it.type === "quote" ? "italic 600 " + fs + "px Cormorant, Georgia, serif" : "400 " + fs + "px Allura, cursive");
+        ctx.fillStyle = it.type === "quote" ? "#4A2F2A" : (it.type === "woord" ? (it.color||"#6A2E48") : "#6A2E48");
+        ctx.textAlign = "center"; ctx.textBaseline = "top";
+        const lines = it.type === "quote" ? wrap(ctx, it.text, w) : [it.text];
+        const lh = fs * (it.type === "quote" ? 1.2 : 1.1);
+        lines.forEach((ln, i)=>ctx.fillText(ln, 0, i*lh));
+      }
+      ctx.restore();
+    }
+    const url = c.toDataURL("image/png");
+    const a = document.createElement("a"); a.href = url; a.download = T.fileName; document.body.appendChild(a); a.click(); a.remove();
+    V.toast(T.toastSaved);
+  }
+  function loadImg(src){ return new Promise((res, rej)=>{ const im = new Image(); im.onload = ()=>res(im); im.onerror = rej; im.src = src; }); }
+  function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function wrap(ctx, text, maxW){
+    const words = text.split(/\s+/), lines = []; let line = "";
+    words.forEach(wd=>{ const t = line ? line + " " + wd : wd; if(ctx.measureText(t).width > maxW && line){ lines.push(line); line = wd; } else line = t; });
+    if(line) lines.push(line); return lines;
+  }
+
+  /* ---------- start ---------- */
+  let rt; window.addEventListener("resize", ()=>{ clearTimeout(rt); rt = setTimeout(render, 120); });
+  DB.get().then(d=>{ if(d && Array.isArray(d.items)) items = d.items; render(); });
+})();
+</script>
+</body>
+</html>

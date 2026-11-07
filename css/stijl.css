@@ -219,6 +219,12 @@ html.reduced .star-link .halo{animation:none}
   .const-row .star-link:nth-child(6){transform:translateY(-14px)}
 }
 
+/* ---------- twee ruimtes (moodboard, traagzand) ---------- */
+.ruimtes{max-width:46rem;margin:0 auto;text-align:center}
+.ruimtes > .eyebrow{display:block;margin-bottom:1rem}
+.ruimtes .cards{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));text-align:left}
+.ruimtes .card h3{font-size:1.5rem}
+
 /* ---------- kaarten & lijsten ---------- */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1.1rem}
 .card{

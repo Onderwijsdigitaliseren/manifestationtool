@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Traagzand — een plek om te vertragen</title>
+<meta name="description" content="Sleep door zand, verf of pailletten. Niets hoeft. Een rustmoment van VANDAAG.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="canonical" href="https://www.manifestationtool.nl/tools/traagzand.html">
+<link rel="alternate" hreflang="nl" href="https://www.manifestationtool.nl/tools/traagzand.html">
+<link rel="alternate" hreflang="en" href="https://www.manifestationtool.nl/en/tools/slowsand.html">
+<link rel="alternate" hreflang="x-default" href="https://www.manifestationtool.nl/tools/traagzand.html">
+<meta name="theme-color" content="#2A1714">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VANDAAG">
+<meta property="og:title" content="Traagzand — een plek om te vertragen">
+<meta property="og:description" content="Sleep door zand, verf of pailletten. Niets hoeft. Een rustmoment van VANDAAG.">
+<meta property="og:url" content="https://www.manifestationtool.nl/tools/traagzand.html">
+<meta property="og:image" content="https://www.manifestationtool.nl/assets/og-nl.png">
+<meta property="og:locale" content="nl_NL">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* Traagzand: schermvullend canvas, tekst drijvend linksboven, één rustige bedieningsrij onderaan.
+   Bewust een warme nacht — het enige donkere scherm van de site. */
+:root{
+  color-scheme:dark;
+  --nacht:#2A1714;
+  --inkt:#F6E8D6;
+  --inkt-zacht:#C9A892;
+  --gloed:#F6CF8E;
+  --lijn:rgba(246,207,142,.28);
+  --vlak:rgba(42,23,20,.62);
+  --lees:"Cormorant",Georgia,serif;
+  --body:"Jost","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+[hidden]{display:none!important}
+body{background:var(--nacht);color:var(--inkt);font-family:var(--body);overflow:hidden;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block;cursor:crosshair}
+a{color:var(--gloed)}
+#top{
+  position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:3;
+  display:flex;justify-content:space-between;align-items:center;gap:.6rem;
+  padding:14px clamp(16px,4vw,48px) 0;pointer-events:none;
+}
+#top a{pointer-events:auto;text-decoration:none;font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--inkt-zacht);
+  text-shadow:0 0 8px var(--nacht),0 0 18px var(--nacht)}
+#top a:hover{color:var(--gloed)}
+#top .lang{border:1px solid var(--lijn);border-radius:999px;padding:.3rem .7rem;background:var(--vlak);backdrop-filter:blur(6px);letter-spacing:.14em;font-weight:600;font-size:.74rem}
+#tekst{
+  position:fixed;left:0;top:calc(env(safe-area-inset-top,0px) + 44px);
+  padding:16px clamp(16px,4vw,48px);max-width:min(100%,40rem);
+  pointer-events:none;user-select:none;
+  text-shadow:0 0 6px var(--nacht),0 0 14px var(--nacht),0 0 28px var(--nacht);
+}
+.merk{font-family:var(--lees);font-size:1.5rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gloed);margin:0 0 clamp(16px,5vh,48px)}
+.merk span{font-family:var(--body);font-size:.74rem;font-weight:400;letter-spacing:.12em;color:var(--inkt-zacht);transition:opacity 2s}
+.soort{font-family:var(--body);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gloed);font-weight:600;margin:0 0 10px}
+h1{font-family:var(--lees);font-weight:500;font-style:italic;font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.08;margin:0 0 14px;text-wrap:balance;color:var(--inkt)}
+.verhaal{font-family:var(--lees);font-weight:500;font-size:clamp(1.15rem,2.4vw,1.45rem);line-height:1.5;margin:0}
+.w{opacity:0;transition:opacity 2.8s ease}
+.aan .w{opacity:1}
+#balk{
+  position:fixed;left:0;right:0;bottom:0;z-index:3;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+  opacity:.72;transition:opacity .6s;
+}
+#balk:hover,#balk:focus-within{opacity:1}
+button,.steun{
+  font-family:var(--body);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
+  color:var(--inkt);background:var(--vlak);border:1px solid var(--lijn);border-radius:999px;
+  padding:9px 14px;cursor:pointer;text-decoration:none;backdrop-filter:blur(6px);
+}
+button[aria-pressed="true"]{border-color:var(--gloed);color:var(--gloed);background:rgba(246,207,142,.12)}
+button:focus-visible,.steun:focus-visible,#top a:focus-visible{outline:2px solid var(--gloed);outline-offset:2px}
+.rij{display:flex;gap:8px;max-width:100%;overflow-x:auto;scrollbar-width:none;padding:3px}
+.rij::-webkit-scrollbar{display:none}
+.rij>*{flex:none;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.w{transition-duration:.01s}}
+</style>
+</head>
+<body>
+
+<canvas id="c" aria-label="Interactieve simulatie: sleep om zand, stroming of rimpels te sturen"></canvas>
+
+<div id="top">
+  <a href="../index.html">&larr; Terug naar Vandaag</a>
+  <a class="lang" href="../en/tools/slowsand.html" hreflang="en" lang="en" aria-label="Switch to English">EN</a>
+</div>
+
+<div id="tekst">
+  <p class="merk">Traagzand <span id="hint">· sleep met je vinger of muis</span></p>
+  <div id="stuk" aria-live="polite">
+    <p class="soort" id="soort"></p>
+    <h1 id="kop"></h1>
+    <p class="verhaal" id="verhaal"></p>
+  </div>
+</div>
+
+<div id="balk">
+  <div class="rij">
+  <button data-m="tafel" aria-pressed="true">Zandtafel</button>
+  <button data-m="ruit" aria-pressed="false">Beslagen ruit</button>
+  <button data-m="verf" aria-pressed="false">Verf</button>
+  <button data-m="pail" aria-pressed="false">Pailletten</button>
+  <button data-m="stroom" aria-pressed="false">Stroming</button>
+  <button data-m="kin" aria-pressed="false">Kinetisch zand</button>
+  <button data-m="nop" aria-pressed="false">Noppenfolie</button>
+  <button data-m="graan" aria-pressed="false">Graan</button>
+  <button data-m="bel" aria-pressed="false">Zeepbellen</button>
+  <button data-m="vijl" aria-pressed="false">Vijlsel</button>
+  <button data-m="draad" aria-pressed="false">Draden</button>
+  <button data-m="zand" aria-pressed="false">Zandloper</button>
+  <button data-m="rimpel" aria-pressed="false">Rimpels</button>
+  </div>
+  <div class="rij">
+  <button id="tool" hidden>Vinger: geul</button>
+  <button id="leeg">Leeg</button>
+  <button id="geluid" aria-pressed="false">Geluid uit</button>
+  <button id="volgende">Volgende gedachte</button>
+  <a class="steun" href="moodboard.html">Naar het moodboard</a>
+  </div>
+</div>
+
+<script>
+const T={"soort": "Om over te mijmeren", "vinger": "Vinger: ", "vingers": ["geul", "strooien", "gladstrijken"], "geluidAan": "Geluid aan", "geluidUit": "Geluid uit"};
+
+
+
+const MIJMER = [
+ ['De geur van vroeger','Welke geur brengt je meteen terug naar een plek waar je al jaren niet bent geweest? Hoe zou het daar nu ruiken?'],
+ ['De extra kamer','Stel dat je thuis een deur vindt die je nooit eerder zag. Erachter ligt een kamer die al die tijd van jou was. Wat staat erin?'],
+ ['Een uur cadeau','Vandaag krijgt de dag één uur extra, alleen voor jou. Niemand weet ervan en er hoeft niets. Waar gaat het heen?'],
+ ['Het raam','Als je één raam mocht kiezen om de rest van je leven door naar buiten te kijken, wat zie je dan?'],
+ ['Wolken','Waar gaat een wolk naartoe als hij verdwijnt? En wie heeft dezelfde wolk gezien voordat hij bij jou was?'],
+ ['Het oudste ding','Wat is het oudste voorwerp in de ruimte waar je nu bent? Wie heeft het vastgehouden voordat jij het had?'],
+ ['Een nieuwe kleur','Probeer een kleur te bedenken die niet bestaat. Hoe zou je hem noemen, en waar zou hij mooi bij staan?'],
+ ['Maandag','Hoe zou een kat een maandag omschrijven? En een boom?'],
+ ['Luisteren','Wat hoor je nu, als je heel goed luistert? Welk van die geluiden was er een minuut geleden ook al, zonder dat je het merkte?'],
+ ['De zijstraat','Welke weg heb je honderd keer genomen zonder ooit die ene zijstraat in te gaan? Wat zou daar zijn?'],
+ ['Een mooi woord','Welk woord vind je fijn om te zeggen, los van wat het betekent?'],
+ ['De verre lamp','Ergens brandt op dit moment een lamp in een huis waar je nooit zult komen. Wie zit eronder, en wat doet die?'],
+ ['De boom','Ergens staat een boom die is geplant in het jaar dat jij werd geboren. Hoe hoog zou hij nu zijn?'],
+ ['Water','Het water in je glas heeft ooit geregend, door een rivier gestroomd, in een wolk boven zee gehangen. Waar zou het nog meer zijn geweest?'],
+ ['Het eiland','Je mag een klein, onbewoond eiland een naam geven. Hoe heet het, en wat groeit er?'],
+ ['Volwassenen','Wat dacht je als kind dat volwassenen de hele dag deden?'],
+ ['Midden in de nacht','Wie is er wakker terwijl de rest slaapt? Een bakker, een vrachtwagenchauffeur, een uil. Wie nog meer?'],
+ ['De smaak van vandaag','Als deze dag een smaak had, welke zou het zijn?'],
+ ['Het briefje','Je mag een briefje achterlaten in een bibliotheekboek, voor wie het na jou leent. Wat schrijf je?'],
+ ['Schaduw','Waar is je schaduw als het donker is?'],
+ ['Het langzaamste','Wat is het langzaamste dat je vandaag hebt zien bewegen?'],
+ ['Een ander huis','Als je vannacht in een willekeurig huis in je straat wakker werd, wat zou je als eerste opvallen?'],
+ ['Het liedje','Welk liedje zit ergens in je hoofd opgeslagen zonder dat je weet waar je het voor het eerst hoorde?'],
+ ['Regen','Hoe klinkt regen op het dak dat je het beste kent?']
+];
+let mijmer = [], beurt = 0;
+function volgendStuk(){
+  if(!mijmer.length) mijmer = MIJMER.slice().sort(() => Math.random() - .5);
+  const m = mijmer.pop();
+  return {s:T.soort, k:m[0], t:m[1]};
+}
+
+/* ---------- tekst, heel langzaam ---------- */
+const $ = id => document.getElementById(id);
+let volgorde = [], stukTimer;
+function schud(){ volgorde=[1]; }
+function toonStuk(){
+  if(!volgorde.length) schud();
+  const p = volgendStuk(), stuk = $('stuk');
+  stuk.classList.remove('aan');
+  let d = 0;
+  const wikkel = (el, tekst, stap) => {
+    el.textContent = '';
+    tekst.split(' ').forEach(w => {
+      const s = document.createElement('span');
+      s.className = 'w'; s.textContent = w + ' ';
+      s.style.transitionDelay = d.toFixed(2) + 's'; d += stap;
+      el.appendChild(s);
+    });
+  };
+  wikkel($('soort'), p.s, .3); d += .8;
+  wikkel($('kop'), p.k, .5); d += 1.5;
+  wikkel($('verhaal'), p.t, .55);
+  void stuk.offsetWidth;
+  stuk.classList.add('aan');
+}
+$('volgende').onclick = () => { clearTimeout(stukTimer); toonStuk() };
+stukTimer = setTimeout(toonStuk, 5000);
+
+
+/* ---------- canvas en aanwijzer ---------- */
+const cv = $('c'), ctx = cv.getContext('2d');
+let W=0, H=0, dpr=1, modus='tafel', t=0, aangeraakt=false;
+const P = {x:0,y:0,px:0,py:0,dx:0,dy:0,neer:false,binnen:false};
+function plek(e){ P.px=P.x; P.py=P.y; P.x=e.clientX; P.y=e.clientY }
+cv.addEventListener('pointerdown', e => {
+  P.x=e.clientX; P.y=e.clientY; plek(e); P.neer=true; P.binnen=true; P.tik=true;
+  try{cv.setPointerCapture(e.pointerId)}catch(_){}
+  if(!aangeraakt){ aangeraakt=true; $('hint').style.opacity=0 }
+});
+cv.addEventListener('pointermove', e => {
+  if(!P.binnen){ P.x=e.clientX; P.y=e.clientY }
+  plek(e); P.binnen=true; P.dx+=P.x-P.px; P.dy+=P.y-P.py; beweeg();
+});
+const los = e => { P.neer=false; if(e.pointerType!=='mouse') P.binnen=false };
+cv.addEventListener('pointerup', los); cv.addEventListener('pointercancel', los);
+cv.addEventListener('pointerleave', () => { P.binnen=false });
+
+function hsl(h,s,l){ // -> [r,g,b]
+  h=((h%360)+360)%360/360; const q=l<.5?l*(1+s):l+s-l*s, p=2*l-q;
+  const f=x=>{x=(x+1)%1; return x<1/6?p+(q-p)*6*x:x<.5?q:x<2/3?p+(q-p)*(2/3-x)*6:p};
+  return [f(h+1/3)*255|0, f(h)*255|0, f(h-1/3)*255|0];
+}
+
+/* ---------- zand ---------- */
+const CS = 2; let gw, gh, zand, zImg, zCv, zCtx, zTel=0;
+function zandInit(){
+  gw=Math.ceil(W/CS); gh=Math.ceil(H/CS);
+  zand=new Uint32Array(gw*gh); zTel=0;
+  zImg=new ImageData(new Uint8ClampedArray(zand.buffer), gw, gh);
+  zCv=document.createElement('canvas'); zCv.width=gw; zCv.height=gh; zCtx=zCv.getContext('2d');
+}
+function korrel(){
+  // echte zandtinten: oker, beige en roestbruin in langzaam wisselende laagjes
+  const [r,g,b]=hsl(31+Math.sin(t*.25)*9+Math.random()*5, .34+Math.random()*.1, .52+Math.sin(t*.41)*.1+Math.random()*.1);
+  return ((255<<24)|(b<<16)|(g<<8)|r)>>>0;
+}
+function strooi(cx,cy,rad,kans){
+  for(let y=-rad;y<=rad;y++) for(let x=-rad;x<=rad;x++){
+    if(x*x+y*y>rad*rad || Math.random()>kans) continue;
+    const gx=cx+x|0, gy=cy+y|0;
+    if(gx<0||gx>=gw||gy<0||gy>=gh) continue;
+    const i=gy*gw+gx; if(!zand[i]){ zand[i]=korrel(); zTel++ }
+  }
+}
+function zandStap(){
+  if(P.neer){
+    const n=Math.max(1,Math.hypot(P.x-P.px,P.y-P.py)/CS|0);
+    for(let k=0;k<=n;k++) strooi((P.px+(P.x-P.px)*k/n)/CS,(P.py+(P.y-P.py)*k/n)/CS,7,.3);
+    P.px=P.x; P.py=P.y;
+  } else if(!aangeraakt){
+    strooi(gw*(.55+.28*Math.sin(t*.35)), 1, 3, .35);
+  }
+  if(zTel>gw*gh*.5){ // laat het langzaam wegzakken
+    const b=(gh-1)*gw;
+    for(let k=0;k<gw/3;k++){ const i=b+(Math.random()*gw|0); if(zand[i]){zand[i]=0;zTel--} }
+  }
+  for(let pas=0;pas<2;pas++) for(let y=gh-2;y>=0;y--){
+    const lr=Math.random()<.5;
+    for(let k=0;k<gw;k++){
+      const x=lr?k:gw-1-k, i=y*gw+x, c=zand[i];
+      if(!c) continue;
+      const o=i+gw;
+      if(!zand[o]){ zand[o]=c; zand[i]=0; continue }
+      const d=Math.random()<.5?1:-1;
+      if(x+d>=0&&x+d<gw&&!zand[o+d]){ zand[o+d]=c; zand[i]=0 }
+      else if(x-d>=0&&x-d<gw&&!zand[o-d]){ zand[o-d]=c; zand[i]=0 }
+    }
+  }
+  zCtx.putImageData(zImg,0,0);
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(zCv,0,0,gw*CS,gh*CS);
+}
+
+/* ---------- stroming ---------- */
+let deel=[]; const EMMERS=6;
+function stroomInit(){
+  const n=Math.min(3200, W*H/380|0); deel=[];
+  for(let i=0;i<n;i++) deel.push({x:Math.random()*W,y:Math.random()*H,vx:0,vy:0,e:i%EMMERS});
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+}
+function stroomStap(){
+  ctx.fillStyle='rgba(10,17,28,.07)'; ctx.fillRect(0,0,W,H);
+  const R=170, sx=P.dx*.06, sy=P.dy*.06;
+  ctx.lineWidth=1.2; ctx.lineCap='round';
+  for(let e=0;e<EMMERS;e++){
+    const [r,g,b]=hsl(170+e*14+Math.sin(t*.1)*40,.55,.6+e*.03);
+    ctx.strokeStyle=`rgba(${r},${g},${b},.55)`; ctx.beginPath();
+    for(let i=e;i<deel.length;i+=EMMERS){
+      const p=deel[i];
+      const a=Math.sin(p.x*.0021+t*.1)*1.7+Math.cos(p.y*.0026-t*.13)*1.7+Math.sin((p.x+p.y)*.0013+t*.07)*1.2;
+      p.vx+=(Math.cos(a)*.7-p.vx)*.04; p.vy+=(Math.sin(a)*.7-p.vy)*.04;
+      if(P.binnen){
+        const ox=p.x-P.x, oy=p.y-P.y, d2=ox*ox+oy*oy;
+        if(d2<R*R){
+          const f=1-Math.sqrt(d2)/R, d=Math.sqrt(d2)+1;
+          p.vx+=sx*f + (-oy/d)*f*.5 - (P.neer?ox/d*f*.25:0);
+          p.vy+=sy*f + ( ox/d)*f*.5 - (P.neer?oy/d*f*.25:0);
+        }
+      }
+      const nx=p.x+p.vx, ny=p.y+p.vy;
+      ctx.moveTo(p.x,p.y); ctx.lineTo(nx,ny);
+      p.x=nx; p.y=ny;
+      if(p.x<0||p.x>W||p.y<0||p.y>H){ p.x=Math.random()*W; p.y=Math.random()*H; p.vx=p.vy=0 }
+    }
+    ctx.stroke();
+  }
+  P.dx*=.6; P.dy*=.6;
+}
+
+/* ---------- rimpels ---------- */
+const RS=5; let rw, rh, ra, rb, rImg, rCv, rCtx, rPix, druppel=0;
+function rimpelInit(){
+  rw=Math.ceil(W/RS)+2; rh=Math.ceil(H/RS)+2;
+  ra=new Float32Array(rw*rh); rb=new Float32Array(rw*rh);
+  rImg=new ImageData(rw,rh); rPix=new Uint32Array(rImg.data.buffer);
+  rCv=document.createElement('canvas'); rCv.width=rw; rCv.height=rh; rCtx=rCv.getContext('2d');
+}
+function plons(x,y,kracht,rad){
+  const cx=x/RS+1|0, cy=y/RS+1|0;
+  for(let j=-rad;j<=rad;j++) for(let i=-rad;i<=rad;i++){
+    const gx=cx+i, gy=cy+j;
+    if(gx<1||gx>=rw-1||gy<1||gy>=rh-1||i*i+j*j>rad*rad) continue;
+    ra[gy*rw+gx]+=kracht*(1-(i*i+j*j)/(rad*rad+1));
+  }
+}
+function rimpelStap(){
+  if(t>druppel){ plons(Math.random()*W,Math.random()*H,6+Math.random()*5,4); druppel=t+.6+Math.random()*1.4 }
+  if(P.neer) plons(P.x,P.y,1.8,3);
+  for(let y=1;y<rh-1;y++) for(let i=y*rw+1,e=y*rw+rw-1;i<e;i++)
+    rb[i]=((ra[i-1]+ra[i+1]+ra[i-rw]+ra[i+rw])*.5-rb[i])*.992;
+  const sw=ra; ra=rb; rb=sw;
+  for(let y=1;y<rh-1;y++) for(let i=y*rw+1,e=y*rw+rw-1;i<e;i++){
+    let d=(ra[i-1]-ra[i+1]+ra[i-rw]-ra[i+rw])*.8+ra[i]*.15;
+    d=d>1?1:d<-1?-1:d;
+    const k=d>0?d:0, s=d<0?-d:0;
+    const r=14+k*140-s*10, g=40+k*190-s*26, b=58+k*185-s*34;
+    rPix[i]=(255<<24)|(b<<16)|(g<<8)|r;
+  }
+  rCtx.putImageData(rImg,0,0);
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(rCv,1,1,rw-2,rh-2,0,0,(rw-2)*RS,(rh-2)*RS);
+}
+function beweeg(){ if(modus==='rimpel'&&!P.neer) plons(P.x,P.y,.7,2) }
+
+/* ---------- draden ---------- */
+let dn, dm, dOff, dVel; const DY=24;
+function draadInit(){
+  dn=Math.ceil(W/20); dm=Math.ceil(H/DY)+2;
+  dOff=new Float32Array(dn*dm); dVel=new Float32Array(dn*dm);
+}
+function draadStap(){
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  const R=70, bw=W/dn;
+  ctx.lineWidth=1.4;
+  for(let s=0;s<dn;s++){
+    const b=s*dm, x0=(s+.5)*bw;
+    // rustig ademen als niemand iets doet
+    dVel[b+(dm>>1)]+=Math.sin(t*.6+s*.35)*.004;
+    let energie=0;
+    for(let j=1;j<dm-1;j++){
+      const i=b+j;
+      let v=dVel[i]+(-.003*dOff[i]+.3*(dOff[i-1]+dOff[i+1]-2*dOff[i]));
+      if(P.binnen){
+        const ox=x0+dOff[i]-P.x, oy=j*DY-P.y, d2=ox*ox+oy*oy;
+        if(d2<R*R){ const f=1-Math.sqrt(d2)/R; v+=P.dx*.07*f - (P.neer?ox*.02*f:0) }
+      }
+      dVel[i]=v*.992; energie+=v<0?-v:v;
+    }
+    for(let j=1;j<dm-1;j++) dOff[b+j]+=dVel[b+j];
+    const gl=Math.min(1,energie/dm*.5);
+    const [r,g,bl]=hsl(20+s/dn*190+t*3,.5,.5+gl*.3);
+    ctx.strokeStyle=`rgba(${r},${g},${bl},${.45+gl*.5})`;
+    ctx.beginPath(); ctx.moveTo(x0,-DY);
+    for(let j=0;j<dm-1;j++){
+      const xa=x0+dOff[b+j], xb=x0+dOff[b+j+1], y=(j-1)*DY;
+      ctx.quadraticCurveTo(xa,y,(xa+xb)/2,y+DY/2);
+    }
+    ctx.stroke();
+  }
+  P.dx*=.6; P.dy*=.6;
+}
+
+/* ---------- bellen ---------- */
+let bellen=[], kringen=[];
+function nieuweBel(b,overal){
+  b.r=14+Math.random()*Math.random()*46; b.x=Math.random()*W;
+  b.y=overal?Math.random()*H:H+b.r+Math.random()*60;
+  b.vx=0; b.vy=0; b.h=170+Math.random()*90; b.f=Math.random()*6.28;
+  return b;
+}
+function belInit(){
+  const n=Math.max(30,Math.min(150,W*H/9000|0)); bellen=[]; kringen=[];
+  for(let i=0;i<n;i++) bellen.push(nieuweBel({},true));
+}
+function belStap(){
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  ctx.lineWidth=1.3;
+  for(const b of bellen){
+    b.vy+=(-(.25+18/b.r*.35)-b.vy)*.03;
+    b.vx+=(Math.sin(t*.7+b.f)*.25-b.vx)*.03;
+    if(P.binnen){
+      const ox=b.x-P.x, oy=b.y-P.y, d=Math.hypot(ox,oy);
+      if(P.tik && d<b.r){ // alleen een tik er middenop laat hem knappen
+        kringen.push({x:b.x,y:b.y,r:b.r,a:1,h:b.h}); nieuweBel(b,false); P.tik=false; plop(); continue;
+      }
+      if(d<b.r+90){ const f=(1-d/(b.r+90))*(P.neer?.9:.35); b.vx+=ox/(d+1)*f; b.vy+=oy/(d+1)*f }
+    }
+    b.x+=b.vx; b.y+=b.vy;
+    if(b.y<-b.r-10) nieuweBel(b,false);
+    const [r,g,bl]=hsl(b.h+t*4,.55,.68);
+    ctx.fillStyle=`rgba(${r},${g},${bl},.07)`; ctx.strokeStyle=`rgba(${r},${g},${bl},.6)`;
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,6.283); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='rgba(233,227,214,.55)';
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r*.72,3.6,4.5); ctx.stroke();
+  }
+  for(let i=kringen.length-1;i>=0;i--){
+    const k=kringen[i]; k.r+=1.6; k.a-=.03;
+    if(k.a<=0){ kringen.splice(i,1); continue }
+    const [r,g,bl]=hsl(k.h,.55,.72);
+    ctx.strokeStyle=`rgba(${r},${g},${bl},${k.a*.7})`;
+    ctx.beginPath(); ctx.arc(k.x,k.y,k.r,0,6.283); ctx.stroke();
+  }
+  P.tik=false;
+}
+
+/* ---------- zandtafel: van bovenaf, je vinger trekt een geul ---------- */
+const TS=3; let tw, th, tH, tKor, tImg, tPix, tCv, tCtx, tVuil;
+function kerf(cx,cy){
+  const R=6, K=R*.55;
+  for(let j=-R;j<=R;j++) for(let i=-R;i<=R;i++){
+    const gx=cx+i|0, gy=cy+j|0;
+    if(gx<1||gx>=tw-1||gy<1||gy>=th-1) continue;
+    const d=Math.sqrt(i*i+j*j); if(d>R) continue;
+    const q=gy*tw+gx;
+    if(d<K){ const doel=-(1-(d/K)*(d/K)); tH[q]+=(doel-tH[q])*.7 }
+    else { const rug=.5*Math.sin(Math.PI*(d-K)/(R-K)); if(rug>tH[q]) tH[q]+=(rug-tH[q])*.5 }
+  }
+  tVuil=true;
+}
+let tM, tR, tG, tB, tGer=0;
+function gladT(cx,cy){ // strijkt het zand weer vlak en veegt kleur weg
+  const R=10;
+  for(let j=-R;j<=R;j++) for(let i=-R;i<=R;i++){
+    const d=Math.sqrt(i*i+j*j); if(d>R) continue;
+    const gx=cx+i|0, gy=cy+j|0;
+    if(gx<1||gx>=tw-1||gy<1||gy>=th-1) continue;
+    const q=gy*tw+gx, f=(1-d/R)*.3;
+    tH[q]-=tH[q]*f; tM[q]*=1-f*.7;
+  }
+  tVuil=true;
+}
+function strooiT(cx,cy){ // licht zand erbovenop, om mee te tekenen
+  const R=5, r=214, g=196, b=168; // licht zand, geen kleur
+  for(let j=-R;j<=R;j++) for(let i=-R;i<=R;i++){
+    const d=Math.sqrt(i*i+j*j); if(d>R||Math.random()>.22) continue;
+    const gx=cx+i|0, gy=cy+j|0;
+    if(gx<1||gx>=tw-1||gy<1||gy>=th-1) continue;
+    const q=gy*tw+gx;
+    if(tH[q]<1.2) tH[q]+=.14*(1-d/R);
+    tM[q]=Math.min(1,tM[q]+.4); tR[q]=r; tG[q]=g; tB[q]=b;
+  }
+  tVuil=true;
+}
+function tafelInit(){
+  tw=Math.ceil(W/TS)+2; th=Math.ceil(H/TS)+2;
+  tH=new Float32Array(tw*th); tKor=new Float32Array(tw*th);
+  for(let i=0;i<tKor.length;i++) tKor[i]=Math.random()*2-1;
+  tImg=new ImageData(tw,th); tPix=new Uint32Array(tImg.data.buffer);
+  tCv=document.createElement('canvas'); tCv.width=tw; tCv.height=th; tCtx=tCv.getContext('2d');
+  tM=new Float32Array(tw*th); tR=new Uint8Array(tw*th); tG=new Uint8Array(tw*th); tB=new Uint8Array(tw*th);
+  tVuil=true;
+}
+function tafelStap(){
+  if(P.neer){
+    const ax=P.px/TS+1, ay=P.py/TS+1, bx=P.x/TS+1, by=P.y/TS+1;
+    const n=Math.max(1,Math.hypot(bx-ax,by-ay)|0);
+    for(let k=0;k<=n;k++) [kerf,strooiT,gladT][tGer](ax+(bx-ax)*k/n, ay+(by-ay)*k/n);
+    P.px=P.x; P.py=P.y;
+  }
+  if(!tVuil) return; tVuil=false;
+  for(let y=1;y<th-1;y++) for(let i=y*tw+1,e=y*tw+tw-1;i<e;i++){
+    let l=1+(tH[i-1]-tH[i+1]+tH[i-tw]-tH[i+tw])*.5+tKor[i]*.08+tH[i]*.1;
+    l=l<.3?.3:l>1.55?1.55:l;
+    const m=tM[i];
+    let r=(158+(tR[i]-158)*m)*l, g=(134+(tG[i]-134)*m)*l, b=(104+(tB[i]-104)*m)*l;
+    r=r>255?255:r; g=g>255?255:g; b=b>255?255:b;
+    tPix[i]=(255<<24)|(b<<16)|(g<<8)|r;
+  }
+  tCtx.putImageData(tImg,0,0);
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(tCv,1,1,tw-2,th-2,0,0,(tw-2)*TS,(th-2)*TS);
+}
+
+/* ---------- graan: een veld dat meebuigt met wind en hand ---------- */
+let halmen=[];
+function graanInit(){
+  halmen=[];
+  for(let r=0;r<3;r++){
+    const n=Math.ceil(W/6), by=H-(2-r)*H*.07;
+    for(let i=0;i<n;i++) halmen.push({x:(i+Math.random())*W/n, by, r,
+      L:H*(.4+.12*r)*(.85+Math.random()*.3), a:0, v:0, f:Math.random()*6.28});
+  }
+}
+function graanStap(){
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  ctx.lineCap='round';
+  for(let r=0;r<3;r++){
+    const steel=new Path2D(), aar=new Path2D();
+    for(const h of halmen){
+      if(h.r!==r) continue;
+      const wind=Math.sin(t*.9+h.x*.006+h.f*.3)*.07+Math.sin(t*.37+h.x*.002)*.1;
+      let kr=(wind-h.a)*.02;
+      if(P.binnen){
+        const hy=h.by-P.y;
+        if(hy>0&&hy<h.L*1.05){
+          const ox=h.x+Math.sin(h.a)*hy-P.x, ab=ox<0?-ox:ox;
+          if(ab<70){ const f=1-ab/70; kr+=(ox>=0?1:-1)*f*.012*(hy/h.L)+P.dx*.0009*f }
+        }
+      }
+      h.v=(h.v+kr)*.94; h.a+=h.v; h.a=h.a>1.3?1.3:h.a<-1.3?-1.3:h.a;
+      const tx=h.x+Math.sin(h.a)*h.L, ty=h.by-Math.cos(h.a)*h.L;
+      steel.moveTo(h.x,h.by); steel.quadraticCurveTo(h.x,h.by-h.L*.5,tx,ty);
+      aar.moveTo(tx,ty); aar.lineTo(tx+Math.sin(h.a*1.5)*h.L*.09, ty-Math.cos(h.a*1.5)*h.L*.09);
+    }
+    const [sr,sg,sb]=hsl(44,.42,.24+r*.1), [ar,ag,ab2]=hsl(42,.6,.42+r*.12);
+    ctx.strokeStyle=`rgb(${sr},${sg},${sb})`; ctx.lineWidth=1+r*.4; ctx.stroke(steel);
+    ctx.strokeStyle=`rgb(${ar},${ag},${ab2})`; ctx.lineWidth=3+r; ctx.stroke(aar);
+  }
+  P.dx*=.6; P.dy*=.6;
+}
+
+/* ---------- beslagen ruit: veeg de wasem weg, hij trekt langzaam weer dicht ---------- */
+let rBg, rFog, rFogCtx, rTel=0;
+const WASEM='142,156,168';
+function ruitInit(){
+  rBg=document.createElement('canvas'); rBg.width=W; rBg.height=H;
+  const b=rBg.getContext('2d'), gr=b.createLinearGradient(0,0,0,H);
+  gr.addColorStop(0,'#070c15'); gr.addColorStop(1,'#141c2c');
+  b.fillStyle=gr; b.fillRect(0,0,W,H);
+  const kl=['232,184,138','226,120,96','120,200,205','240,232,214','236,160,80'];
+  const n=Math.max(30,W*H/16000|0);
+  for(let i=0;i<n;i++){ // lichtjes van een stad in de nacht
+    const x=Math.random()*W, y=H*(.2+Math.random()*.75), r=10+Math.random()*46, k=kl[Math.random()*kl.length|0];
+    const g=b.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,`rgba(${k},.55)`); g.addColorStop(.7,`rgba(${k},.35)`); g.addColorStop(1,`rgba(${k},0)`);
+    b.fillStyle=g; b.beginPath(); b.arc(x,y,r,0,6.283); b.fill();
+  }
+  rFog=document.createElement('canvas'); rFog.width=Math.ceil(W/2); rFog.height=Math.ceil(H/2);
+  rFogCtx=rFog.getContext('2d');
+  rFogCtx.fillStyle=`rgba(${WASEM},.93)`; rFogCtx.fillRect(0,0,rFog.width,rFog.height);
+}
+function ruitStap(){
+  const f=rFogCtx;
+  if(P.neer){
+    f.globalCompositeOperation='destination-out';
+    f.lineCap='round'; f.lineWidth=24; f.strokeStyle='#000'; f.shadowColor='#000'; f.shadowBlur=7;
+    f.beginPath(); f.moveTo(P.px/2,P.py/2); f.lineTo(P.x/2+.01,P.y/2); f.stroke();
+    f.shadowBlur=0; f.globalCompositeOperation='source-over';
+    P.px=P.x; P.py=P.y;
+  }
+  if(++rTel%8===0){ f.fillStyle=`rgba(${WASEM},.02)`; f.fillRect(0,0,rFog.width,rFog.height) }
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(rBg,0,0,W,H); ctx.drawImage(rFog,0,0,W,H);
+}
+
+/* ---------- verf: natte kleuren die je met je vinger uitveegt ---------- */
+let vCv, vCtx;
+function verfInit(){
+  vCv=document.createElement('canvas'); vCv.width=Math.ceil(W/2); vCv.height=Math.ceil(H/2);
+  vCtx=vCv.getContext('2d');
+  const w=vCv.width, h=vCv.height;
+  vCtx.fillStyle='#d9cfbd'; vCtx.fillRect(0,0,w,h);
+  const kl=['#2f6f73','#c96a4f','#d9a441','#7d6aa8','#e9e3d6','#1f3b57','#b8506e'];
+  const n=Math.max(26,w*h/5000|0);
+  for(let i=0;i<n;i++){
+    const x=Math.random()*w, y=Math.random()*h, r=18+Math.random()*60;
+    vCtx.fillStyle=kl[i%kl.length]; vCtx.globalAlpha=.9;
+    vCtx.beginPath(); vCtx.ellipse(x,y,r,r*(.5+Math.random()*.6),Math.random()*3.14,0,6.283); vCtx.fill();
+  }
+  vCtx.globalAlpha=1;
+}
+function verfStap(){
+  if(P.neer){
+    const ax=P.px/2, ay=P.py/2, bx=P.x/2, by=P.y/2, R=20;
+    const n=Math.min(60,Math.hypot(bx-ax,by-ay)/2|0);
+    let sx=ax, sy=ay;
+    for(let k=1;k<=n;k++){
+      const dx=ax+(bx-ax)*k/n, dy=ay+(by-ay)*k/n;
+      vCtx.save(); vCtx.beginPath(); vCtx.arc(dx,dy,R,0,6.283); vCtx.clip();
+      vCtx.globalAlpha=.55; vCtx.drawImage(vCv,sx-R,sy-R,2*R,2*R,dx-R,dy-R,2*R,2*R);
+      vCtx.restore(); sx=dx; sy=dy;
+    }
+    if(n){ P.px=P.x; P.py=P.y }
+  }
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(vCv,0,0,W,H);
+}
+
+/* ---------- pailletten: aai ze de ene kant op voor goud, de andere kant voor blauwgroen ---------- */
+let pail=[];
+function pailInit(){
+  pail=[];
+  for(let y=8,rij=0;y<H+10;y+=15,rij++) for(let x=(rij%2?19:9);x<W+10;x+=20) pail.push({x,y,f:0,d:0});
+}
+function pailStap(){
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  const mx=P.x-P.px, my=P.y-P.py, actief=P.binnen&&(mx*mx+my*my>.3), kant=(mx-my)>0?1:0;
+  const A=new Path2D(), B=new Path2D();
+  for(const s of pail){
+    if(actief && segAfst(s.x,s.y,P.px,P.py,P.x,P.y)<26) s.d=kant;
+    s.f+=(s.d-s.f)*.16;
+    const c=Math.cos(s.f*3.14159), p=c>0?A:B, ry=10*(c<0?-c:c)+.6;
+    p.moveTo(s.x+10,s.y); p.ellipse(s.x,s.y,10,ry,0,0,6.283);
+  }
+  P.px=P.x; P.py=P.y;
+  ctx.lineWidth=1; ctx.strokeStyle='rgba(10,17,28,.55)';
+  ctx.fillStyle='#7B5798'; ctx.fill(A); ctx.stroke(A);
+  ctx.fillStyle='#e0b07c'; ctx.fill(B); ctx.stroke(B);
+}
+
+/* ---------- geluid (standaard uit) ---------- */
+let geluid=false, ac;
+function plop(){
+  if(!geluid) return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain(), n=ac.currentTime;
+    o.frequency.setValueAtTime(420+Math.random()*320,n); o.frequency.exponentialRampToValueAtTime(90,n+.07);
+    g.gain.setValueAtTime(.1,n); g.gain.exponentialRampToValueAtTime(.001,n+.09);
+    o.connect(g); g.connect(ac.destination); o.start(n); o.stop(n+.1);
+  }catch(_){}
+}
+
+/* ---------- noppenfolie ---------- */
+const NR=17; let nop=[], nopKr=[], nopOver=0, nopNieuw=0;
+function nopInit(){
+  nop=[]; nopKr=[]; nopNieuw=0;
+  for(let y=26,rij=0;y<H+NR;y+=35,rij++) for(let x=(rij%2?40:20);x<W+NR;x+=40)
+    nop.push({x,y,k:false,h:Math.random()*6.28});
+  nopOver=nop.length;
+}
+function segAfst(px,py,ax,ay,bx,by){
+  const dx=bx-ax, dy=by-ay, l=dx*dx+dy*dy;
+  let u=l?((px-ax)*dx+(py-ay)*dy)/l:0; u=u<0?0:u>1?1:u;
+  return Math.hypot(px-ax-dx*u, py-ay-dy*u);
+}
+function nopStap(){
+  ctx.fillStyle='#2E1A16'; ctx.fillRect(0,0,W,H);
+  const heel=new Path2D(), glans=new Path2D(), plat=new Path2D();
+  for(const b of nop){
+    if(!b.k && P.neer && segAfst(b.x,b.y,P.px,P.py,P.x,P.y)<NR){
+      b.k=true; nopOver--; nopKr.push({x:b.x,y:b.y,r:NR*.6,a:1}); plop();
+    }
+    if(b.k){
+      plat.moveTo(b.x+NR*.8,b.y); plat.arc(b.x,b.y,NR*.8,0,6.283);
+      const cx=Math.cos(b.h)*NR*.55, cy=Math.sin(b.h)*NR*.55;
+      plat.moveTo(b.x-cx,b.y-cy); plat.lineTo(b.x+cx,b.y+cy);
+      plat.moveTo(b.x-cy*.6,b.y+cx*.6); plat.lineTo(b.x+cx*.3,b.y+cy*.3);
+    } else {
+      heel.moveTo(b.x+NR,b.y); heel.arc(b.x,b.y,NR,0,6.283);
+      glans.moveTo(b.x+Math.cos(3.5)*NR*.62,b.y+Math.sin(3.5)*NR*.62); glans.arc(b.x,b.y,NR*.62,3.5,4.6);
+    }
+  }
+  P.px=P.x; P.py=P.y;
+  ctx.lineWidth=1.2; ctx.lineCap='round';
+  ctx.fillStyle='rgba(233,227,214,.09)'; ctx.fill(heel);
+  ctx.strokeStyle='rgba(233,227,214,.4)'; ctx.stroke(heel);
+  ctx.strokeStyle='rgba(233,227,214,.8)'; ctx.stroke(glans);
+  ctx.strokeStyle='rgba(154,163,173,.3)'; ctx.stroke(plat);
+  for(let i=nopKr.length-1;i>=0;i--){
+    const k=nopKr[i]; k.r+=1.4; k.a-=.07;
+    if(k.a<=0){ nopKr.splice(i,1); continue }
+    ctx.strokeStyle=`rgba(232,184,138,${k.a*.8})`;
+    ctx.beginPath(); ctx.arc(k.x,k.y,k.r,0,6.283); ctx.stroke();
+  }
+  if(nopOver<=0){ if(!nopNieuw) nopNieuw=t+2; else if(t>nopNieuw) nopInit() }
+}
+
+/* ---------- kinetisch zand: een blok dat je doorsnijdt en dat traag inzakt ---------- */
+let kw, kh, kin, kLos, kImg, kCv, kCtx;
+function kinKleur(y){
+  const [r,g,b]=hsl(30+Math.random()*5,.36,.5+Math.sin(y*.07)*.05+Math.random()*.07);
+  return ((255<<24)|(b<<16)|(g<<8)|r)>>>0;
+}
+function kinInit(){
+  kw=Math.ceil(W/CS); kh=Math.ceil(H/CS);
+  kin=new Uint32Array(kw*kh); kLos=new Uint8Array(kw*kh);
+  kImg=new ImageData(new Uint8ClampedArray(kin.buffer), kw, kh);
+  kCv=document.createElement('canvas'); kCv.width=kw; kCv.height=kh; kCtx=kCv.getContext('2d');
+  for(let y=kh*.36|0;y<kh;y++) for(let x=kw*.1|0;x<kw*.9;x++) kin[y*kw+x]=kinKleur(y);
+}
+function kMv(i,n){ kin[n]=kin[i]; kin[i]=0; kLos[n]=kLos[i]; kLos[i]=0 }
+function snij(cx,cy){
+  for(let j=-5;j<=5;j++) for(let i=-5;i<=5;i++){
+    const gx=cx+i|0, gy=cy+j|0, d=i*i+j*j;
+    if(d>25||gx<0||gx>=kw||gy<0||gy>=kh) continue;
+    const q=gy*kw+gx, c=kin[q]; if(!c) continue;
+    if(d<8){ // het mes duwt dit zand opzij en omhoog
+      kin[q]=0; kLos[q]=0;
+      let nx=gx+(Math.random()<.5?-1:1)*(7+(Math.random()*4|0)), ny=gy;
+      nx=nx<0?0:nx>=kw?kw-1:nx;
+      while(ny>=0&&kin[ny*kw+nx]) ny--;
+      if(ny>=0){ kin[ny*kw+nx]=c; kLos[ny*kw+nx]=1 }
+    } else kLos[q]=1;
+  }
+}
+function kinStap(){
+  if(P.neer){
+    const ax=P.px/CS, ay=P.py/CS, bx=P.x/CS, by=P.y/CS, n=Math.max(1,Math.hypot(bx-ax,by-ay)|0);
+    for(let k=0;k<=n;k++) snij(ax+(bx-ax)*k/n, ay+(by-ay)*k/n);
+    P.px=P.x; P.py=P.y;
+  }
+  for(let pas=0;pas<2;pas++) for(let y=kh-2;y>=0;y--){
+    const lr=Math.random()<.5;
+    for(let k=0;k<kw;k++){
+      const x=lr?k:kw-1-k, i=y*kw+x;
+      if(!kin[i]) continue;
+      const o=i+kw;
+      if(kLos[i]){
+        if(!kin[o]){ kMv(i,o); continue }
+        const d=Math.random()<.5?1:-1;
+        if(x+d>=0&&x+d<kw&&!kin[o+d]) kMv(i,o+d);
+        else if(x-d>=0&&x-d<kw&&!kin[o-d]) kMv(i,o-d);
+        else if(Math.random()<.03) kLos[i]=0; // plakt weer vast
+      } else if(!kin[o]){
+        if(Math.random()<.3) kMv(i,o);
+      } else if((!kin[i-1]||!kin[i+1])&&Math.random()<.012){
+        const d=Math.random()<.5?1:-1;
+        if(x+d>=0&&x+d<kw&&!kin[i+d]&&!kin[o+d]) kMv(i,o+d);
+      }
+    }
+  }
+  kCtx.putImageData(kImg,0,0);
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(kCv,0,0,kw*CS,kh*CS);
+}
+
+/* ---------- vijlsel: naaldjes richten zich naar je vinger ---------- */
+const VS=24; let vk, vr, vA;
+function vijlInit(){
+  vk=Math.ceil(W/VS); vr=Math.ceil(H/VS); vA=new Float32Array(vk*vr);
+  for(let i=0;i<vA.length;i++) vA[i]=Math.random()*3.14;
+}
+function vijlStap(){
+  ctx.fillStyle='#2A1714'; ctx.fillRect(0,0,W,H);
+  const p=[new Path2D(),new Path2D(),new Path2D()];
+  for(let y=0;y<vr;y++) for(let x=0;x<vk;x++){
+    const i=y*vk+x, px=(x+.5)*VS, py=(y+.5)*VS;
+    let doel=(Math.sin(px*.004+t*.3)+Math.cos(py*.005-t*.2))*1.5, f=0;
+    if(P.binnen){
+      const ox=P.x-px, oy=P.y-py; f=1-Math.hypot(ox,oy)/90;
+      if(f>0) doel=Math.atan2(oy,ox)+(P.neer?1.5708:0); else f=0;
+    }
+    let v=(doel-vA[i])%3.14159; if(v>1.5708) v-=3.14159; else if(v<-1.5708) v+=3.14159;
+    vA[i]+=v*.1;
+    const cx=Math.cos(vA[i])*8, cy=Math.sin(vA[i])*8, q=p[f>.6?2:f>.25?1:0];
+    q.moveTo(px-cx,py-cy); q.lineTo(px+cx,py+cy);
+  }
+  ctx.lineWidth=1.6; ctx.lineCap='round';
+  ctx.strokeStyle='rgba(154,163,173,.45)'; ctx.stroke(p[0]);
+  ctx.strokeStyle='rgba(233,227,214,.75)'; ctx.stroke(p[1]);
+  ctx.strokeStyle='rgba(232,184,138,.95)'; ctx.stroke(p[2]);
+}
+
+/* ---------- lus ---------- */
+const INIT={zand:zandInit,stroom:stroomInit,rimpel:rimpelInit,draad:draadInit,bel:belInit,tafel:tafelInit,graan:graanInit,nop:nopInit,ruit:ruitInit,verf:verfInit,pail:pailInit,kin:kinInit,vijl:vijlInit}, STAP={zand:zandStap,stroom:stroomStap,rimpel:rimpelStap,draad:draadStap,bel:belStap,tafel:tafelStap,graan:graanStap,nop:nopStap,ruit:ruitStap,verf:verfStap,pail:pailStap,kin:kinStap,vijl:vijlStap};
+function maat(){
+  dpr=Math.min(2,window.devicePixelRatio||1);
+  W=window.innerWidth; H=window.innerHeight;
+  cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  INIT[modus]();
+}
+function kies(m){
+  modus=m; $('tool').hidden = m!=='tafel';
+  document.querySelectorAll('[data-m]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));
+  INIT[m]();
+}
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>kies(b.dataset.m));
+$('leeg').onclick=()=>INIT[modus]();
+let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(maat,150)});
+$('tool').onclick=()=>{ tGer=(tGer+1)%3; $('tool').textContent=T.vinger+T.vingers[tGer] };
+$('geluid').onclick=()=>{ geluid=!geluid; $('geluid').textContent=geluid?T.geluidAan:T.geluidUit; $('geluid').setAttribute('aria-pressed',geluid); if(geluid) plop() };
+maat(); kies(modus);
+let vorig=performance.now();
+(function lus(nu){
+  t+=Math.min(.05,(nu-vorig)/1000||0); vorig=nu;
+  STAP[modus]();
+  requestAnimationFrame(lus);
+})(vorig);
+</script>
+</body>
+</html>
