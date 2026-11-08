@@ -11,7 +11,7 @@ npm of buildproces.
 - `css/`, `js/`, `data/`, `assets/` … gedeeld door beide talen
 - `data/kaarten.js` … alle kaartdekken (NL en EN), gedeeld door Kaartjes en het moodboard
 - `routes/` … zes routes met oefeningen
-- `tools/` … Kaartjes (`kaarten.html`, Engels: `en/tools/cards.html`), de drieminutentool (`vandaag.html`, Engels: `en/tools/today.html`), het moodboard (`moodboard.html`: foto's bijsnijden/knippen, zinnen, kaartjes, tekenen met pen of vinger, zelf schrijven op het vel, plakken met Ctrl+V of slepen; alles bewaart vanzelf in IndexedDB, alleen lokaal), Traagzand (`traagzand.html`, Engels: `en/tools/slowsand.html`) en de Verbeeldingsstudio (preview)
+- `tools/` … Kaartjes (`kaarten.html`, Engels: `en/tools/cards.html`), de drieminutentool (`vandaag.html`, Engels: `en/tools/today.html`), het moodboard (`moodboard.html`: foto's bijsnijden/knippen, zinnen, kaartjes, tekenen met pen of vinger, zelf schrijven op het vel, plakken met Ctrl+V of slepen, inzoomen (knoppen, Ctrl+scroll, knijpen); alles bewaart vanzelf in IndexedDB, alleen lokaal), Traagzand (`traagzand.html`, Engels: `en/tools/slowsand.html`) en de Verbeeldingsstudio (preview)
 - `404.html`, `sitemap.xml`, `robots.txt` … voor GitHub Pages en zoekmachines
 
 ## Uitgangspunten

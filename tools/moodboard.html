@@ -32,11 +32,25 @@
   background:linear-gradient(168deg,#6A2E48 8%,#B24A2C 55%,#B9731F 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .mb-head p{color:var(--text);font-size:.98rem}
 .mb-stage{display:grid;place-items:center}
-#board{
-  position:relative;background:#fff;width:min(100%,calc((100svh - 19rem) * 0.8));aspect-ratio:4/5;
-  border-radius:6px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;
+/* het vel: een vast kader (mb-frame), daarbinnen een scrollvenster; het vel zelf wordt geschaald met --z */
+.mb-frame{
+  position:relative;background:#fff;width:min(100%,calc((100svh - 19rem) * 0.8));aspect-ratio:4/5;border-radius:6px;
   box-shadow:0 30px 60px -30px rgba(120,60,40,.6), 0 0 0 1px rgba(170,105,75,.18);
 }
+.mb-view{position:absolute;inset:0;overflow:hidden;border-radius:6px;overscroll-behavior:contain}
+.mb-view.zoomed{overflow:auto}
+.mb-sizer{position:relative;width:calc(100% * var(--z,1));aspect-ratio:4/5;overflow:hidden}
+#board{
+  position:absolute;left:0;top:0;background:#fff;width:calc(100% / var(--z,1));aspect-ratio:4/5;
+  transform:scale(var(--z,1));transform-origin:0 0;
+  overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;
+}
+.mb-zoom{position:absolute;right:.5rem;bottom:.5rem;z-index:6;display:flex;align-items:center;gap:.1rem;padding:.2rem;border-radius:999px;
+  background:rgba(58,35,32,.78);backdrop-filter:blur(6px);box-shadow:0 8px 18px -10px rgba(60,30,20,.6)}
+.mb-zoom button{width:2.1rem;height:2.1rem;border-radius:50%;border:0;background:transparent;color:#FFF3DC;font-size:1.1rem;font-weight:600;display:grid;place-items:center}
+.mb-zoom button:hover{background:rgba(255,255,255,.14)}
+.mb-zoom #zoomPct{width:auto;min-width:3.3rem;border-radius:999px;font-size:.78rem;font-weight:500;padding:0 .4rem}
+#board.panning{cursor:grabbing}
 #board.empty::before{
   content:attr(data-empty);position:absolute;inset:0;display:grid;place-items:center;padding:2rem;text-align:center;
   font-family:var(--font-display);font-style:italic;font-weight:600;font-size:clamp(1.1rem,3vw,1.5rem);color:#B9A08F;pointer-events:none;
@@ -159,7 +173,7 @@ body:has(#board.drawing){-webkit-user-select:none;user-select:none}
 @keyframes adem{0%,100%{opacity:.35}50%{opacity:1}}
 html.reduced #kijk .adem{animation:none;opacity:.8}
 @media (max-width:700px){
-  #board{width:min(100%,calc((100svh - 21rem) * 0.8))}
+  .mb-frame{width:min(100%,calc((100svh - 21rem) * 0.8))}
   .mb-bar button{font-size:.84rem;padding:.5rem .8rem}
 }
 </style>
@@ -194,7 +208,18 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   </div>
 
   <div class="mb-stage">
-    <div id="board" class="empty" data-empty="Nog leeg. Kies hieronder wat je als eerste wilt neerleggen." aria-label="Moodboard"></div>
+    <div class="mb-frame" id="mbFrame">
+      <div class="mb-view" id="mbView">
+        <div class="mb-sizer">
+          <div id="board" class="empty" data-empty="Nog leeg. Kies hieronder wat je als eerste wilt neerleggen." aria-label="Moodboard"></div>
+        </div>
+      </div>
+      <div class="mb-zoom" role="group" aria-label="Zoomen">
+        <button id="zoomOut" aria-label="Uitzoomen">&minus;</button>
+        <button id="zoomPct" aria-label="Terug naar 100%">100%</button>
+        <button id="zoomIn" aria-label="Inzoomen">+</button>
+      </div>
+    </div>
   </div>
 
   <div class="mb-bar" role="toolbar" aria-label="Toevoegen">
@@ -535,7 +560,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     selId = null; selectEl();
     D.on = true; D.strokes = []; D.cur = null;
     const cv = document.createElement("canvas"); cv.id = "drawLayer";
-    D.dpr = Math.min(2, window.devicePixelRatio || 1);
+    D.dpr = Math.min(3200/Math.max(1,BW()), Math.max(1, (window.devicePixelRatio || 1) * zoom));
     cv.width = Math.round(BW()*D.dpr); cv.height = Math.round(BH()*D.dpr);
     board.appendChild(cv); board.classList.add("drawing");
     D.cv = cv; D.ctx = cv.getContext("2d");
@@ -543,7 +568,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     cv.addEventListener("pointerup", dUp); cv.addEventListener("pointercancel", dUp); cv.addEventListener("pointerleave", dUp);
     drawbar.hidden = false; syncDrawbar();
     // vel boven de tekenbalk in beeld brengen
-    const r = board.getBoundingClientRect(), free = window.innerHeight - drawbar.offsetHeight - 24;
+    const r = frame.getBoundingClientRect(), free = window.innerHeight - drawbar.offsetHeight - 24;
     const head = (document.querySelector(".site-header") || {offsetHeight:70}).offsetHeight + 8;
     window.scrollBy({top: r.top - Math.max(head, (free - r.height)/2), behavior: V.isCalm() ? "auto" : "smooth"});
     V.toast(T.drawHint);
@@ -619,7 +644,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     if(writeKind === "titel"){ items = items.filter(i=>i.type !== "titel"); Object.assign(it, {w:.6, x:.5, y:.04}); }
     else if(writeKind === "woord"){ Object.assign(it, {w:.3, color:COLORS[12], font:pickedFont.woord}); }
     else { Object.assign(it, {w:.5, font:pickedFont.quote}); }
-    if(writeKind !== "titel"){ it.x = Math.min(1 - it.w/2, Math.max(it.w/2, fx)); it.y = Math.max(0, fy - .02); }
+    if(writeKind !== "titel"){ it.x = Math.min(1 - it.w/2, Math.max(it.w/2, fx)); it.y = Math.max(0, fy - .02/zoom); }
     items.push(it); selId = it.id;
     render();
     startEdit(it.id);
@@ -717,6 +742,58 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     addPastedText(e.dataTransfer.getData("text/plain"));
   });
 
+  /* ---------- inzoomen: knoppen, Ctrl+scroll/trackpad, knijpen met twee vingers ---------- */
+  const frame = document.getElementById("mbFrame"), view = document.getElementById("mbView"), zoomPct = document.getElementById("zoomPct");
+  let zoom = 1, pan = null;
+  const ZMIN = 1, ZMAX = 4;
+  function setZoom(z, cx, cy){
+    z = Math.min(ZMAX, Math.max(ZMIN, z));
+    const r = view.getBoundingClientRect();
+    if(cx == null){ cx = r.left + r.width/2; cy = r.top + r.height/2; }
+    const px = cx - r.left, py = cy - r.top;
+    const ox = (view.scrollLeft + px)/zoom, oy = (view.scrollTop + py)/zoom;   // punt onder vinger/muis, in vel-maat
+    zoom = z;
+    frame.style.setProperty("--z", z);
+    view.classList.toggle("zoomed", z > 1.001);
+    view.scrollLeft = ox*z - px; view.scrollTop = oy*z - py;                  // dat punt blijft onder vinger/muis
+    zoomPct.textContent = Math.round(z*100) + "%";
+  }
+  document.getElementById("zoomIn").addEventListener("click", ()=>setZoom(zoom*1.5));
+  document.getElementById("zoomOut").addEventListener("click", ()=>setZoom(zoom/1.5));
+  zoomPct.addEventListener("click", ()=>setZoom(1));
+  view.addEventListener("wheel", e=>{
+    if(!e.ctrlKey) return;                      // Ctrl+scroll en knijpen op een trackpad
+    e.preventDefault();
+    setZoom(zoom * Math.exp(-e.deltaY * .01), e.clientX, e.clientY);
+  }, {passive:false});
+  const touches = new Map(); let pinch = null;
+  const mid = ()=>{ const [a,b] = [...touches.values()]; return {x:(a.x+b.x)/2, y:(a.y+b.y)/2, d:Math.hypot(a.x-b.x, a.y-b.y) || 1}; };
+  frame.addEventListener("pointerdown", e=>{
+    if(e.pointerType !== "touch") return;
+    touches.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(touches.size === 2){
+      // tweede vinger: geen item slepen of streep zetten, maar zoomen
+      if(drag){ drag.it.x = drag.ox; drag.it.y = drag.oy; drag = null; render(); }
+      pan = null; board.classList.remove("panning");
+      if(D.on && D.cur){ D.strokes.pop(); D.cur = null; redraw(); }
+      const m = mid(); pinch = {d0:m.d, z0:zoom, last:m};
+      e.stopPropagation(); e.preventDefault();
+    }
+  }, true);
+  frame.addEventListener("pointermove", e=>{
+    if(!touches.has(e.pointerId)) return;
+    touches.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(pinch && touches.size >= 2){
+      const m = mid();
+      setZoom(pinch.z0 * m.d / pinch.d0, m.x, m.y);
+      view.scrollLeft -= m.x - pinch.last.x; view.scrollTop -= m.y - pinch.last.y;   // met twee vingers schuiven
+      pinch.last = m;
+      e.stopPropagation(); e.preventDefault();
+    }
+  }, true);
+  const touchEnd = e=>{ touches.delete(e.pointerId); if(touches.size < 2) pinch = null; };
+  frame.addEventListener("pointerup", touchEnd, true); frame.addEventListener("pointercancel", touchEnd, true);
+
   /* ---------- slepen ---------- */
   let drag = null;
   let lastTap = {id:null, t:0};
@@ -725,7 +802,11 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     const el = e.target.closest(".item");
     if(el && el.classList.contains("editing")) return;          // in de tekst klikken = cursor zetten
     if(editId) finishEdit();
-    if(!el){ selId = null; selectEl(); return; }
+    if(!el){
+      selId = null; selectEl();
+      if(zoom > 1.001){ pan = {sx:e.clientX, sy:e.clientY, sl:view.scrollLeft, st:view.scrollTop}; board.setPointerCapture(e.pointerId); board.classList.add("panning"); e.preventDefault(); }
+      return;
+    }
     // dubbeltik op tekst = meteen bewerken
     const now = Date.now();
     if(lastTap.id === el.dataset.id && now - lastTap.t < 380 && isText(el.dataset.id)){ lastTap = {id:null,t:0}; e.preventDefault(); startEdit(el.dataset.id); return; }
@@ -737,15 +818,16 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     e.preventDefault();
   });
   board.addEventListener("pointermove", e=>{
+    if(pan){ view.scrollLeft = pan.sl - (e.clientX - pan.sx); view.scrollTop = pan.st - (e.clientY - pan.sy); return; }
     if(!drag) return;
-    const dx = (e.clientX - drag.sx)/BW(), dy = (e.clientY - drag.sy)/BH();
+    const dx = (e.clientX - drag.sx)/(BW()*zoom), dy = (e.clientY - drag.sy)/(BH()*zoom);
     if(Math.abs(dx)+Math.abs(dy) > .004) drag.moved = true;
     drag.it.x = Math.min(1.05, Math.max(-.05, drag.ox + dx));
     drag.it.y = Math.min(1.02, Math.max(-.05, drag.oy + dy));
     const el = board.querySelector('[data-id="'+drag.it.id+'"]');
     if(el){ const w = drag.it.w*BW(); el.style.transform = "translate(" + (drag.it.x*BW() - w/2) + "px," + (drag.it.y*BH()) + "px) rotate(" + (drag.it.rot||0) + "deg)"; }
   });
-  const endDrag = ()=>{ if(drag){ if(drag.moved) save(); drag = null; } };
+  const endDrag = ()=>{ if(pan){ pan = null; board.classList.remove("panning"); } if(drag){ if(drag.moved) save(); drag = null; } };
   board.addEventListener("pointerup", endDrag); board.addEventListener("pointercancel", endDrag);
 
   /* ---------- selectiebalk ---------- */
