@@ -1,9 +1,9 @@
 /* ============================================================
-   VANDAAG / TODAY — gedeelde basis (rust, lichtstof, toast, opslag)
+   Manifest — gedeelde basis (rust, lichtstof, toast, opslag)
    ============================================================ */
 "use strict";
 /* >>> Pas hier je Ko-fi-adres aan (één plek voor de hele site): */
-window.VANDAAG_KOFI = "https://ko-fi.com/kellievdk";
+window.Manifest_KOFI = "https://ko-fi.com/kellievdk";
 window.V = (function(){
 
   /* ---------- veilige opslag: localStorage met geheugen-terugval ---------- */
@@ -137,7 +137,7 @@ window.V = (function(){
 
   /* ---------- init per pagina ---------- */
   function init(){
-    document.querySelectorAll("[data-kofi]").forEach(a=>{ a.href = window.VANDAAG_KOFI; });
+    document.querySelectorAll("[data-kofi]").forEach(a=>{ a.href = window.Manifest_KOFI; });
     document.querySelectorAll("[data-calm]").forEach(b=>{
       b.addEventListener("click", ()=>{ calm = !calm; store.set("calm", calm); applyCalm(); });
     });

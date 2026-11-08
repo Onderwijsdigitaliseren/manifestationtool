@@ -1,4 +1,4 @@
-/* VANDAAG / TODAY — kaartdekken, gedeeld door Kaartjes en het moodboard.
+/* Manifest — kaartdekken, gedeeld door Kaartjes en het moodboard.
    Per kaartje: [titel, tekst, doe-regel]. group: 'hart' of 'tekens' (Engelen & tekens). */
 "use strict";
 window.KAARTEN = {

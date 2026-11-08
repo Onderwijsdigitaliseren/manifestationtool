@@ -16,7 +16,7 @@
 <link rel="alternate" hreflang="x-default" href="https://www.manifestationtool.nl/tools/moodboard.html">
 <meta name="theme-color" content="#F5C7B0">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="VANDAAG">
+<meta property="og:site_name" content="Manifest">
 <meta property="og:title" content="Moodboard — zie het voor je">
 <meta property="og:description" content="Maak een moodboard van foto's, woorden, kleuren en knipsels. Alles blijft in je eigen browser.">
 <meta property="og:url" content="https://www.manifestationtool.nl/tools/moodboard.html">
@@ -121,6 +121,25 @@
 #rotOut{font-size:.85rem;color:var(--text-soft);min-width:2.6rem;text-align:right}
 .edit-panel .panel-actions{display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1rem;align-items:center}
 .toast{bottom:4.6rem}
+/* tekenen */
+#drawLayer{position:absolute;inset:0;width:100%;height:100%;z-index:50;touch-action:none;cursor:crosshair}
+#board.drawing{outline:2px dashed var(--gold-strong);outline-offset:4px}
+#board.drawing .item{pointer-events:none}
+body:has(#board.drawing){-webkit-user-select:none;user-select:none}
+#board.drawing.empty::before{content:""}
+#drawbar{position:fixed;left:50%;bottom:max(.8rem,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:130;
+  background:var(--deep);border-radius:20px;padding:.5rem .6rem;display:grid;gap:.4rem;box-shadow:0 14px 30px -12px rgba(80,35,25,.8);
+  width:max-content;max-width:calc(100vw - 1.2rem)}
+.db-row{display:flex;gap:.3rem;align-items:center;justify-content:center;flex-wrap:wrap}
+.db-color{width:1.65rem;height:1.65rem;flex:none;border-radius:50%;border:2px solid rgba(255,255,255,.35);padding:0}
+.db-color[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 2px var(--gold-light)}
+.db-size,.db-tool{width:2.3rem;height:2.3rem;border-radius:50%;border:0;background:transparent;color:#FFF3DC;display:grid;place-items:center}
+.db-size i{display:block;border-radius:50%;background:#FFF3DC}
+.db-size[aria-pressed="true"],.db-tool[aria-pressed="true"]{background:rgba(255,255,255,.18)}
+.db-size:hover,.db-tool:hover{background:rgba(255,255,255,.12)}
+.db-sp{flex:1;min-width:.4rem}
+.db-text{border:1px solid rgba(255,243,220,.35);background:transparent;color:#FFF3DC;border-radius:999px;padding:.45rem .9rem;font-size:.86rem}
+.db-done{background:linear-gradient(135deg,#FBDFA6,#EDB068);color:var(--deep);border:0;font-weight:600}
 /* kijkmoment */
 #kijk{position:fixed;inset:0;z-index:300;background:#FFF9F0;display:grid;place-items:center;padding:1rem;cursor:pointer}
 #kijk[hidden]{display:none}
@@ -139,12 +158,12 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <div class="starsky" aria-hidden="true"><i></i><i></i></div>
 <canvas id="dust" aria-hidden="true"></canvas>
 <header class="site-header">
-  <a class="wordmark" href="../index.html" aria-label="Vandaag">
+  <a class="wordmark" href="../index.html" aria-label="Manifest">
     <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
       <path d="M6.5 18 a6.5 6.5 0 0 1 13 0" fill="#F6CF8E" stroke="#9A5A22" stroke-width="1.4"/>
       <path d="M2.5 18 h21 M13 4.5 v3 M4.6 9.2 l2.1 2.1 M21.4 9.2 l-2.1 2.1 M7 21.5 h12" stroke="#9A5A22" stroke-width="1.4" stroke-linecap="round"/>
     </svg>
-    VANDAAG
+    Manifest
   </a>
   <nav class="site-nav" aria-label="Hoofdnavigatie">
     <a href="moodboard.html" aria-current="page">Moodboard</a>
@@ -174,6 +193,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     <button id="addKleur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor"/><circle cx="12.5" cy="7.5" r="1.3" fill="currentColor"/><circle cx="16" cy="10.5" r="1.3" fill="currentColor"/><path d="M12 20.5 c-2 -3 1 -4 2 -5 c1 -1 1 -3 -1 -3"/></svg>Kleur</button>
     <button id="addKnipsel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 l2.2 5.6 5.8 2.2 -5.8 2.2 -2.2 5.6 -2.2 -5.6 -5.8 -2.2 5.8 -2.2 Z"/><path d="M19 17 l.9 2.1 2.1 .9 -2.1 .9 -.9 2.1 -.9 -2.1 -2.1 -.9 2.1 -.9 Z"/></svg>Knipsel</button>
     <button id="addTitel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 6 h16 M12 6 v13 M8 19 h8"/></svg>Titel</button>
+    <button id="addTeken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 l1.2-4.4 L16.5 4.3 a2.1 2.1 0 0 1 3 3 L8.2 18.8 Z M14.5 6.3 l3 3"/><path d="M4 20 c3-1 5 1 8 0 s5-1 8 0" opacity=".55"/></svg>Teken</button>
   </div>
   <div class="mb-bar second">
     <button id="kijkBtn">Kijkmoment</button>
@@ -183,6 +203,20 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   <p class="space-note" style="text-align:center;max-width:36rem;margin:1rem auto 0">Je moodboard blijft alleen in deze browser, op dit apparaat &mdash; voor niemand anders zichtbaar. Bewaar het als afbeelding om het als achtergrond op je telefoon te zetten.</p>
   <input class="file-in" type="file" id="fileIn" accept="image/*" multiple aria-hidden="true" tabindex="-1">
 </main>
+
+<div id="drawbar" hidden role="toolbar" aria-label="Tekenen">
+  <div class="db-row" id="dbColors"></div>
+  <div class="db-row">
+    <button class="db-size" data-size="0" aria-label="Dun" aria-pressed="false"><i style="width:4px;height:4px"></i></button>
+    <button class="db-size" data-size="1" aria-label="Middel" aria-pressed="true"><i style="width:8px;height:8px"></i></button>
+    <button class="db-size" data-size="2" aria-label="Dik" aria-pressed="false"><i style="width:14px;height:14px"></i></button>
+    <button class="db-tool" id="dbErase" aria-pressed="false" aria-label="Gum"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M8 20 L3.5 15.5 a2 2 0 0 1 0-2.8 L12.7 3.5 a2 2 0 0 1 2.8 0 l4.9 4.9 a2 2 0 0 1 0 2.8 L11 20 Z M8 20 h12 M7 10 l7 7"/></svg></button>
+    <button class="db-tool" id="dbUndo" aria-label="Ongedaan maken"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 L4 9 l5-5"/><path d="M4 9 h10 a6 6 0 0 1 0 12 h-3"/></svg></button>
+    <span class="db-sp"></span>
+    <button class="db-text" id="dbCancel">Annuleer</button>
+    <button class="db-text db-done" id="dbDone">Op het vel</button>
+  </div>
+</div>
 
 <div id="selbar" hidden aria-label="Geselecteerd onderdeel">
   <button data-act="smaller" aria-label="Kleiner">&minus;</button>
@@ -318,9 +352,9 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <footer class="site-footer">
   <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
-    Vind je Vandaag waardevol? Trakteer op een koffie</a></p>
-  <p>&copy; 2026 VANDAAG &middot; gemaakt met aandacht</p>
-  <p>Vandaag is geen vervanging van medische of psychologische zorg.</p>
+    Vind je Manifest waardevol? Trakteer op een koffie</a></p>
+  <p>&copy; 2026 Manifest &middot; gemaakt met aandacht</p>
+  <p>Manifest is geen vervanging van medische of psychologische zorg.</p>
 </footer>
 
 <div class="toast" id="toast" role="status"></div>
@@ -330,7 +364,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <script>
 (function(){
   "use strict";
-  const T = {"tekensLabel": "Engelen & tekens", "toastAdded": "Op het vel gelegd.", "toastImgFail": "Deze foto kon niet worden geladen.", "toastEmpty": "Het vel is weer leeg.", "toastFirst": "Leg eerst iets op het vel.", "toastSaved": "Bewaard als afbeelding.", "toastEdited": "Foto aangepast.", "leeg": "Vel leegmaken", "leegSure": "Zeker weten? Tik nog eens", "tagKijk": "Moodboard", "kijkSaved": "Een kijkmoment bij mijn moodboard", "fileName": "vandaag-moodboard.png"};
+  const T = {"drawHint": "Teken met je vinger, pen of muis.", "tekensLabel": "Engelen & tekens", "toastAdded": "Op het vel gelegd.", "toastImgFail": "Deze foto kon niet worden geladen.", "toastEmpty": "Het vel is weer leeg.", "toastFirst": "Leg eerst iets op het vel.", "toastSaved": "Bewaard als afbeelding.", "toastEdited": "Foto aangepast.", "leeg": "Vel leegmaken", "leegSure": "Zeker weten? Tik nog eens", "tagKijk": "Moodboard", "kijkSaved": "Een kijkmoment bij mijn moodboard", "fileName": "manifest-moodboard.png"};
   const SOURCES = [{"id": "kaart", "label": "Kaartje", "items": []}, {"id": "routes", "label": "De zes routes", "items": []}, {"id": "visies", "label": "Uit de visies", "items": ["Beelden gaan aan verandering vooraf.", "Onder het denken ligt een stiller weten.", "De grens van wat je durft ligt waar je geloof over jezelf ophoudt.", "Niet de wereld knelt — vaak knelt de bril.", "Waarderen wat er is, opent wat komt.", "Het onzichtbare wordt zichtbaar in kleine, herhaalde stappen."]}, {"id": "dank", "label": "Dankbaarheid", "items": ["Er is al veel goed. Er mag meer bij.", "Wat ik waardeer, groeit.", "Vandaag was er licht, warm water en een groet. Dat telt.", "Ik kijk om en zie hoeveel er al gekomen is.", "Dank je. Voor dit. Precies dit.", "Overvloed begint met opmerken."]}, {"id": "moed", "label": "Moed & vertrouwen", "items": ["Ik mag dit willen.", "Ik hoef het niet zeker te weten om te beginnen.", "Wat ik al eens deed, kan ik opnieuw.", "Ik vertrouw wat ik voel en doe wat ik kan.", "De eerste stap hoeft niet groot — alleen echt.", "Ik loop door, ook met trillende knieën."]}, {"id": "rust", "label": "Rust & zachtheid", "items": ["Rust is geen stilstand.", "Ik mag langzaam.", "Zacht voor mezelf, helder in wat ik wil.", "Niet alles hoeft vandaag.", "Ik leg neer wat niet van mij is.", "Adem in. Laat los. Dat is genoeg voor nu."]}, {"id": "ontvang", "label": "Overvloed & ontvangen", "items": ["Wat van mij is, vindt mij.", "Ik maak ruimte en laat het komen.", "Ik ben er al bijna — en ik ben hier al.", "Er is genoeg. Ook voor mij.", "Ik ontvang met open handen.", "Goede dingen zijn al onderweg."]}, {"id": "vandaag", "label": "Vandaag", "items": ["Vandaag telt.", "Wat ik helder zie, krijgt richting.", "Elke dag een kleine stap in de goede richting.", "Groots mag klein beginnen.", "Ik hoef het niet alleen te doen.", "Dit is mijn plek, dit is mijn tijd."]}];
   const DECKS = ((window.KAARTEN || {})[(document.documentElement.lang || "nl").slice(0,2)]) || [];
   const MANTRAS = ["Ik ben genoeg", "Adem in, laat los", "Ik mag hier zijn", "Alles op zijn tijd", "Ik kies zacht", "Hier en nu", "Ik vertrouw de weg", "Er is ruimte", "Ik ben al onderweg", "Laat komen wat komt", "Rust in mij", "Ik open mijn handen"];
@@ -462,6 +496,94 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     render(); save();
     V.toast(T.toastAdded);
   }
+
+  /* ---------- tekenen met pen, vinger of muis ---------- */
+  const DRAW_COLORS = ["#4A2F2A","#6A2E48","#B24A2C","#B9731F","#F6CF8E","#8FA58A","#4F7A8C","#7B5798","#C9707A","#FFFFFF"];
+  const DRAW_SIZES = [.005, .011, .022];          // als deel van de vel-breedte, zodat het meeschaalt
+  const D = {on:false, strokes:[], cur:null, color:DRAW_COLORS[1], size:1, erase:false, cv:null, ctx:null, dpr:1};
+  const drawbar = document.getElementById("drawbar");
+  const dbColors = document.getElementById("dbColors");
+  DRAW_COLORS.forEach((c,i)=>{
+    const b = document.createElement("button"); b.className = "db-color"; b.style.background = c; b.setAttribute("aria-label", c);
+    b.setAttribute("aria-pressed", String(c === D.color));
+    b.addEventListener("click", ()=>{ D.color = c; D.erase = false; syncDrawbar(); });
+    dbColors.appendChild(b);
+  });
+  function syncDrawbar(){
+    dbColors.querySelectorAll(".db-color").forEach(b=>b.setAttribute("aria-pressed", String(!D.erase && b.style.background && b.getAttribute("aria-label") === D.color)));
+    drawbar.querySelectorAll(".db-size").forEach(b=>b.setAttribute("aria-pressed", String(+b.dataset.size === D.size)));
+    document.getElementById("dbErase").setAttribute("aria-pressed", String(D.erase));
+  }
+  drawbar.querySelectorAll(".db-size").forEach(b=>b.addEventListener("click", ()=>{ D.size = +b.dataset.size; syncDrawbar(); }));
+  document.getElementById("dbErase").addEventListener("click", ()=>{ D.erase = !D.erase; syncDrawbar(); });
+  document.getElementById("dbUndo").addEventListener("click", ()=>{ D.strokes.pop(); redraw(); });
+  function startDraw(){
+    selId = null; selectEl();
+    D.on = true; D.strokes = []; D.cur = null;
+    const cv = document.createElement("canvas"); cv.id = "drawLayer";
+    D.dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(BW()*D.dpr); cv.height = Math.round(BH()*D.dpr);
+    board.appendChild(cv); board.classList.add("drawing");
+    D.cv = cv; D.ctx = cv.getContext("2d");
+    cv.addEventListener("pointerdown", dDown); cv.addEventListener("pointermove", dMove);
+    cv.addEventListener("pointerup", dUp); cv.addEventListener("pointercancel", dUp); cv.addEventListener("pointerleave", dUp);
+    drawbar.hidden = false; syncDrawbar();
+    // vel boven de tekenbalk in beeld brengen
+    const r = board.getBoundingClientRect(), free = window.innerHeight - drawbar.offsetHeight - 24;
+    const head = (document.querySelector(".site-header") || {offsetHeight:70}).offsetHeight + 8;
+    window.scrollBy({top: r.top - Math.max(head, (free - r.height)/2), behavior: V.isCalm() ? "auto" : "smooth"});
+    V.toast(T.drawHint);
+  }
+  function stopDraw(){
+    D.on = false; if(D.cv) D.cv.remove(); D.cv = null;
+    board.classList.remove("drawing"); drawbar.hidden = true;
+  }
+  function pt(e){ const r = D.cv.getBoundingClientRect(); return {x:(e.clientX - r.left)/r.width, y:(e.clientY - r.top)/r.height, p:(e.pointerType === "pen" && e.pressure > 0) ? e.pressure : .5}; }
+  function dDown(e){
+    e.preventDefault(); e.stopPropagation();
+    D.cv.setPointerCapture(e.pointerId);
+    D.cur = {color:D.color, size:DRAW_SIZES[D.size], erase:D.erase, pts:[pt(e)]};
+    D.strokes.push(D.cur); redraw();
+  }
+  function dMove(e){ if(!D.cur) return; e.preventDefault(); D.cur.pts.push(pt(e)); redraw(); }
+  function dUp(){ D.cur = null; }
+  function paint(ctx, W, H, strokes){
+    ctx.clearRect(0,0,W,H); ctx.lineCap = "round"; ctx.lineJoin = "round";
+    strokes.forEach(st=>{
+      ctx.globalCompositeOperation = st.erase ? "destination-out" : "source-over";
+      ctx.strokeStyle = st.color; ctx.fillStyle = st.color;
+      const base = st.size * W * (st.erase ? 2.2 : 1);
+      const P = st.pts;
+      if(P.length === 1){ ctx.beginPath(); ctx.arc(P[0].x*W, P[0].y*H, base*(.4+P[0].p*1.2)/2, 0, Math.PI*2); ctx.fill(); return; }
+      // vloeiende lijn: kwadratische bochten door de middens, dikte volgt de pendruk
+      for(let i = 1; i < P.length; i++){
+        const a = P[i-1], b = P[i], m0 = i > 1 ? {x:(P[i-2].x+a.x)/2, y:(P[i-2].y+a.y)/2} : a, m1 = {x:(a.x+b.x)/2, y:(a.y+b.y)/2};
+        ctx.lineWidth = base*(.4 + ((a.p+b.p)/2)*1.2);
+        ctx.beginPath(); ctx.moveTo(m0.x*W, m0.y*H); ctx.quadraticCurveTo(a.x*W, a.y*H, m1.x*W, m1.y*H); ctx.stroke();
+      }
+      const l = P[P.length-1], m = {x:(P[P.length-2].x+l.x)/2, y:(P[P.length-2].y+l.y)/2};
+      ctx.beginPath(); ctx.moveTo(m.x*W, m.y*H); ctx.lineTo(l.x*W, l.y*H); ctx.stroke();
+    });
+    ctx.globalCompositeOperation = "source-over";
+  }
+  function redraw(){ if(D.ctx) paint(D.ctx, D.cv.width, D.cv.height, D.strokes); }
+  document.getElementById("addTeken").addEventListener("click", ()=>{ if(!D.on) startDraw(); });
+  document.getElementById("dbCancel").addEventListener("click", stopDraw);
+  document.getElementById("dbDone").addEventListener("click", ()=>{
+    if(!D.strokes.some(s=>!s.erase)){ stopDraw(); return; }
+    // teken opnieuw op hoge resolutie, snij bij tot wat er getekend is
+    const W = 1200, H = 1500, big = document.createElement("canvas"); big.width = W; big.height = H;
+    const bc = big.getContext("2d"); paint(bc, W, H, D.strokes);
+    const px = bc.getImageData(0,0,W,H).data;
+    let x0 = W, y0 = H, x1 = -1, y1 = -1;
+    for(let y = 0; y < H; y += 2){ for(let x = 0; x < W; x += 2){ if(px[(y*W + x)*4 + 3] > 8){ if(x < x0) x0 = x; if(x > x1) x1 = x; if(y < y0) y0 = y; if(y > y1) y1 = y; } } }
+    if(x1 < 0){ stopDraw(); return; }
+    const pad = 6; x0 = Math.max(0, x0-pad); y0 = Math.max(0, y0-pad); x1 = Math.min(W-1, x1+pad); y1 = Math.min(H-1, y1+pad);
+    const cw = x1-x0+1, ch = y1-y0+1, out = document.createElement("canvas"); out.width = cw; out.height = ch;
+    out.getContext("2d").drawImage(big, x0, y0, cw, ch, 0, 0, cw, ch);
+    stopDraw();
+    add({type:"foto", src:out.toDataURL("image/png"), ar:ch/cw, shaped:true, drawing:true, w:cw/W, x:(x0 + cw/2)/W, y:y0/H, rot:0});
+  });
 
   /* ---------- slepen ---------- */
   let drag = null;

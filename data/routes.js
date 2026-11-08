@@ -1,4 +1,4 @@
-/* VANDAAG — routes (NL + EN) */
+/* Manifest — routes (NL + EN) */
 "use strict";
 window.ROUTES = {
   verbeelding:{slug:"verbeelding",naam:"De Verbeelding",essence:"Wat je helder voor je ziet, geeft richting aan wat je doet.",uitleg:"Verbeelding is geen vluchten uit de werkelijkheid — het is er alvast naartoe reizen. Wie een verlangen zintuiglijk voor zich ziet, herkent kansen sneller en beweegt er als vanzelf naartoe.",

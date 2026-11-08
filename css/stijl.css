@@ -86,7 +86,7 @@ html.reduced #dust{display:none}
 }
 .wordmark{
   display:flex;align-items:center;gap:.55rem;
-  font-family:var(--font-display);font-size:1.2rem;letter-spacing:.3em;
+  font-family:var(--font-display);font-size:1.2rem;letter-spacing:.3em;text-transform:uppercase;
   color:var(--deep);font-weight:700;text-decoration:none;
 }
 .site-nav{display:flex;align-items:center;gap:clamp(.2rem,1.5vw,.9rem);flex-wrap:wrap;justify-content:flex-end}

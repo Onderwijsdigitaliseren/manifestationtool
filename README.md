@@ -1,7 +1,7 @@
-# VANDAAG (NL) · TODAY (EN)
+# Manifest
 
 Een tweetalige manifestatieomgeving op www.manifestationtool.nl — in het Nederlands
-heet de site VANDAAG, in het Engels TODAY: verhelder wat je verlangt, voel het,
+heet de site in beide talen Manifest: verhelder wat je verlangt, voel het,
 zie het voor je — en breng het in beweging. Statische site zonder framework,
 npm of buildproces.
 
@@ -11,7 +11,7 @@ npm of buildproces.
 - `css/`, `js/`, `data/`, `assets/` … gedeeld door beide talen
 - `data/kaarten.js` … alle kaartdekken (NL en EN), gedeeld door Kaartjes en het moodboard
 - `routes/` … zes routes met oefeningen
-- `tools/` … Kaartjes (`kaarten.html`, Engels: `en/tools/cards.html`), de drieminutentool (`vandaag.html`, Engels: `en/tools/today.html`), het moodboard (`moodboard.html`, IndexedDB, alleen lokaal), Traagzand (`traagzand.html`, Engels: `en/tools/slowsand.html`) en de Verbeeldingsstudio (preview)
+- `tools/` … Kaartjes (`kaarten.html`, Engels: `en/tools/cards.html`), de drieminutentool (`vandaag.html`, Engels: `en/tools/today.html`), het moodboard (`moodboard.html`: foto's bijsnijden/knippen, zinnen, kaartjes, tekenen met pen of vinger; IndexedDB, alleen lokaal), Traagzand (`traagzand.html`, Engels: `en/tools/slowsand.html`) en de Verbeeldingsstudio (preview)
 - `404.html`, `sitemap.xml`, `robots.txt` … voor GitHub Pages en zoekmachines
 
 ## Uitgangspunten
@@ -30,7 +30,7 @@ Gouden uur: warme avondlucht (roze → perzik → goud), crèmekleurig papier,
 espresso-inkt, brons en een vleugje amethist. Alle stijl staat in `css/stijl.css`
 (kleuren bovenaan als variabelen); pagina's hebben geen eigen `<style>`-blokken meer.
 Lettertypen: Cormorant (koppen), Jost (tekst), Allura (alleen het
-handgeschreven woordbeeld Vandaag/Today).
+handgeschreven woordbeeld Manifest).
 
 ## Publiceren op GitHub Pages
 1. Maak een nieuwe repository (bijv. `vandaag`).
@@ -44,7 +44,7 @@ output directory: root) én lokaal door `index.html` te openen.
 
 ## Ko-fi
 De koffieknop staat op elke pagina. Het adres pas je op één plek aan:
-in `js/basis.js`, bovenaan — regel `window.VANDAAG_KOFI = "https://ko-fi.com/…";`
+in `js/basis.js`, bovenaan — regel `window.Manifest_KOFI = "https://ko-fi.com/…";`
 
 ## Opslag
 "Mijn ruimte" bewaart plannen, oefeningen en kaartjes in de browser (localStorage)
