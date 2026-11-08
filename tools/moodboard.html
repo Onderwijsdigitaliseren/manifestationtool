@@ -121,6 +121,17 @@
 #rotOut{font-size:.85rem;color:var(--text-soft);min-width:2.6rem;text-align:right}
 .edit-panel .panel-actions{display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1rem;align-items:center}
 .toast{bottom:4.6rem}
+/* zelf schrijven op het vel */
+#board.writing{cursor:text;outline:2px dashed var(--violet);outline-offset:4px}
+#board.writing .item{pointer-events:none}
+#board.writing.empty::before{content:""}
+.item.editing{cursor:text;outline:2px solid var(--gold-strong);outline-offset:4px}
+.item.editing p{outline:none;min-height:1.1em;-webkit-user-select:text;user-select:text}
+.item.editing p:empty::before{content:attr(data-ph);opacity:.4}
+.item p{overflow-wrap:break-word}
+.item.quote p{white-space:pre-wrap}
+.own-hint{font-size:.85rem;color:var(--text-soft);margin-top:.5rem}
+#board.dropping{outline:2px dashed var(--gold-strong);outline-offset:4px}
 /* tekenen */
 #drawLayer{position:absolute;inset:0;width:100%;height:100%;z-index:50;touch-action:none;cursor:crosshair}
 #board.drawing{outline:2px dashed var(--gold-strong);outline-offset:4px}
@@ -179,7 +190,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   <div class="mb-head rise">
     <p class="eyebrow">Moodboard &middot; zie het voor je</p>
     <h1>Een wit vel voor wat je verlangt.</h1>
-    <p>Leg erop wat jouw verlangen oproept: foto&rsquo;s, een zin, een kleur, een paar woorden. Sleep, draai, vergroot &mdash; en kijk er elke dag even naar.</p>
+    <p>Leg erop wat jouw verlangen oproept: foto&rsquo;s, een zin, een kleur, je eigen woorden. Plak een foto met Ctrl+V, sleep, draai, schrijf &mdash; alles blijft vanzelf bewaard.</p>
   </div>
 
   <div class="mb-stage">
@@ -194,6 +205,8 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     <button id="addKnipsel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 l2.2 5.6 5.8 2.2 -5.8 2.2 -2.2 5.6 -2.2 -5.6 -5.8 -2.2 5.8 -2.2 Z"/><path d="M19 17 l.9 2.1 2.1 .9 -2.1 .9 -.9 2.1 -.9 -2.1 -2.1 -.9 2.1 -.9 Z"/></svg>Knipsel</button>
     <button id="addTitel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 6 h16 M12 6 v13 M8 19 h8"/></svg>Titel</button>
     <button id="addTeken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 l1.2-4.4 L16.5 4.3 a2.1 2.1 0 0 1 3 3 L8.2 18.8 Z M14.5 6.3 l3 3"/><path d="M4 20 c3-1 5 1 8 0 s5-1 8 0" opacity=".55"/></svg>Teken</button>
+    <button id="addSchrijf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5 h14 M12 5 v14 M9 19 h6"/><path d="M19 15 v6" opacity=".6"/></svg>Schrijf</button>
+    <button id="addPlak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4.5" width="14" height="17" rx="2"/><path d="M9 4.5 V3.5 a1 1 0 0 1 1-1 h4 a1 1 0 0 1 1 1 v1 M9 11 h6 M9 15 h4"/></svg>Plak</button>
   </div>
   <div class="mb-bar second">
     <button id="kijkBtn">Kijkmoment</button>
@@ -224,6 +237,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   <button data-act="rotl" aria-label="Draai naar links">&#8634;</button>
   <button data-act="rotr" aria-label="Draai naar rechts">&#8635;</button>
   <button data-act="front" aria-label="Naar voren">&#8679;</button>
+  <button data-act="write" id="writeBtn" aria-label="Tekst aanpassen" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 l1.2-4.4 L16.5 4.3 a2.1 2.1 0 0 1 3 3 L8.2 18.8 Z"/></svg></button>
   <button data-act="font" id="fontBtn" aria-label="Ander lettertype" hidden style="font-family:var(--font-display);font-size:1.05rem">Aa</button>
   <button data-act="edit" id="editBtn" aria-label="Foto bijsnijden, knippen of draaien" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M7 3v14h14M3 7h14v14"/></svg></button>
   <button data-act="del" class="del" aria-label="Verwijderen">&times;</button>
@@ -250,9 +264,8 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     </div>
     <div class="pick" id="quoteList"></div>
     <div class="own" id="quoteOwnZone">
-      <label for="quoteOwn">Of je eigen woorden</label>
-      <textarea id="quoteOwn" rows="2" maxlength="140" placeholder="Schrijf hier je eigen zin&hellip;"></textarea>
-      <div class="row"><button class="btn-gold" id="quoteOwnBtn">Op het vel</button></div>
+      <button class="btn-line write-self" data-write="quote">Zelf schrijven op het vel</button>
+      <p class="own-hint">Tik daarna op het vel waar je wilt schrijven. Wat je typt, blijft gewoon staan.</p>
     </div>
   </div>
 </div>
@@ -267,9 +280,8 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     <p class="soft" style="font-size:.9rem;margin-bottom:.6rem">Korte zinnen om bij te ademen. Lees ze langzaam, één per keer.</p>
     <div class="pick" id="mantraList"></div>
     <div class="own">
-      <label for="woordOwn">Of je eigen woord</label>
-      <input id="woordOwn" maxlength="24" placeholder="Bijvoorbeeld: vrijheid">
-      <div class="row"><button class="btn-gold" id="woordOwnBtn">Op het vel</button></div>
+      <button class="btn-line write-self" data-write="woord">Zelf schrijven op het vel</button>
+      <p class="own-hint">Tik daarna op het vel waar je wilt schrijven. Wat je typt, blijft gewoon staan.</p>
     </div>
   </div>
 </div>
@@ -280,9 +292,8 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     <div class="panel-head"><h2 id="ovTitelH">Een titel voor je vel</h2><button class="close-btn" data-close aria-label="Sluiten">&times;</button></div>
     <div class="pick" id="titelList"></div>
     <div class="own">
-      <label for="titelOwn">Of je eigen titel</label>
-      <input id="titelOwn" maxlength="30" placeholder="Bijvoorbeeld: Mijn 2027">
-      <div class="row"><button class="btn-gold" id="titelOwnBtn">Op het vel</button></div>
+      <button class="btn-line write-self" data-write="titel">Zelf schrijven op het vel</button>
+      <p class="own-hint">Tik daarna op het vel waar je wilt schrijven. Wat je typt, blijft gewoon staan.</p>
     </div>
   </div>
 </div>
@@ -364,7 +375,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 <script>
 (function(){
   "use strict";
-  const T = {"drawHint": "Teken met je vinger, pen of muis.", "tekensLabel": "Engelen & tekens", "toastAdded": "Op het vel gelegd.", "toastImgFail": "Deze foto kon niet worden geladen.", "toastEmpty": "Het vel is weer leeg.", "toastFirst": "Leg eerst iets op het vel.", "toastSaved": "Bewaard als afbeelding.", "toastEdited": "Foto aangepast.", "leeg": "Vel leegmaken", "leegSure": "Zeker weten? Tik nog eens", "tagKijk": "Moodboard", "kijkSaved": "Een kijkmoment bij mijn moodboard", "fileName": "manifest-moodboard.png"};
+  const T = {"writeHint": "Tik op het vel waar je wilt schrijven.", "writePh": "Schrijf hier…", "pasteHint": "Plakken lukte niet. Op een computer: kopieer de foto en druk Ctrl+V (Cmd+V op een Mac). Of kies Foto.", "pasteEmpty": "Er staat geen foto of tekst op je klembord.", "drawHint": "Teken met je vinger, pen of muis.", "tekensLabel": "Engelen & tekens", "toastAdded": "Op het vel gelegd.", "toastImgFail": "Deze foto kon niet worden geladen.", "toastEmpty": "Het vel is weer leeg.", "toastFirst": "Leg eerst iets op het vel.", "toastSaved": "Bewaard als afbeelding.", "toastEdited": "Foto aangepast.", "leeg": "Vel leegmaken", "leegSure": "Zeker weten? Tik nog eens", "tagKijk": "Moodboard", "kijkSaved": "Een kijkmoment bij mijn moodboard", "fileName": "manifest-moodboard.png"};
   const SOURCES = [{"id": "kaart", "label": "Kaartje", "items": []}, {"id": "routes", "label": "De zes routes", "items": []}, {"id": "visies", "label": "Uit de visies", "items": ["Beelden gaan aan verandering vooraf.", "Onder het denken ligt een stiller weten.", "De grens van wat je durft ligt waar je geloof over jezelf ophoudt.", "Niet de wereld knelt — vaak knelt de bril.", "Waarderen wat er is, opent wat komt.", "Het onzichtbare wordt zichtbaar in kleine, herhaalde stappen."]}, {"id": "dank", "label": "Dankbaarheid", "items": ["Er is al veel goed. Er mag meer bij.", "Wat ik waardeer, groeit.", "Vandaag was er licht, warm water en een groet. Dat telt.", "Ik kijk om en zie hoeveel er al gekomen is.", "Dank je. Voor dit. Precies dit.", "Overvloed begint met opmerken."]}, {"id": "moed", "label": "Moed & vertrouwen", "items": ["Ik mag dit willen.", "Ik hoef het niet zeker te weten om te beginnen.", "Wat ik al eens deed, kan ik opnieuw.", "Ik vertrouw wat ik voel en doe wat ik kan.", "De eerste stap hoeft niet groot — alleen echt.", "Ik loop door, ook met trillende knieën."]}, {"id": "rust", "label": "Rust & zachtheid", "items": ["Rust is geen stilstand.", "Ik mag langzaam.", "Zacht voor mezelf, helder in wat ik wil.", "Niet alles hoeft vandaag.", "Ik leg neer wat niet van mij is.", "Adem in. Laat los. Dat is genoeg voor nu."]}, {"id": "ontvang", "label": "Overvloed & ontvangen", "items": ["Wat van mij is, vindt mij.", "Ik maak ruimte en laat het komen.", "Ik ben er al bijna — en ik ben hier al.", "Er is genoeg. Ook voor mij.", "Ik ontvang met open handen.", "Goede dingen zijn al onderweg."]}, {"id": "vandaag", "label": "Vandaag", "items": ["Vandaag telt.", "Wat ik helder zie, krijgt richting.", "Elke dag een kleine stap in de goede richting.", "Groots mag klein beginnen.", "Ik hoef het niet alleen te doen.", "Dit is mijn plek, dit is mijn tijd."]}];
   const DECKS = ((window.KAARTEN || {})[(document.documentElement.lang || "nl").slice(0,2)]) || [];
   const MANTRAS = ["Ik ben genoeg", "Adem in, laat los", "Ik mag hier zijn", "Alles op zijn tijd", "Ik kies zacht", "Hier en nu", "Ik vertrouw de weg", "Er is ruimte", "Ik ben al onderweg", "Laat komen wat komt", "Rust in mij", "Ik open mijn handen"];
@@ -433,11 +444,13 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
 
   /* ---------- renderen ---------- */
   function render(){
+    const reEdit = editId; if(editId){ editId = null; }
     board.innerHTML = "";
     board.classList.toggle("empty", !items.length);
     document.getElementById("leegBtn").hidden = !items.length;
     items.forEach(it=>board.appendChild(makeEl(it, BW(), BH())));
     selectEl();
+    if(reEdit && items.some(x=>x.id === reEdit)) startEdit(reEdit);
   }
   function makeEl(it, bw, bh, forView){
     const el = document.createElement("div");
@@ -481,6 +494,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     const cur = items.find(i=>i.id === selId);
     document.getElementById("editBtn").hidden = !(cur && cur.type === "foto");
     document.getElementById("fontBtn").hidden = !(cur && (cur.type === "quote" || cur.type === "woord"));
+    document.getElementById("writeBtn").hidden = !(cur && isText(cur.id));
   }
   function add(it){
     it.id = uid();
@@ -585,11 +599,137 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
     add({type:"foto", src:out.toDataURL("image/png"), ar:ch/cw, shaped:true, drawing:true, w:cw/W, x:(x0 + cw/2)/W, y:y0/H, rot:0});
   });
 
+  /* ---------- zelf schrijven op het vel: wat je typt, blijft staan ---------- */
+  let editId = null, writeKind = "quote", saveT = null;
+  const isText = id=>{ const it = items.find(i=>i.id === id); return !!it && (it.type === "quote" || it.type === "woord" || it.type === "titel"); };
+  function startWriting(kind){
+    writeKind = kind || "quote";
+    if(editId) finishEdit();
+    selId = null; selectEl();
+    board.classList.add("writing");
+    board.scrollIntoView({block:"center", behavior: V.isCalm() ? "auto" : "smooth"});
+    V.toast(T.writeHint);
+  }
+  function placeWriting(e){
+    e.preventDefault();
+    board.classList.remove("writing");
+    const r = board.getBoundingClientRect();
+    const fx = (e.clientX - r.left)/r.width, fy = (e.clientY - r.top)/r.height;
+    const it = {id:uid(), type:writeKind, text:"", rot:0};
+    if(writeKind === "titel"){ items = items.filter(i=>i.type !== "titel"); Object.assign(it, {w:.6, x:.5, y:.04}); }
+    else if(writeKind === "woord"){ Object.assign(it, {w:.3, color:COLORS[12], font:pickedFont.woord}); }
+    else { Object.assign(it, {w:.5, font:pickedFont.quote}); }
+    if(writeKind !== "titel"){ it.x = Math.min(1 - it.w/2, Math.max(it.w/2, fx)); it.y = Math.max(0, fy - .02); }
+    items.push(it); selId = it.id;
+    render();
+    startEdit(it.id);
+  }
+  function startEdit(id){
+    const el = board.querySelector('[data-id="' + id + '"]'); if(!el) return;
+    const p = el.querySelector("p"); if(!p) return;
+    editId = id; selId = id; selectEl();
+    el.classList.add("editing");
+    try{ p.contentEditable = "plaintext-only"; }catch(err){}
+    if(p.contentEditable !== "plaintext-only") p.contentEditable = "true";
+    p.setAttribute("data-ph", T.writePh);
+    p.spellcheck = false;
+    p.focus();
+    const rg = document.createRange(); rg.selectNodeContents(p); rg.collapse(false);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(rg);
+    p.addEventListener("input", onType);
+    p.addEventListener("keydown", onKey);
+    p.addEventListener("blur", onBlur);
+  }
+  function onType(e){
+    const it = items.find(i=>i.id === editId); if(!it) return;
+    it.text = e.target.innerText.replace(/\n+$/,"");
+    board.classList.toggle("empty", !items.length);
+    clearTimeout(saveT); saveT = setTimeout(save, 300);      // automatisch bewaren tijdens het typen
+  }
+  function onKey(e){
+    if(e.key === "Escape"){ e.preventDefault(); finishEdit(); }
+    const it = items.find(i=>i.id === editId);
+    if(e.key === "Enter" && it && it.type !== "quote"){ e.preventDefault(); finishEdit(); }   // woord en titel: één regel
+  }
+  function onBlur(){ setTimeout(()=>{ if(editId && !document.activeElement.closest?.(".item.editing")) finishEdit(); }, 0); }
+  function finishEdit(keepSel){
+    if(!editId) return;
+    const id = editId; editId = null;
+    const it = items.find(i=>i.id === id);
+    if(it){ it.text = (it.text || "").trim(); if(!it.text){ items = items.filter(i=>i.id !== id); if(selId === id) selId = null; } }
+    if(!keepSel && it && !it.text) selId = null;
+    clearTimeout(saveT); render(); save();
+  }
+  document.getElementById("addSchrijf").addEventListener("click", ()=>startWriting("quote"));
+  document.querySelectorAll(".write-self").forEach(b=>b.addEventListener("click", ()=>{ closeAll(); startWriting(b.dataset.write); }));
+
+  /* ---------- plakken (Ctrl+V / Plak-knop) en slepen vanaf je computer ---------- */
+  async function addImageBlobs(blobs, at){
+    let n = 0;
+    for(const f of blobs.slice(0,6)){
+      try{
+        const r = await shrink(f);
+        const it = {type:"foto", src:r.src, ar:r.ar, w:.38};
+        if(at){ it.x = Math.min(.85, Math.max(.15, at.x + n*.04)); it.y = Math.max(0, at.y - .1 + n*.04); }
+        add(it); n++;
+      }catch(e){ V.toast(T.toastImgFail); }
+    }
+    return n;
+  }
+  function addPastedText(text){
+    text = (text || "").trim(); if(!text) return false;
+    add({type:"quote", text:text.slice(0,240), w:.46, font:pickedFont.quote});
+    return true;
+  }
+  document.addEventListener("paste", async e=>{
+    const t = e.target;
+    if(t && (t.isContentEditable)){                       // tijdens schrijven: alleen platte tekst
+      if(t.contentEditable === "true"){ e.preventDefault(); document.execCommand("insertText", false, e.clipboardData.getData("text/plain")); }
+      return;
+    }
+    if(t && /INPUT|TEXTAREA/.test(t.tagName)) return;
+    if(!document.getElementById("kijk").hidden || D.on) return;
+    const cd = e.clipboardData; if(!cd) return;
+    const imgs = Array.from(cd.items || []).filter(i=>i.kind === "file" && i.type.indexOf("image/") === 0).map(i=>i.getAsFile()).filter(Boolean);
+    if(imgs.length){ e.preventDefault(); await addImageBlobs(imgs); return; }
+    if(addPastedText(cd.getData("text/plain"))) e.preventDefault();
+  });
+  document.getElementById("addPlak").addEventListener("click", async ()=>{
+    try{
+      if(navigator.clipboard && navigator.clipboard.read){
+        const list = await navigator.clipboard.read(); const imgs = [];
+        for(const ci of list){ const tp = ci.types.find(x=>x.indexOf("image/") === 0); if(tp) imgs.push(await ci.getType(tp)); }
+        if(imgs.length){ await addImageBlobs(imgs); return; }
+        for(const ci of list){ if(ci.types.indexOf("text/plain") > -1){ const tx = await (await ci.getType("text/plain")).text(); if(addPastedText(tx)) return; } }
+        V.toast(T.pasteEmpty); return;
+      }
+      if(navigator.clipboard && navigator.clipboard.readText){ if(addPastedText(await navigator.clipboard.readText())) return; }
+      V.toast(T.pasteHint);
+    }catch(err){ V.toast(T.pasteHint); }
+  });
+  board.addEventListener("dragover", e=>{ if(e.dataTransfer && Array.from(e.dataTransfer.types || []).some(x=>x === "Files" || x === "text/plain")){ e.preventDefault(); board.classList.add("dropping"); } });
+  board.addEventListener("dragleave", ()=>board.classList.remove("dropping"));
+  board.addEventListener("drop", async e=>{
+    e.preventDefault(); board.classList.remove("dropping");
+    const r = board.getBoundingClientRect(), at = {x:(e.clientX - r.left)/r.width, y:(e.clientY - r.top)/r.height};
+    const imgs = Array.from(e.dataTransfer.files || []).filter(f=>f.type.indexOf("image/") === 0);
+    if(imgs.length){ await addImageBlobs(imgs, at); return; }
+    addPastedText(e.dataTransfer.getData("text/plain"));
+  });
+
   /* ---------- slepen ---------- */
   let drag = null;
+  let lastTap = {id:null, t:0};
   board.addEventListener("pointerdown", e=>{
+    if(board.classList.contains("writing")){ placeWriting(e); return; }
     const el = e.target.closest(".item");
+    if(el && el.classList.contains("editing")) return;          // in de tekst klikken = cursor zetten
+    if(editId) finishEdit();
     if(!el){ selId = null; selectEl(); return; }
+    // dubbeltik op tekst = meteen bewerken
+    const now = Date.now();
+    if(lastTap.id === el.dataset.id && now - lastTap.t < 380 && isText(el.dataset.id)){ lastTap = {id:null,t:0}; e.preventDefault(); startEdit(el.dataset.id); return; }
+    lastTap = {id:el.dataset.id, t:now};
     const it = items.find(i=>i.id === el.dataset.id); if(!it) return;
     selId = it.id; selectEl();
     drag = {it, sx:e.clientX, sy:e.clientY, ox:it.x, oy:it.y, moved:false};
@@ -611,6 +751,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   /* ---------- selectiebalk ---------- */
   document.getElementById("selbar").addEventListener("click", e=>{
     const b = e.target.closest("button"); if(!b || !selId) return;
+    if(editId && b.dataset.act !== "write") finishEdit(true);
     const i = items.findIndex(x=>x.id === selId); if(i < 0) return;
     const it = items[i];
     switch(b.dataset.act){
@@ -621,12 +762,13 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
       case "front": items.splice(i,1); items.push(it); break;
       case "del": items.splice(i,1); selId = null; break;
       case "edit": openEdit(it); return;
+      case "write": startEdit(it.id); return;
       case "font": { const f = it.font || (it.type === "quote" ? "serif" : "script"); it.font = FONT_ORDER[(FONT_ORDER.indexOf(f)+1) % FONT_ORDER.length]; break; }
     }
     render(); save();
   });
   document.addEventListener("keydown", e=>{
-    if((e.key === "Delete" || e.key === "Backspace") && selId && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+    if((e.key === "Delete" || e.key === "Backspace") && selId && !editId && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable){
       items = items.filter(x=>x.id !== selId); selId = null; render(); save();
     }
   });
@@ -757,15 +899,6 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
   document.getElementById("addTitel").addEventListener("click", ()=>openOv(ov("ovTitel")));
   document.getElementById("addKleur").addEventListener("click", ()=>openOv(ov("ovKleur")));
   document.getElementById("addKnipsel").addEventListener("click", ()=>openOv(ov("ovKnipsel")));
-  function own(inputId, btnId, fn){
-    const inp = document.getElementById(inputId);
-    const go = ()=>{ const v = inp.value.trim(); if(!v) return; fn(v); inp.value = ""; closeAll(); };
-    document.getElementById(btnId).addEventListener("click", go);
-    inp.addEventListener("keydown", e=>{ if(e.key === "Enter" && inp.tagName === "INPUT"){ e.preventDefault(); go(); } });
-  }
-  own("quoteOwn","quoteOwnBtn", v=>add({type:"quote", text:v, w:.46, font:pickedFont.quote}));
-  own("woordOwn","woordOwnBtn", v=>add({type:"woord", text:v, w:.3, color:COLORS[12], font:pickedFont.woord}));
-  own("titelOwn","titelOwnBtn", v=>{ items = items.filter(i=>i.type !== "titel"); add({type:"titel", text:v, w:.6, x:.5, y:.04, rot:0}); });
 
   /* ---------- foto bewerken: bijsnijden, knippen, draaien ---------- */
   const E = {it:null, img:null, crop:null, shape:"rect", ratio:0, quarter:0, fine:0};
@@ -956,7 +1089,7 @@ html.reduced #kijk .adem{animation:none;opacity:.8}
         ctx.textAlign = "center"; ctx.textBaseline = "top";
         const text = f === "sans" ? it.text.toUpperCase() : it.text;
         const sp = f === "sans" ? fs*.22 : f === "caps" ? fs*.08 : 0;
-        const lines = it.type === "titel" ? [text] : wrapSp(ctx, text, w, sp);
+        const lines = it.type === "titel" ? [text] : text.split("\n").reduce((acc, ln)=>acc.concat(ln.trim() ? wrapSp(ctx, ln, w, sp) : [""]), []);
         const lh = fs * ({script:1.05, serif:1.2, sans:1.35, caps:1.3}[f]);
         lines.forEach((ln, i)=>spaced(ctx, ln, 0, i*lh, sp));
       }
