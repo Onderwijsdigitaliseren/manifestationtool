@@ -38,9 +38,9 @@
     VANDAAG
   </a>
   <nav class="site-nav" aria-label="Hoofdnavigatie">
-    <a href="begin.html">Begin</a>
+    <a href="tools/moodboard.html">Moodboard</a>
+    <a href="tools/kaarten.html">Kaartjes</a>
     <a href="ontdek.html">Ontdek</a>
-    <a href="boeken.html">Boeken</a>
     <a href="mijn-ruimte.html" aria-current="page">Mijn ruimte</a>
     <a class="lang-mini" href="en/mijn-ruimte.html" hreflang="en" lang="en" aria-label="Switch to English">EN</a>
     <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Rust</button>
@@ -59,6 +59,16 @@
     <a class="btn-line" href="ontdek.html">Doe een oefening</a>
     <button class="linkish" id="wisBtn">Alles wissen</button>
   </div>
+  <p class="space-board" id="boardLine" hidden><span id="boardCount"></span> <a href="tools/moodboard.html">Open je moodboard &rarr;</a></p>
+  <section class="backup" aria-labelledby="bkH">
+    <h2 id="bkH">Back-up</h2>
+    <p>Alles staat alleen in deze browser, op dit apparaat. Maak af en toe een back-up: één bestand met je ruimte &eacute;n je moodboard. Daarmee zet je alles terug op een nieuwe telefoon, of na het wissen van je browser.</p>
+    <div class="space-actions" style="margin-top:1rem">
+      <button class="btn-line" id="bkMake">Maak een back-up</button>
+      <button class="btn-line" id="bkRestore">Zet een back-up terug</button>
+    </div>
+    <input type="file" id="bkFile" accept="application/json,.json" class="file-in" tabindex="-1" aria-hidden="true">
+  </section>
 </main>
 <footer class="site-footer">
   <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
@@ -105,6 +115,37 @@
     V.store.set("items", []);
     render();
     V.toast("Je ruimte is weer leeg.");
+  });
+
+  /* moodboard-regel en back-up */
+  const T = {board1:'Je moodboard heeft {n} onderdelen.', ok:'Back-up gemaakt. Bewaar het bestand op een veilige plek.', back:'Back-up teruggezet.', bad:'Dit bestand is geen back-up van Vandaag.', file:'vandaag-backup'};
+  function boardLine(){
+    V.board.get().then(function(b){
+      const n = b && Array.isArray(b.items) ? b.items.length : 0;
+      document.getElementById("boardLine").hidden = !n;
+      document.getElementById("boardCount").textContent = T.board1.replace("{n}", n);
+    });
+  }
+  boardLine();
+  document.getElementById("bkMake").addEventListener("click", async function(){
+    const data = await V.exportAll();
+    const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = T.file + "-" + new Date().toISOString().slice(0,10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    V.toast(T.ok);
+  });
+  const bkFile = document.getElementById("bkFile");
+  document.getElementById("bkRestore").addEventListener("click", function(){ bkFile.click(); });
+  bkFile.addEventListener("change", async function(){
+    const f = bkFile.files && bkFile.files[0]; bkFile.value = "";
+    if(!f) return;
+    try{
+      const data = JSON.parse(await f.text());
+      await V.importAll(data);
+      render(); boardLine(); V.toast(T.back);
+    }catch(e){ V.toast(T.bad); }
   });
   render();
 })();

@@ -23,6 +23,7 @@
   --ease:cubic-bezier(.33,.8,.35,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 html.reduced{scroll-behavior:auto}
 body{
@@ -140,6 +141,7 @@ html.reduced .btn-gold{transition:none}
 .page-head h1{font-size:clamp(2.2rem,6.5vh,3.4rem);margin:.5rem 0 .6rem;
   background:linear-gradient(168deg,#6A2E48 8%,#B24A2C 55%,#B9731F 95%);
   -webkit-background-clip:text;background-clip:text;color:transparent;}
+.page-head h1{overflow-wrap:break-word}
 .page-head p{color:var(--text)}
 .rise > *{opacity:0;transform:translateY(18px);animation:rise 1s var(--ease) forwards}
 .rise > :nth-child(2){animation-delay:.15s}
@@ -162,6 +164,24 @@ html.reduced .rise > *{animation:none;opacity:1;transform:none}
 .tool-cue{text-align:center;color:var(--text-soft);font-size:.95rem}
 .tool-cue a{color:var(--gold);font-weight:500;text-decoration:none;border-bottom:1px solid rgba(154,90,34,.5)}
 .tool-cue a:hover{border-bottom-color:var(--gold)}
+
+/* ---------- home: één hoofdknop, het hart, en verder ---------- */
+.home-cta{margin-top:clamp(1.2rem,3vh,1.8rem);display:grid;justify-items:center;gap:.55rem}
+.btn-big{font-size:1.12rem;padding:1.05rem 2.6rem}
+.home-sub{font-size:.9rem;color:var(--text-soft)}
+.hart{max-width:46rem;width:100%;margin:0 auto}
+.hart .cards{grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.hart .card h3{font-size:1.6rem}
+.home-private{display:flex;align-items:center;justify-content:center;gap:.45rem;margin-top:1rem;font-size:.88rem;color:var(--text-soft)}
+.home-private svg{color:var(--gold);flex:none}
+.verder{max-width:64rem;margin:0 auto;text-align:center;padding-top:.6rem}
+.verder > .eyebrow{display:block;margin-bottom:1rem}
+.verder .verder-eye{margin:2rem 0 .8rem}
+.verder-links{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.verder-links a{border:1px solid var(--line);background:rgba(255,250,243,.7);backdrop-filter:blur(8px);border-radius:999px;padding:.5rem 1rem;
+  font-size:.9rem;color:var(--deep);text-decoration:none;transition:border-color .3s,box-shadow .3s}
+.verder-links a:hover,.verder-links a:focus-visible{border-color:var(--gold-strong);box-shadow:0 0 20px -6px rgba(200,132,47,.6)}
+.verder-links a[href*="engel"]{color:var(--violet)}
 
 /* ---------- de drie poorten (hoofdingangen) ---------- */
 .portals{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1rem,2.5vw,1.8rem);max-width:58rem;margin:0 auto}
@@ -224,6 +244,45 @@ html.reduced .star-link .halo{animation:none}
 .ruimtes > .eyebrow{display:block;margin-bottom:1rem}
 .ruimtes .cards{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));text-align:left}
 .ruimtes .card h3{font-size:1.5rem}
+
+/* ---------- kaartjes trekken (gedeeld: Kaartjes-pagina en moodboard) ---------- */
+/* inspiratiebronnen, kaartjes, lettertypen */
+.panel-wide{width:min(34rem,100%)}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}
+.tabs .chip[aria-selected="true"]{border-color:var(--gold-strong);background:var(--gold-light);font-weight:600}
+.fontrow{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+.fontrow .chip{font-size:1rem;padding:.3rem .8rem}
+.fontrow .chip[data-font="script"]{font-family:var(--font-script);font-size:1.3rem;padding:.1rem .8rem}
+.fontrow .chip[data-font="serif"]{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.1rem}
+.fontrow .chip[data-font="sans"]{font-family:var(--font-body);letter-spacing:.2em;text-transform:uppercase;font-size:.78rem}
+.fontrow .chip[data-font="caps"]{font-family:"Cinzel",var(--font-display);letter-spacing:.08em;font-size:.86rem}
+.groep{font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--violet);font-weight:600;margin:1.2rem 0 .3rem}
+.pick .opt.m{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.05rem}
+.pick .opt.src{font-family:var(--font-display);font-weight:600;font-size:1rem;text-align:left;width:100%;display:flex;gap:.6rem;align-items:baseline}
+.pick .opt.src small{font-family:var(--font-body);font-weight:600;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--violet);flex:none}
+.deck{display:grid;place-items:center;padding:.6rem 0 .2rem;perspective:900px}
+.kaart{width:min(16rem,80vw);aspect-ratio:3/4.3;border-radius:14px;display:grid;place-items:center;text-align:center;padding:1.2rem}
+.kaart.rug{border:1px solid rgba(154,90,34,.5);background:
+  radial-gradient(circle at 50% 50%, rgba(255,255,255,.35), transparent 60%),
+  repeating-linear-gradient(45deg, rgba(200,132,47,.14) 0 6px, transparent 6px 14px),
+  linear-gradient(160deg,#F6CF8E,#E8B070);cursor:pointer;color:var(--deep);box-shadow:0 18px 36px -22px rgba(120,60,40,.7);transition:transform .4s var(--ease)}
+.kaart.rug:hover{transform:translateY(-4px) rotate(-1deg)}
+.kaart.rug span{font-family:"Cinzel",var(--font-display);letter-spacing:.14em;font-size:.82rem;border:1px solid rgba(154,90,34,.5);border-radius:10px;padding:.9rem 1rem;background:rgba(255,250,243,.55)}
+.kaart.voor{background:linear-gradient(165deg,#FFFCF6,#FBF0E0);border:1px solid var(--line);outline:1px solid rgba(200,132,47,.5);outline-offset:-8px;
+  box-shadow:0 18px 36px -22px rgba(120,60,40,.7);align-content:center;gap:.6rem;animation:flip .6s var(--ease)}
+@keyframes flip{from{transform:rotateY(90deg);opacity:0}to{transform:none;opacity:1}}
+html.reduced .kaart.voor{animation:none}
+.kaart.voor b{font-family:"Cinzel",var(--font-display);letter-spacing:.16em;font-size:.78rem;color:var(--deckc,var(--gold));font-weight:600}
+.kaart.voor small{display:block;font-family:var(--font-body);font-size:.78rem;color:var(--text-soft);margin-top:.2rem}
+.kaart.voor small:empty{display:none}
+.kaart.rug{background-image:radial-gradient(circle at 50% 50%, rgba(255,255,255,.35), transparent 60%),repeating-linear-gradient(45deg, rgba(200,132,47,.14) 0 6px, transparent 6px 14px),linear-gradient(160deg,var(--deckl,#F6CF8E),var(--deckd,#E8B070))}
+.tabs.decks{margin-bottom:.3rem}
+.deck-sep{flex-basis:100%;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--violet);font-weight:600;margin-top:.3rem}
+.tabs.decks .chip{padding-left:1.4rem;position:relative}
+.tabs.decks .chip::before{content:"";position:absolute;left:.55rem;top:50%;width:.5rem;height:.5rem;border-radius:50%;background:var(--deckc);transform:translateY(-50%)}
+.kaart.voor p{margin:0;font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.25rem;line-height:1.25;color:var(--deep)}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.35rem .75rem;font-size:.84rem;color:var(--deep)}
+.chip[aria-pressed="true"]{border-color:var(--gold-strong);background:var(--gold-light);font-weight:600}
 
 /* ---------- kaarten & lijsten ---------- */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1.1rem}
@@ -382,6 +441,12 @@ html.reduced .opt{animation:none;transition:border-color .3s}
 .space-item time{display:block;font-size:.76rem;color:var(--text-soft);margin-top:.25rem}
 .space-note{font-size:.78rem;color:var(--text-soft);margin-top:1.1rem}
 .space-actions{display:flex;gap:.7rem;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:1.8rem}
+.space-board{text-align:center;margin-top:1.4rem;color:var(--text-soft);font-size:.95rem}
+.space-board a{color:var(--gold);font-weight:500}
+.backup{margin-top:2.4rem;border:1px solid var(--line);border-radius:22px;background:var(--glass);backdrop-filter:blur(8px);padding:1.4rem 1.5rem;text-align:center;box-shadow:var(--shadow)}
+.backup h2{font-size:1.5rem;margin-bottom:.4rem}
+.backup p{color:var(--text-soft);font-size:.95rem;max-width:34em;margin:0 auto}
+.file-in{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 .linkish.armed{color:#A23A2E;font-weight:600}
 .toast{
   position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,180%);

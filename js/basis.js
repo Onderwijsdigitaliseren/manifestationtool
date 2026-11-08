@@ -148,6 +148,64 @@ window.V = (function(){
     document.addEventListener("DOMContentLoaded", init);
   } else { init(); }
 
-  return { store, saveItem, getItems, toast, openOverlay, closeOverlay, dust,
+  /* ---------- moodboard-opslag (IndexedDB), gedeeld met kaartjes en back-up ---------- */
+  const board = (function(){
+    let db = null;
+    function open(){
+      return new Promise(res=>{
+        if(db) return res(db);
+        try{
+          const r = indexedDB.open("vandaag-moodboard", 1);
+          r.onupgradeneeded = ()=>{ r.result.createObjectStore("kv"); };
+          r.onsuccess = ()=>{ db = r.result; res(db); };
+          r.onerror = ()=>res(null);
+        }catch(e){ res(null); }
+      });
+    }
+    return {
+      async get(){
+        const d = await open(); if(!d) return null;
+        return new Promise(res=>{
+          try{ const q = d.transaction("kv","readonly").objectStore("kv").get("board"); q.onsuccess = ()=>res(q.result || null); q.onerror = ()=>res(null); }
+          catch(e){ res(null); }
+        });
+      },
+      async set(v){
+        const d = await open(); if(!d) return false;
+        return new Promise(res=>{
+          try{ const tx = d.transaction("kv","readwrite"); tx.objectStore("kv").put(v,"board"); tx.oncomplete = ()=>res(true); tx.onerror = ()=>res(false); }
+          catch(e){ res(false); }
+        });
+      },
+      async add(item){
+        const cur = (await this.get()) || {v:1, items:[]};
+        if(!Array.isArray(cur.items)) cur.items = [];
+        item.id = Math.random().toString(36).slice(2,9);
+        if(item.x == null){ item.x = .3 + Math.random()*.4; item.y = .2 + Math.random()*.5; }
+        if(item.rot == null) item.rot = Math.round((Math.random()-.5)*8);
+        cur.items.push(item);
+        return this.set(cur);
+      }
+    };
+  })();
+
+  /* ---------- back-up: alles van deze site in één bestand ---------- */
+  async function exportAll(){
+    const local = {};
+    try{
+      for(let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i);
+        if(k && k.indexOf("vandaag:") === 0) local[k] = localStorage.getItem(k);
+      }
+    }catch(e){}
+    return {app:"vandaag", v:1, made:new Date().toISOString(), local, board: await board.get()};
+  }
+  async function importAll(data){
+    if(!data || data.app !== "vandaag") throw new Error("geen back-up");
+    try{ Object.keys(data.local || {}).forEach(k=>{ if(k.indexOf("vandaag:") === 0) localStorage.setItem(k, data.local[k]); }); }catch(e){}
+    if(data.board && Array.isArray(data.board.items)) await board.set(data.board);
+  }
+
+  return { store, saveItem, getItems, toast, openOverlay, closeOverlay, dust, board, exportAll, importAll,
     isCalm(){ return calm; } };
 })();
