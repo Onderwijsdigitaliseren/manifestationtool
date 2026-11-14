@@ -1,5 +1,7 @@
 # De weg naar morgen – beelden
 
+**Stand 14 november 2026:** alle twaalf beelden zijn aangeleverd door Kellie en gekoppeld (1600×900, webp, kwaliteit 80).
+
 Alle beelden zijn optioneel: zonder beeld toont een moment alleen tekst, en de wintertuin op het overzicht wordt door de code getekend.
 
 **Toevoegen:** zet het bestand als `<naam>.webp` in deze map (liggend, 16:9, ± 1600 px breed) en zet de naam in de lijst `BEELDEN` in `data/wandeling.js`, bijvoorbeeld `const BEELDEN = ["pension","pad"];`.

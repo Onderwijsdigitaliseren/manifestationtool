@@ -430,7 +430,7 @@ window.WANDEL = (function(){
 
   /* Beelden die in assets/wandeling/ staan (zonder .webp). Zolang een naam hier niet staat,
      toont het moment alleen tekst. Zie assets/wandeling/ARTWORK.md. */
-  const BEELDEN = [];
+  const BEELDEN = ["brug","eik","kast","kruispunt","pad","pension","raam","tafel","water","wintertuin-begin","wintertuin-eind","wintertuin-midden"];
 
   const T = {
     belofte:"Wandel met aandacht naar een leven dat meer van jou voelt.",
