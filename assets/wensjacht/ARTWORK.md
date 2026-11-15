@@ -1,5 +1,7 @@
 # De Wensjacht – beelden
 
+**Stand 15 november 2026:** alle veertien beelden aangeleverd door Kellie ("landelijke luxe") en gekoppeld. Webp opnieuw opgeslagen op kwaliteit 78 (samen ± 2,1 MB). `og-wensjacht.jpg` is haar beeld met de titel erop gezet (lettertypen van de site).
+
 Alle beelden zijn optioneel: zonder beeld toont de wandeling gekleurde pictogrammen en een getekende bordachtergrond.
 
 **Stijl:** zonnig, vrolijk en een tikje glamoureus. Warm en realistisch, gouden uur, de kleuren van de site (goud, koraal, crème). Mag groot en luxe ogen: dit is de wandeling van "alles kan". Geen leesbare tekst in beeld. Mensen alleen van achteren of zonder herkenbaar gezicht.

@@ -69,6 +69,18 @@
   const datum = iso => { try{ return new Date(iso).toLocaleDateString("nl-NL", {day:"numeric", month:"long", year:"numeric"}); }catch(e){ return ""; } };
   const icoon = (w, cls) => h("span", {class:"j-ic " + (cls || ""), style:"--k:" + w.kleur, "aria-hidden":"true",
     html:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="' + w.ic + '"/></svg>'});
+  const IMG = "../assets/wensjacht/";
+  /* beeld van een wens; lukt het laden niet, dan het gekleurde pictogram */
+  function wensBeeld(w, cls){
+    const im = h("img", {class:"j-wb " + (cls || ""), src:IMG + "wens-" + w.id + ".webp", alt:"", loading:"lazy", style:"--k:" + w.kleur});
+    im.addEventListener("error", ()=>{ im.replaceWith(icoon(w, cls)); });
+    return im;
+  }
+  function sfeer(naam, cls){
+    const im = h("img", {class:"j-sfeer " + (cls || ""), src:IMG + naam + ".webp", alt:"", loading:"lazy"});
+    im.addEventListener("error", ()=>im.remove());
+    return im;
+  }
   function zeker(btn, vraag, doe){
     if(btn.classList.contains("armed")){ doe(); return; }
     const oud = btn.textContent; btn.textContent = vraag; btn.classList.add("armed");
@@ -162,6 +174,7 @@
         h("p", {text:D.T.pitch})
       ]),
       h("div", {class:"j-thuis"}, [
+        sfeer("hero", "hero"),
         J ? h("div", {class:"j-kaartje verder"}, [
           h("p", {class:"eyebrow", text:"Je bent nog op jacht"}),
           h("p", {class:"j-groot", text:J.fase === "zet" ? "Alle wensen binnen. Nog één zet." : "Wens " + (J.i + 1) + " van " + J.n + ": " + WENS[J.w[J.i].c].naam}),
@@ -201,7 +214,7 @@
         if(i >= 0) gekozen.splice(i, 1);
         else { if(gekozen.length >= n){ V.toast("Je mand zit vol. Haal er eerst één uit, of kies een grotere jacht."); return; } gekozen.push(w.id); }
         ververs();
-      }}, [icoon(w), h("b", {text:w.naam}), h("small", {text:w.kort})]));
+      }}, [wensBeeld(w, "kaart"), h("b", {text:w.naam}), h("small", {text:w.kort})]));
     });
     scherm(true, [
       h("div", {class:"j-balk"}, [h("button", {class:"linkish", text:"← Terug", onclick:thuis})]),
@@ -246,7 +259,7 @@
   function wegBlok(J){
     const x = J.w[J.i], w = WENS[x.c];
     return h("div", {class:"j-weg"}, [
-      h("div", {class:"j-wegkop"}, [icoon(w), h("div", null, [h("small", {text:"Op weg naar"}), h("b", {text:w.naam})])]),
+      h("div", {class:"j-wegkop"}, [wensBeeld(w, "rond"), h("div", null, [h("small", {text:"Op weg naar"}), h("b", {text:w.naam})])]),
       h("p", {class:"j-opdracht", text:w.weg[x.weg % w.weg.length]})
     ]);
   }
@@ -261,6 +274,7 @@
       h("article", {class:"j-blad"}, [
         h("p", {class:"eyebrow", text:"Onderweg"}),
         h("h1", {text:"Op naar de volgende"}),
+        sfeer("onderweg"),
         h("p", {text:J.waar === "thuis" ? D.T.thuisLoop : D.T.vrijLoop}),
         wegBlok(J),
         h("div", {class:"j-knoppen"}, [
@@ -430,6 +444,7 @@
     scherm(true, [
       balk(J),
       h("article", {class:"j-blad punt", style:"--k:" + w.kleur}, [
+        wensBeeld(w, "banner"),
         h("div", {class:"j-puntkop"}, [icoon(w, "xl"), h("div", null, [h("p", {class:"eyebrow", text:"Wens " + (J.i + 1) + " van " + J.n}), h("h1", {text:w.naam})])]),
         h("p", {class:"j-intro", text:w.intro}),
         h("section", {class:"j-stap"}, [
@@ -508,6 +523,8 @@
     const Wd = 1080, Ht = 1350, cv = document.createElement("canvas"); cv.width = Wd; cv.height = Ht; const c = cv.getContext("2d");
     const DISP = '"Cormorant", Georgia, serif', BODY = '"Jost", "Segoe UI", system-ui, sans-serif';
     const g = c.createLinearGradient(0, 0, 0, Ht); g.addColorStop(0, "#FBE3C4"); g.addColorStop(.45, "#FFF3E0"); g.addColorStop(1, "#F8D9C0"); c.fillStyle = g; c.fillRect(0, 0, Wd, Ht);
+    const ach = await laadBeeld(IMG + "bord-achtergrond.webp");
+    if(ach){ const s0 = Math.max(Wd / ach.width, Ht / ach.height); c.drawImage(ach, (Wd - ach.width * s0) / 2, (Ht - ach.height * s0) / 2, ach.width * s0, ach.height * s0); }
     const zon = c.createRadialGradient(880, 120, 10, 880, 120, 420); zon.addColorStop(0, "rgba(246,207,142,.95)"); zon.addColorStop(1, "rgba(246,207,142,0)"); c.fillStyle = zon; c.fillRect(0, 0, Wd, 620);
     c.textAlign = "center"; c.fillStyle = "#9A5A22"; c.font = "600 24px " + BODY;
     const kop = ("De Wensjacht · " + datum(a.datum)).toUpperCase(); try{ c.letterSpacing = "5px"; }catch(e){}
@@ -517,7 +534,7 @@
     const n = a.w.length, cols = n <= 4 ? 2 : 3, cellen = n === 8 ? 9 : n, rijen = Math.ceil(cellen / cols);
     const X0 = 56, Y0 = 232, AW = Wd - 2 * X0, AH = 1150 - Y0, gap = 26;
     const tw = (AW - gap * (cols - 1)) / cols, th = (AH - gap * (rijen - 1)) / rijen;
-    const fotos = await Promise.all(a.w.map((x, i) => x.foto === "f" ? FOTO.get(a.id + ":" + i).then(laadBeeld) : null));
+    const fotos = await Promise.all(a.w.map((x, i) => x.foto === "f" ? FOTO.get(a.id + ":" + i).then(laadBeeld) : laadBeeld(IMG + "wens-" + x.c + ".webp").then(im => im ? Object.assign(im, {wens:true}) : null)));
     for(let i = 0; i < cellen; i++){
       const cx = X0 + (i % cols) * (tw + gap) + tw / 2, cy = Y0 + Math.floor(i / cols) * (th + gap) + th / 2;
       const rot = ((i * 37) % 7 - 3) * .009;

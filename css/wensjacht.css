@@ -115,3 +115,14 @@ html.reduced .j-wens{transition:none;transform:none!important}
 /* bord */
 .j-bordwrap{max-width:34rem;margin:0 auto;display:grid;gap:1rem}
 .j-bord{display:block;width:100%;aspect-ratio:4/5;border-radius:14px;box-shadow:0 30px 50px -30px rgba(120,60,40,.9);background:#F8E3CB}
+
+/* beelden */
+.j-sfeer{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:22px;box-shadow:var(--shadow);background:#F3E2CC}
+.j-sfeer.hero{border-radius:26px}
+.j-wb{display:block;flex:none;object-fit:cover;background:color-mix(in srgb,var(--k) 25%,#F3E2CC)}
+.j-wb.kaart{width:100%;aspect-ratio:4/3;border-radius:12px;margin-bottom:.15rem}
+.j-wb.rond{width:2.8rem;height:2.8rem;border-radius:50%;box-shadow:0 0 0 3px #FFF9F0,0 0 0 5px var(--k)}
+.j-wb.banner{width:100%;aspect-ratio:16/9;border-radius:22px;box-shadow:var(--shadow);margin-bottom:-2.6rem}
+.j-blad.punt .j-puntkop{position:relative;padding-left:.8rem}
+.j-blad.punt .j-ic.xl{box-shadow:0 0 0 5px #FFF9F0,0 8px 18px -8px rgba(0,0,0,.4)}
+.j-wens .j-ic{margin-bottom:.15rem}
