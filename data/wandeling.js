@@ -405,7 +405,7 @@ window.WANDEL = (function(){
 
   /* ---------- de wintertuin per wandeling ---------- */
   const TUIN = [
-    "De wintertuin wacht nog: stoffige ramen en een lege kaart op het prikbord.",
+    "Het pension wacht op je. Achter het huis staat een wintertuin, nog stoffig en vol spullen.",
     "Aankomen. Stoffige ramen, en op het prikbord hangt nu een kaart.",
     "Verbeelden. Eén raam is schoongemaakt; er valt ochtendlicht naar binnen.",
     "Onderzoeken. Lou heeft haar bord afgemaakt. De laatste letter staat een beetje scheef.",

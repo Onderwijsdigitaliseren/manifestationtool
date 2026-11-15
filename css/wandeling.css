@@ -43,7 +43,7 @@ html.reduced .btn-groen{transition:none}
 .w-links .w-knoppen{justify-content:flex-start}
 .w-verhaal{font-family:var(--font-display);font-size:1.2rem;line-height:1.4;color:var(--deep);margin-top:1rem}
 .tuin{margin:0}
-.tuin-svg{display:block;width:100%;height:auto;border-radius:16px;box-shadow:var(--shadow)}
+.tuin-beeld{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:16px;box-shadow:var(--shadow);background:#E3DCC6}
 .tuin figcaption{font-size:.9rem;color:var(--text-soft);margin-top:.6rem}
 .tuin-kaartjes{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
 .tuin-kaartjes span{

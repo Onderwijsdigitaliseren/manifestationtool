@@ -113,39 +113,12 @@
   /* ============================================================
      De wintertuin (getekend; verandert per gevolgde wandeling)
      ============================================================ */
-  function tuin(s){
-    const schoon = i => s >= 7 || (s >= 6 && i !== 6) || (s >= 4 && i <= 2) || (s >= 2 && i === 1);
-    let ruit = "";
-    for(let i = 0; i < 7; i++){
-      if(i === 3) continue;
-      const x = 40 + i * 40;
-      ruit += '<rect x="'+x+'" y="78" width="40" height="92" fill="'+(s >= 7 ? "#F7E3B4" : schoon(i) ? "#DCEBDD" : "#B4AD98")+'" opacity="'+(schoon(i) ? .55 : .93)+'"/>';
-      if(schoon(i) && s < 7) ruit += '<path d="M'+(x+6)+' 84 l10 0 l-14 40z" fill="#fff" opacity=".5"/>';
-    }
-    const binnen =
-      (s < 4 ? '<rect x="52" y="140" width="26" height="30" fill="#8C7A5E"/><rect x="60" y="124" width="22" height="16" fill="#9C8A6B"/><rect x="94" y="146" width="24" height="24" fill="#857256"/>' : "") +
-      (s < 7 ? '<rect x="250" y="138" width="30" height="32" fill="#8C7A5E"/><rect x="284" y="150" width="24" height="20" fill="#9C8A6B"/>' : "") +
-      (s >= 4 ? '<g stroke="#6B4A2E" stroke-width="3" stroke-linecap="round" fill="none"><path d="M92 170 v-42 M92 150 h18 v20 M92 128 h4"/></g>' : "") +
-      (s >= 5 ? '<g><rect x="122" y="144" width="36" height="4" rx="1" fill="#7A5A3C"/><path d="M126 148 v22 M154 148 v22" stroke="#7A5A3C" stroke-width="3"/><rect x="133" y="138" width="14" height="6" fill="#FBF6EA" transform="rotate(-6 140 141)"/></g>' : "") +
-      (s >= 6 ? '<g><path d="M60 170 v-20 M60 152 q-10 -8 -6 -18 M60 156 q10 -8 8 -20 M60 160 q-12 -2 -14 -10" stroke="#4E7D5E" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="53" y="162" width="14" height="8" fill="#B5673F"/>' +
-                 '<path d="M226 170 v-26 M226 148 q-9 -8 -5 -17 M226 152 q9 -7 9 -18" stroke="#4E7D5E" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="219" y="162" width="14" height="8" fill="#B5673F"/>' +
-                 '<g stroke="#6B4A2E" stroke-width="3" stroke-linecap="round" fill="none"><path d="M188 170 v-20 h-18 v20 M188 150 v-22"/></g>' +
-                 '<path d="M148 138 q-2 -10 3 -14 M150 138 q4 -6 8 -6" stroke="#4E7D5E" stroke-width="2" fill="none" stroke-linecap="round"/></g>' : "");
-    const deur = s >= 7
-      ? '<rect x="160" y="96" width="40" height="74" fill="#F9D98F"/><path d="M200 96 l22 8 v62 l-22 4z" fill="#3F6B52" stroke="#2C4E3B" stroke-width="1.5"/><path d="M150 190 L160 170 H200 L226 190Z" fill="#F9D98F" opacity=".55"/>'
-      : '<rect x="160" y="96" width="40" height="74" fill="#3F6B52" stroke="#2C4E3B" stroke-width="1.5"/><rect x="166" y="102" width="28" height="30" fill="'+(s >= 2 ? "#CFE0D2" : "#A9A790")+'" opacity=".8"/><circle cx="193" cy="140" r="2" fill="#D9B45A"/>';
-    return '<svg class="tuin-svg" viewBox="0 0 360 214" role="img" aria-label=t("De wintertuin achter het pension")>' +
-      '<rect width="360" height="214" rx="16" fill="'+(s >= 7 ? "#F8EBCB" : "#EAE3CF")+'"/>' +
-      '<circle cx="300" cy="44" r="20" fill="#F6CF8E" opacity="'+(.25 + s * .1)+'"/>' +
-      '<path d="M0 190 H360 V198 a16 16 0 0 1 -16 16 H16 a16 16 0 0 1 -16 -16Z" fill="#C9C39D"/>' +
-      '<rect x="40" y="78" width="280" height="92" fill="'+(s >= 7 ? "#E3C27E" : "#5D5646")+'"/>' + binnen + ruit +
-      '<path d="M40 78 L180 26 L320 78Z" fill="'+(s >= 7 ? "#F3DDA8" : s >= 2 ? "#CBD6C4" : "#B8B19C")+'" opacity=".9"/>' +
-      '<g stroke="#4A5A4C" stroke-width="2.5" fill="none"><path d="M40 78 L180 26 L320 78 M40 78 V170 M320 78 V170 M80 78 V170 M120 78 V170 M160 78 V170 M200 78 V170 M240 78 V170 M280 78 V170 M40 78 H320 M110 52 V78 M180 26 V78 M250 52 V78"/></g>' +
-      '<rect x="36" y="170" width="288" height="20" fill="#A8704F"/><path d="M36 180 H324" stroke="#8E5B3F" stroke-width="1"/>' + deur +
-      '<text x="180" y="91" text-anchor="middle" font-family="Jost,system-ui,sans-serif" font-weight="600" font-size="'+(t("MORGEN").length > 6 ? 8 : 9.5)+'" letter-spacing="'+(t("MORGEN").length > 6 ? 2 : 3.2)+'" fill="#B8923A">'+t("MORGEN")+'</text>' +
-      '<g><path d="M22 190 v-40" stroke="#7A5A3C" stroke-width="3"/><rect x="10" y="132" width="24" height="20" rx="2" fill="#9A7650"/><rect x="14" y="136" width="16" height="12" fill="'+(s >= 1 ? "#FBF6EA" : "none")+'" stroke="#FBF6EA" stroke-width="1" stroke-dasharray="'+(s >= 1 ? "0" : "2 2")+'"/></g>' +
-      (s >= 3 ? '<g transform="rotate(-7 338 172)"><rect x="324" y="160" width="30" height="16" rx="2" fill="#9A7650"/><text x="327" y="172" font-family="Jost,system-ui,sans-serif" font-weight="600" font-size="8" fill="#FBF6EA">OPE<tspan dy="1.2" rotate="9">N</tspan></text></g>' : "") +
-      '</svg>';
+  /* De wintertuin: jouw beelden, per gelopen wandeling een stap verder.
+     0 = nog niet begonnen (het pension), 1–3 begin, 4–6 halverwege, 7 einde. */
+  function tuinBeeld(s){
+    const naam = s === 0 ? "pension" : s <= 3 ? "wintertuin-begin" : s <= 6 ? "wintertuin-midden" : "wintertuin-eind";
+    const alt = s === 0 ? t("Het pension met de groene deur") : t("De wintertuin achter het pension");
+    return h("img", {class:"tuin-beeld", src:(D.PAD || "../assets/wandeling/") + naam + ".webp", alt:alt, width:"1600", height:"900"});
   }
   function tuinBlok(s, metWoorden){
     const A = reis().A, kaartjes = [];
@@ -154,7 +127,7 @@
       (A.richtingwoorden || A.gevoelswoorden || []).forEach(w => kaartjes.push(w));
     }
     return h("figure", {class:"tuin"}, [
-      h("div", {html:tuin(s)}),
+      tuinBeeld(s),
       kaartjes.length ? h("div", {class:"tuin-kaartjes", "aria-label":t("Jouw woorden op de kaarten")}, kaartjes.map(k => h("span", {text:k}))) : null,
       h("figcaption", {text:D.TUIN[s]})
     ]);

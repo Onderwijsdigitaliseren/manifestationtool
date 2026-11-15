@@ -397,7 +397,7 @@ window.WANDEL = (function(){
 
   /* ---------- the winter garden per walk ---------- */
   const TUIN = [
-    "The winter garden is still waiting: dusty windows and an empty card on the noticeboard.",
+    "The guesthouse is waiting for you. Behind it stands a winter garden, still dusty and full of things.",
     "Arriving. Dusty windows, and now there is a card on the noticeboard.",
     "Imagining. One window has been cleaned; morning light falls inside.",
     "Exploring. Lou has finished her sign. The last letter is a little crooked.",
@@ -447,7 +447,7 @@ window.WANDEL = (function(){
   /* ---------- fixed texts of the engine (Dutch → English) ---------- */
   const UI = {
     "De wintertuin achter het pension":"The winter garden behind the guesthouse",
-    "MORGEN":"TOMORROW",
+    "Het pension met de groene deur":"The guesthouse with the green door",
     "Jouw woorden op de kaarten":"Your words on the cards",
     "Verder bij ":"Continue at ",
     "Begin wandeling ":"Begin walk ",
