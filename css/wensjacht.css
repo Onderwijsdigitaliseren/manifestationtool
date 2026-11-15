@@ -72,9 +72,10 @@ html.reduced .j-wens{transition:none;transform:none!important}
 /* kaart */
 .j-map{position:relative;flex:1;min-height:12rem;background:#F6EBD7}
 #jMap{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-#zoom{position:absolute;right:.6rem;top:.6rem;display:flex;flex-direction:column;gap:.35rem;z-index:2}
+#zoom{position:absolute;right:.6rem;top:.6rem;display:flex;flex-direction:column;gap:.35rem;align-items:flex-end;z-index:2}
 #zoom button{min-width:2.6rem;height:2.6rem;padding:0 .6rem;background:rgba(255,249,240,.95);border:1px solid var(--line);border-radius:12px;font-size:1.05rem;color:var(--deep);box-shadow:0 6px 12px -8px rgba(120,60,40,.6)}
-#zoom #zPlan{font-size:.78rem;font-weight:600}
+#zoom #zPlan,#zoom #zMove{font-size:.78rem;font-weight:600}
+#zoom #zMove[aria-pressed="true"]{background:var(--deep);color:#FFF9F0}
 #jInfo{position:absolute;left:.6rem;bottom:.6rem;max-width:calc(100% - 1.2rem);background:rgba(255,249,240,.95);border:1px solid var(--line);border-radius:999px;padding:.3rem .8rem;font-size:.86rem;font-weight:600;color:var(--deep);z-index:2}
 .j-paneel{flex:none;background:var(--paper);border-top:1px solid var(--line);padding:.8rem .9rem calc(.9rem + env(safe-area-inset-bottom));box-shadow:0 -14px 26px -22px rgba(120,60,40,.7)}
 .j-paneel .j-knoppen{margin-top:.7rem}

@@ -1,7 +1,7 @@
 /* Kaartlaag voor de wandelingen met plattegrond (De Wensjacht).
-   tiles.js, plan.js en walk.js zijn ongewijzigd overgenomen uit de wandelmotor van Enigma Mystery
+   tiles.js, plan.js, move.js en walk.js zijn ongewijzigd overgenomen uit de wandelmotor van Enigma Mystery
    (repo test, wandel/shared/). Dit bestand vervangt daar platform.js: de kaartlaag heeft alleen MW.LS nodig.
-   Laadvolgorde: mw.js → tiles.js → plan.js → walk.js. Bijwerken = de drie bestanden opnieuw kopiëren. */
+   Laadvolgorde: mw.js → tiles.js → plan.js → move.js → walk.js. Bijwerken = de vier bestanden opnieuw kopiëren. */
 "use strict";
 window.MW = window.MW || {};
 window.MW.LS = {

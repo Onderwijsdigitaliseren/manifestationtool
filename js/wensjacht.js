@@ -354,6 +354,8 @@
       if(!w.pts){ w.pts = maakPunten(sx, sy, w, J.n); save(); }
       if(res.later) res.later.then(ws => { if(ws && ws.length) WAYS = ws; }).catch(()=>{});
       map = Wk.createMap(cv, {player:()=>P, ways:()=>WAYS, R:()=>w.R, items:items, theme:THEMA,
+        move:{points:()=>J.world.pts, can:p=>J.world.pts.indexOf(p) >= J.i, target:volgend,
+          done:(p, info)=>{ p.name = info.name || ""; save(); map.V.auto = true; map.follow(); tik(); }},
         onTap:(hit, pos)=>{ if(TEST){ P.x = pos.x; P.y = pos.y; w.px = P.x; w.py = P.y; save(); tik(); } else { map.V.auto = true; map.follow(); } }});
       map.V.auto = true;
       if(!lus){ lus = true; requestAnimationFrame(function loop(t){
