@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wandelen — twee wandelingen om te manifesteren · Manifest</title>
+<meta name="description" content="Twee wandelingen om je wensen mee te nemen: De weg naar morgen, een rustige reis in zeven wandelingen, en De Wensjacht, een speurtocht voor je visiebord.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/stijl.css">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="canonical" href="https://www.manifestationtool.nl/wandelen.html">
+<meta name="theme-color" content="#F5C7B0">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Manifest">
+<meta property="og:title" content="Wandelen — twee wandelingen om te manifesteren">
+<meta property="og:description" content="Een rustige reis naar het huis met de groene deur, of een vrolijke jacht op je wensen.">
+<meta property="og:url" content="https://www.manifestationtool.nl/wandelen.html">
+<meta property="og:image" content="https://www.manifestationtool.nl/assets/og-nl.png">
+<meta property="og:locale" content="nl_NL">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+<div class="starsky" aria-hidden="true"><i></i><i></i></div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="wordmark" href="index.html" aria-label="Manifest">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M6.5 18 a6.5 6.5 0 0 1 13 0" fill="#F6CF8E" stroke="#9A5A22" stroke-width="1.4"/>
+      <path d="M2.5 18 h21 M13 4.5 v3 M4.6 9.2 l2.1 2.1 M21.4 9.2 l-2.1 2.1 M7 21.5 h12" stroke="#9A5A22" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    Manifest
+  </a>
+  <nav class="site-nav" aria-label="Hoofdnavigatie">
+    <a href="tools/moodboard.html">Moodboard</a>
+    <a href="tools/kaarten.html">Kaartjes</a>
+    <a href="wandelen.html" aria-current="page">Ontdek</a>
+    <a href="wandelen.html" aria-current="page">Wandelen</a>
+    <a href="mijn-ruimte.html">Mijn ruimte</a>
+    <button class="pill" data-calm aria-pressed="false"><span class="dot" aria-hidden="true"></span> Rust</button>
+  </nav>
+</header>
+
+<main class="page">
+  <div class="page-head rise">
+    <p class="eyebrow">Wandelen</p>
+    <h1>Neem je wens mee naar buiten.</h1>
+    <p>Twee wandelingen, twee stemmingen. Allebei voor buiten, binnen of thuis, en wat je invult blijft op jouw telefoon.</p>
+  </div>
+  <div class="ruimtes wandelen">
+    <a class="card uitgelicht" href="tools/wandeling.html">
+      <img src="assets/wandeling/pension-kaart.webp" alt="Een oud pension met een groene deur en een glazen wintertuin, in de zomerzon" width="960" height="540" loading="lazy">
+      <div>
+        <span class="tag">Wandel</span>
+        <h3>De weg naar morgen</h3>
+        <p>Een wandelreis in zeven wandelingen naar het huis met de groene deur. Je leest een kort stukje, wandelt verder met &eacute;&eacute;n vraag en neemt aan het eind je eigen toekomstkaart mee.</p>
+        <p class="uitgelicht-feit">Buiten, binnen of op de plaats &middot; 15, 25 of 35 minuten</p>
+        <span class="link">Begin bij het hek &rarr;</span>
+      </div>
+    </a>
+
+    <a class="card uitgelicht" href="tools/wensjacht.html">
+      <img src="assets/wensjacht/wensjacht-kaart.webp" alt="Een vrouw fotografeert een zonnig dorpsstraatje met klimrozen en een groene deur" width="960" height="540" loading="lazy">
+      <div>
+        <span class="tag">Wandel &middot; speurtocht</span>
+        <h3>De Wensjacht</h3>
+        <p>Kies je wensen, loop van punt naar punt en schiet bij elke wens een foto. Geld, liefde, een huis met een torentje: alles mag. Aan het eind heb je een visiebord uit je eigen buurt.</p>
+        <p class="uitgelicht-feit">Met plattegrond, eigen route of thuis &middot; 20, 35 of 50 minuten</p>
+        <span class="link">Start een jacht &rarr;</span>
+      </div>
+    </a>
+  </div>
+</main>
+<footer class="site-footer">
+  <p><a class="kofi" data-kofi href="#" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5 h13 a3 3 0 0 1 3 3 v1 a3 3 0 0 1 -3 3 h-1 v1 a5 5 0 0 1 -5 5 h-2 a5 5 0 0 1 -5 -5 Z M16 7 v3 h1 a1 1 0 0 0 1 -1 v-1 a1 1 0 0 0 -1 -1 Z" fill="currentColor"/></svg>
+    Vind je Manifest waardevol? Trakteer op een koffie</a></p>
+  <p>&copy; 2026 Manifest &middot; gemaakt met aandacht</p>
+  <p>Manifest is geen vervanging van medische of psychologische zorg.</p>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="data/routes.js"></script>
+<script src="js/basis.js"></script>
+<script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  if(params.get("ervaar")){
+    const slugs = Object.keys(window.ROUTES);
+    const slug = slugs[Math.floor(Math.random()*slugs.length)];
+    V.toast("We kozen een oefening voor je\u2026");
+    setTimeout(function(){ location.replace("routes/" + slug + ".html#oefening"); }, V.isCalm() ? 200 : 1000);
+  }
+})();
+</script>
+</body>
+</html>
