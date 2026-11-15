@@ -13,7 +13,9 @@
 (function(){
   const D = window.WANDEL, V = window.V;
   const app = document.getElementById("wandelApp");
-  const KEY = "wandeling";
+  const U = D.UI || {};
+  const t = s => U[s] != null ? U[s] : s;                 /* vertaling van vaste teksten (Engels: data/wandeling-en.js) */
+  const KEY = D.KEY || "wandeling";
   const ALLES = /[?&]alles\b/.test(location.search);      /* test: alle wandelingen open */
   const SNEL = /[?&]snel\b/.test(location.search);        /* test: richttijd in seconden */
   const SEG = {15:2, 25:4, 35:6};                         /* minuten per wandelstuk */
@@ -50,7 +52,7 @@
   }
   const leeg = v => v == null || (Array.isArray(v) ? v.length === 0 : String(v).trim() === "");
   const tekstVan = v => Array.isArray(v) ? v.join(" · ") : String(v);
-  const datum = iso => { try{ return new Date(iso).toLocaleDateString("nl-NL", {day:"numeric", month:"long", year:"numeric"}); }catch(e){ return ""; } };
+  const datum = iso => { try{ return new Date(iso).toLocaleDateString(t("nl-NL"), {day:"numeric", month:"long", year:"numeric"}); }catch(e){ return ""; } };
   function antwoorden(){
     const A = Object.assign({}, reis().A);
     if(ST.run) for(const k in ST.run.D){ if(ST.run.D[k] === null) delete A[k]; else A[k] = ST.run.D[k]; }
@@ -132,7 +134,7 @@
     const deur = s >= 7
       ? '<rect x="160" y="96" width="40" height="74" fill="#F9D98F"/><path d="M200 96 l22 8 v62 l-22 4z" fill="#3F6B52" stroke="#2C4E3B" stroke-width="1.5"/><path d="M150 190 L160 170 H200 L226 190Z" fill="#F9D98F" opacity=".55"/>'
       : '<rect x="160" y="96" width="40" height="74" fill="#3F6B52" stroke="#2C4E3B" stroke-width="1.5"/><rect x="166" y="102" width="28" height="30" fill="'+(s >= 2 ? "#CFE0D2" : "#A9A790")+'" opacity=".8"/><circle cx="193" cy="140" r="2" fill="#D9B45A"/>';
-    return '<svg class="tuin-svg" viewBox="0 0 360 214" role="img" aria-label="De wintertuin achter het pension">' +
+    return '<svg class="tuin-svg" viewBox="0 0 360 214" role="img" aria-label=t("De wintertuin achter het pension")>' +
       '<rect width="360" height="214" rx="16" fill="'+(s >= 7 ? "#F8EBCB" : "#EAE3CF")+'"/>' +
       '<circle cx="300" cy="44" r="20" fill="#F6CF8E" opacity="'+(.25 + s * .1)+'"/>' +
       '<path d="M0 190 H360 V198 a16 16 0 0 1 -16 16 H16 a16 16 0 0 1 -16 -16Z" fill="#C9C39D"/>' +
@@ -140,7 +142,7 @@
       '<path d="M40 78 L180 26 L320 78Z" fill="'+(s >= 7 ? "#F3DDA8" : s >= 2 ? "#CBD6C4" : "#B8B19C")+'" opacity=".9"/>' +
       '<g stroke="#4A5A4C" stroke-width="2.5" fill="none"><path d="M40 78 L180 26 L320 78 M40 78 V170 M320 78 V170 M80 78 V170 M120 78 V170 M160 78 V170 M200 78 V170 M240 78 V170 M280 78 V170 M40 78 H320 M110 52 V78 M180 26 V78 M250 52 V78"/></g>' +
       '<rect x="36" y="170" width="288" height="20" fill="#A8704F"/><path d="M36 180 H324" stroke="#8E5B3F" stroke-width="1"/>' + deur +
-      '<text x="180" y="91" text-anchor="middle" font-family="Jost,system-ui,sans-serif" font-weight="600" font-size="9.5" letter-spacing="3.2" fill="#B8923A">MORGEN</text>' +
+      '<text x="180" y="91" text-anchor="middle" font-family="Jost,system-ui,sans-serif" font-weight="600" font-size="'+(t("MORGEN").length > 6 ? 8 : 9.5)+'" letter-spacing="'+(t("MORGEN").length > 6 ? 2 : 3.2)+'" fill="#B8923A">'+t("MORGEN")+'</text>' +
       '<g><path d="M22 190 v-40" stroke="#7A5A3C" stroke-width="3"/><rect x="10" y="132" width="24" height="20" rx="2" fill="#9A7650"/><rect x="14" y="136" width="16" height="12" fill="'+(s >= 1 ? "#FBF6EA" : "none")+'" stroke="#FBF6EA" stroke-width="1" stroke-dasharray="'+(s >= 1 ? "0" : "2 2")+'"/></g>' +
       (s >= 3 ? '<g transform="rotate(-7 338 172)"><rect x="324" y="160" width="30" height="16" rx="2" fill="#9A7650"/><text x="327" y="172" font-family="Jost,system-ui,sans-serif" font-weight="600" font-size="8" fill="#FBF6EA">OPE<tspan dy="1.2" rotate="9">N</tspan></text></g>' : "") +
       '</svg>';
@@ -153,7 +155,7 @@
     }
     return h("figure", {class:"tuin"}, [
       h("div", {html:tuin(s)}),
-      kaartjes.length ? h("div", {class:"tuin-kaartjes", "aria-label":"Jouw woorden op de kaarten"}, kaartjes.map(k => h("span", {text:k}))) : null,
+      kaartjes.length ? h("div", {class:"tuin-kaartjes", "aria-label":t("Jouw woorden op de kaarten")}, kaartjes.map(k => h("span", {text:k}))) : null,
       h("figcaption", {text:D.TUIN[s]})
     ]);
   }
@@ -166,48 +168,48 @@
     let hoofd;
     if(run){
       const m = D.W[run.w-1].m[run.i];
-      hoofd = h("button", {class:"btn-groen", text:"Verder bij " + m.id + " · " + m.t, onclick:hervat});
+      hoofd = h("button", {class:"btn-groen", text:t("Verder bij ") + m.id + " · " + m.t, onclick:hervat});
     } else if(nx){
-      hoofd = h("button", {class:"btn-groen", text:(R.gevolgd.length ? "Begin wandeling " + nx : "Begin bij het hek"), onclick:()=>vooraf(nx)});
+      hoofd = h("button", {class:"btn-groen", text:(R.gevolgd.length ? t("Begin wandeling ") + nx : t("Begin bij het hek")), onclick:()=>vooraf(nx)});
     } else {
-      hoofd = h("button", {class:"btn-groen", text:"Bekijk mijn toekomstkaart", onclick:kaartScherm});
+      hoofd = h("button", {class:"btn-groen", text:t("Bekijk mijn toekomstkaart"), onclick:kaartScherm});
     }
     const lijst = h("ol", {class:"w-lijst"}, D.W.map(w=>{
       const klaar = R.gevolgd.indexOf(w.n) >= 0, bezig = run && run.w === w.n, kan = open(w.n);
       const b = h("button", {class:"w-item" + (klaar ? " klaar" : "") + (bezig ? " bezig" : ""), disabled:!kan,
         onclick:function(){
           if(bezig) return hervat();
-          if(run) return zeker(this.querySelector(".w-staat"), "Je bent nog bezig met wandeling " + run.w + ". Tik nog eens om toch deze te beginnen.", ()=>{ ST.run = null; save(); vooraf(w.n); });
+          if(run) return zeker(this.querySelector(".w-staat"), t("Je bent nog bezig met wandeling ") + run.w + t(". Tik nog eens om toch deze te beginnen."), ()=>{ ST.run = null; save(); vooraf(w.n); });
           vooraf(w.n);
         }}, [
         h("span", {class:"w-nr", text:String(w.n), "aria-hidden":"true"}),
         h("span", {class:"w-tekst"}, [h("b", {text:w.t}), h("small", {text:w.sub})]),
-        h("span", {class:"w-staat", text: bezig ? "Bezig" : klaar ? "Gelopen" : kan ? "Open" : "Volgt"})
+        h("span", {class:"w-staat", text: bezig ? t("Bezig") : klaar ? t("Gelopen") : kan ? t("Open") : t("Volgt")})
       ]);
       return h("li", null, b);
     }));
     scherm(false, [
       h("header", {class:"page-head"}, [
-        h("p", {class:"eyebrow", text:"Een manifestatiereis in zeven wandelingen"}),
-        h("h1", {text:"De weg naar morgen"}),
-        h("p", {class:"w-onder", text:"Het huis met de groene deur"}),
+        h("p", {class:"eyebrow", text:t("Een manifestatiereis in zeven wandelingen")}),
+        h("h1", {text:t("De weg naar morgen")}),
+        h("p", {class:"w-onder", text:t("Het huis met de groene deur")}),
         h("p", {text:D.T.belofte})
       ]),
       h("div", {class:"w-thuis"}, [
         h("div", {class:"w-links"}, [
           tuinBlok(stage(), true),
-          h("p", {class:"w-verhaal", text:"Aan het einde van een denkbeeldig pad staat een oud pension met een groene deur. Op het hek hangt een bord: “Voor mensen die ruimte willen maken voor wat ertoe doet.”"}),
+          h("p", {class:"w-verhaal", text:t("Aan het einde van een denkbeeldig pad staat een oud pension met een groene deur. Op het hek hangt een bord: “Voor mensen die ruimte willen maken voor wat ertoe doet.”")}),
           h("div", {class:"w-knoppen"}, [hoofd,
-            !nx && !run ? h("button", {class:"btn-line", text:"Een volgende wandeling beginnen", onclick:boek}) : null]),
+            !nx && !run ? h("button", {class:"btn-line", text:t("Een volgende wandeling beginnen"), onclick:boek}) : null]),
           h("p", {class:"w-linkjes"}, [
-            h("button", {class:"linkish", text:"Mijn toekomstkaart", onclick:kaartScherm}),
-            h("button", {class:"linkish", text:"Mijn wandelboek", onclick:boek}),
-            h("button", {class:"linkish", text:"Over deze reis", onclick:()=>V.openOverlay(document.getElementById("overOverlay"))})
+            h("button", {class:"linkish", text:t("Mijn toekomstkaart"), onclick:kaartScherm}),
+            h("button", {class:"linkish", text:t("Mijn wandelboek"), onclick:boek}),
+            h("button", {class:"linkish", text:t("Over deze reis"), onclick:()=>V.openOverlay(document.getElementById("overOverlay"))})
           ])
         ]),
         h("div", null, [
           lijst,
-          h("p", {class:"soft w-klein", text:"Zeven losse wandelingen, in je eigen tempo. Elke wandeling heeft zes korte leesmomenten en vijf wandelstukken: ongeveer 15, 25 of 35 minuten. Buiten, binnen of op de plaats."})
+          h("p", {class:"soft w-klein", text:t("Zeven losse wandelingen, in je eigen tempo. Elke wandeling heeft zes korte leesmomenten en vijf wandelstukken: ongeveer 15, 25 of 35 minuten. Buiten, binnen of op de plaats.")})
         ])
       ])
     ]);
@@ -231,18 +233,18 @@
     scherm(true, [
       balk(null),
       h("article", {class:"moment"}, [
-        h("p", {class:"eyebrow", text:"Wandeling " + w + " · " + W.t}),
-        h("h1", {text:"Een stukje voor jezelf"}),
+        h("p", {class:"eyebrow", text:t("Wandeling ") + w + " · " + W.t}),
+        h("h1", {text:t("Een stukje voor jezelf")}),
         h("div", {class:"scene"}, D.T.vooraf.map(p => h("p", {text:p}))),
         h("section", {class:"refl"}, [
-          h("p", {class:"vraag", text:"Waar wandel je?"}),
-          seg("Waar wandel je", [["buiten","Buiten wandelen"],["binnen","Binnen of op de plaats"]], ()=>ST.plek, v=>{ ST.plek = v; }),
-          h("p", {class:"vraag", text:"Hoe lang ongeveer?"}),
-          seg("Richtduur", [[15,"± 15 min"],[25,"± 25 min"],[35,"± 35 min"]], ()=>ST.duur, v=>{ ST.duur = v; }),
-          h("p", {class:"w-klein soft", text:"De richttijd is een suggestie. Je kunt altijd pauzeren, eerder verdergaan of langer doorlopen. Niets wordt verstuurd; wat je bewaart, blijft op dit apparaat."})
+          h("p", {class:"vraag", text:t("Waar wandel je?")}),
+          seg(t("Waar wandel je"), [["buiten",t("Buiten wandelen")],["binnen",t("Binnen of op de plaats")]], ()=>ST.plek, v=>{ ST.plek = v; }),
+          h("p", {class:"vraag", text:t("Hoe lang ongeveer?")}),
+          seg(t("Richtduur"), [[15,"± 15 min"],[25,"± 25 min"],[35,"± 35 min"]], ()=>ST.duur, v=>{ ST.duur = v; }),
+          h("p", {class:"w-klein soft", text:t("De richttijd is een suggestie. Je kunt altijd pauzeren, eerder verdergaan of langer doorlopen. Niets wordt verstuurd; wat je bewaart, blijft op dit apparaat.")})
         ]),
         h("div", {class:"w-knoppen"}, [
-          h("button", {class:"btn-groen", text:"Begin mijn wandeling", onclick:()=>{
+          h("button", {class:"btn-groen", text:t("Begin mijn wandeling"), onclick:()=>{
             const A = reis().A;
             ST.run = {w:w, i:0, fase:(w !== 6 && (A.kleine_stap || A.volgende_stap)) ? "terug" : "lees", el:0, t0:null, D:{}, stil:{}};
             save(); geluidKlaar(); hervat();
@@ -254,20 +256,20 @@
 
   /* ---------- balk bovenaan tijdens een wandeling ---------- */
   function balk(run){
-    const kids = [h("button", {class:"linkish", text:"← Overzicht", onclick:()=>{ verzamelHuidig(); if(ST.run && ST.run.fase === "loop") pauze(); release(); thuis(); }})];
+    const kids = [h("button", {class:"linkish", text:t("← Overzicht"), onclick:()=>{ verzamelHuidig(); if(ST.run && ST.run.fase === "loop") pauze(); release(); thuis(); }})];
     if(run){
-      const dots = h("div", {class:"w-dots", role:"img", "aria-label":"Moment " + (run.i+1) + " van 6"});
+      const dots = h("div", {class:"w-dots", role:"img", "aria-label":t("Moment ") + (run.i+1) + t(" van 6")});
       for(let i = 0; i < 6; i++) dots.appendChild(h("i", {class:i < run.i ? "af" : i === run.i ? "nu" : ""}));
       kids.push(dots);
       const naar = i => { verzamelHuidig(); if(run.fase === "loop") bewaarTijd(); run.i = i; run.fase = "lees"; run.el = 0; run.t0 = null; save(); release(); hervat(); };
       kids.push(h("details", {class:"w-meer"}, [
-        h("summary", {text:"Meer"}),
+        h("summary", {text:t("Meer")}),
         h("div", null, [
-          run.i > 0 ? h("button", {class:"linkish", text:"Eén moment terug", onclick:()=>naar(run.i - 1)}) : null,
-          h("button", {class:"linkish", text:"Naar het begin van deze wandeling", onclick:()=>naar(0)}),
-          h("button", {class:"linkish", text:"Naar de afronding van deze wandeling", onclick:()=>naar(5)}),
-          h("button", {class:"linkish", text:"Zacht seintje bij de richttijd: " + (ST.sein ? "aan" : "uit"), onclick:function(){ ST.sein = !ST.sein; save(); this.textContent = "Zacht seintje bij de richttijd: " + (ST.sein ? "aan" : "uit"); }}),
-          h("button", {class:"linkish", text:"Deze wandeling stoppen", onclick:function(){ zeker(this, "Tik nog eens: de antwoorden van deze wandeling worden niet bewaard.", ()=>{ ST.run = null; save(); release(); thuis(); }); }})
+          run.i > 0 ? h("button", {class:"linkish", text:t("Eén moment terug"), onclick:()=>naar(run.i - 1)}) : null,
+          h("button", {class:"linkish", text:t("Naar het begin van deze wandeling"), onclick:()=>naar(0)}),
+          h("button", {class:"linkish", text:t("Naar de afronding van deze wandeling"), onclick:()=>naar(5)}),
+          h("button", {class:"linkish", text:t("Zacht seintje bij de richttijd: ") + (ST.sein ? t("aan") : t("uit")), onclick:function(){ ST.sein = !ST.sein; save(); this.textContent = t("Zacht seintje bij de richttijd: ") + (ST.sein ? t("aan") : t("uit")); }}),
+          h("button", {class:"linkish", text:t("Deze wandeling stoppen"), onclick:function(){ zeker(this, t("Tik nog eens: de antwoorden van deze wandeling worden niet bewaard."), ()=>{ ST.run = null; save(); release(); thuis(); }); }})
         ])
       ]));
     }
@@ -289,7 +291,7 @@
     const run = ST.run, A = antwoorden();
     const uit = h("p", {class:"w-terug", role:"status"});
     const box = h("div", {class:"chips"});
-    D.TERUG.map(x=>x).concat([{v:"ik wil het voor mezelf houden", tx:D.TERUG_PRIVE, prive:true}]).forEach(o=>{
+    D.TERUG.map(x=>x).concat([{v:t("ik wil het voor mezelf houden"), tx:D.TERUG_PRIVE, prive:true}]).forEach(o=>{
       box.appendChild(h("button", {class:"chip", type:"button", "aria-pressed":"false", text:o.v, onclick:function(){
         box.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed", String(b === this)));
         if(o.prive) delete run.D.terugkomst; else run.D.terugkomst = o.v;
@@ -299,14 +301,14 @@
     scherm(true, [
       balk(null),
       h("article", {class:"moment"}, [
-        h("p", {class:"eyebrow", text:"Voor we verdergaan"}),
-        h("h1", {text:"Terug bij de groene deur"}),
-        h("div", {class:"scene"}, [h("p", {text:"De vorige keer koos je een kleine stap. Hoe is het daarmee gegaan? Elk antwoord is hier welkom."})]),
+        h("p", {class:"eyebrow", text:t("Voor we verdergaan")}),
+        h("h1", {text:t("Terug bij de groene deur")}),
+        h("div", {class:"scene"}, [h("p", {text:t("De vorige keer koos je een kleine stap. Hoe is het daarmee gegaan? Elk antwoord is hier welkom.")})]),
         h("section", {class:"refl"}, [
-          h("div", {class:"toon"}, [h("div", null, [h("span", {text:"Mijn stap"}), h("p", {text:tekstVan(A.volgende_stap || A.kleine_stap)})])]),
+          h("div", {class:"toon"}, [h("div", null, [h("span", {text:t("Mijn stap")}), h("p", {text:tekstVan(A.volgende_stap || A.kleine_stap)})])]),
           box, uit
         ]),
-        h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:"Verder", onclick:()=>{ run.fase = "lees"; save(); hervat(); }})])
+        h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:t("Verder"), onclick:()=>{ run.fase = "lees"; save(); hervat(); }})])
       ])
     ]);
   }
@@ -383,7 +385,7 @@
             if(f.multi){ if(i >= 0) a.splice(i, 1); else { a.push(o); const lim = (f.max || 99) - (eigAan[f.key] && (eig[f.key] || "").trim() ? 1 : 0); while(a.length > Math.max(lim, 1)) a.shift(); } }
             else { loc[f.key] = i >= 0 ? [] : [o]; eigAan[f.key] = false; }
             /* wens aanpassen of opnieuw beginnen: veld klaarzetten */
-            m.r.forEach(g=>{ if(g.nieuw){ const k = loc[f.key][0] || ""; loc[g.key] = /aanpassen/.test(k) ? (basis[g.key] || "") : ""; } });
+            m.r.forEach(g=>{ if(g.nieuw){ const k = loc[f.key][0] || ""; loc[g.key] = (g.vul || []).indexOf(k) >= 0 ? (basis[g.key] || "") : ""; } });
             teken();
           };
           opts.forEach(o => box.appendChild(h("button", {class:"chip", type:"button", "aria-pressed":String(loc[f.key].indexOf(o) >= 0), text:o, onclick:()=>kies(o)})));
@@ -393,7 +395,7 @@
             const inp = velden.querySelector('[data-eig="'+f.key+'"]'); if(inp) inp.focus();
           }}));
           velden.appendChild(box);
-          if(f.eigen && eigAan[f.key]) velden.appendChild(h("input", {class:"w-in", type:"text", maxlength:"80", "data-eig":f.key, "aria-label":f.eigen, placeholder:"In je eigen woorden", value:eig[f.key] || "", oninput:function(){ eig[f.key] = this.value; }}));
+          if(f.eigen && eigAan[f.key]) velden.appendChild(h("input", {class:"w-in", type:"text", maxlength:"80", "data-eig":f.key, "aria-label":f.eigen, placeholder:t("In je eigen woorden"), value:eig[f.key] || "", oninput:function(){ eig[f.key] = this.value; }}));
           if(f.terug){
             const hit = D.TERUG.filter(x => x.v === loc[f.key][0])[0];
             if(hit) velden.appendChild(h("p", {class:"w-terug", role:"status", text:hit.tx}));
@@ -423,7 +425,7 @@
       if(stil){
         stilUit.textContent = stil === "past" ? D.T.pastNa : (m.r.some(f=>f.terug) ? D.TERUG_PRIVE : D.T.priveNa);
         refl.appendChild(stilUit);
-        refl.appendChild(h("button", {class:"linkish", text:"Toch iets invullen", onclick:()=>{ delete run.stil[m.id]; save(); tekenRefl(); }}));
+        refl.appendChild(h("button", {class:"linkish", text:t("Toch iets invullen"), onclick:()=>{ delete run.stil[m.id]; save(); tekenRefl(); }}));
         return;
       }
       if(m.vr) refl.appendChild(h("p", {class:"vraag", text:m.vr}));
@@ -443,30 +445,30 @@
     const scene = h("div", {class:"scene"}, m.tx.map(p => /^“[^”]*”$/.test(p) ? h("p", {class:"briefje", text:p.slice(1, -1)}) : h("p", {text:p})));
     const th = m.thema && D.THEMAS.filter(x => x.label === A0.thema)[0];
     if(th) scene.appendChild(h("p", {class:"aanvulling", text:th[m.thema]}));
-    const beeld = m.img && D.BEELDEN.indexOf(m.img) >= 0 ? h("img", {class:"w-beeld", alt:"", hidden:true, src:"../assets/wandeling/" + m.img + ".webp", onload:function(){ this.hidden = false; }, onerror:function(){ this.remove(); }}) : null;
+    const beeld = m.img && D.BEELDEN.indexOf(m.img) >= 0 ? h("img", {class:"w-beeld", alt:"", hidden:true, src:(D.PAD || "../assets/wandeling/") + m.img + ".webp", onload:function(){ this.hidden = false; }, onerror:function(){ this.remove(); }}) : null;
 
     const kids = [
-      h("p", {class:"eyebrow", text:"Wandeling " + run.w + " · moment " + (run.i+1) + " van 6"}),
+      h("p", {class:"eyebrow", text:t("Wandeling ") + run.w + t(" · moment ") + (run.i+1) + t(" van 6")}),
       h("h1", {text:m.t}), beeld, scene, refl
     ];
     if(m.kaart){ verzamelHuidig(); kids.push(kaartBlok(antwoorden(), false)); }
     if(!laatste){
       kids.push(h("section", {class:"opdracht"}, [
-        h("p", {class:"eyebrow", text:"Voor het wandelstuk"}),
+        h("p", {class:"eyebrow", text:t("Voor het wandelstuk")}),
         h("p", {text:m.op}),
-        ST.plek === "binnen" ? h("p", {class:"w-klein soft", text:"Binnen kun je door de kamer lopen of op de plaats wandelen."}) : null
+        ST.plek === "binnen" ? h("p", {class:"w-klein soft", text:t("Binnen kun je door de kamer lopen of op de plaats wandelen.")}) : null
       ]));
-      kids.push(h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:"Ik ga wandelen", onclick:()=>{
+      kids.push(h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:t("Ik ga wandelen"), onclick:()=>{
         verzamelHuidig(); geluidKlaar();
         run.fase = "loop"; run.el = 0; run.t0 = Date.now(); run.gemeld = false; save(); lock(); loopScherm();
       }})]));
-      kids.push(h("p", {class:"w-klein soft midden", text:"Berg daarna je telefoon op. Tijdens het lopen blijven je ogen open."}));
+      kids.push(h("p", {class:"w-klein soft midden", text:t("Berg daarna je telefoon op. Tijdens het lopen blijven je ogen open.")}));
     } else {
       kids.push(h("div", {class:"w-knoppen"}, [
-        h("button", {class:"btn-groen", text:"Bewaar mijn kaart", onclick:()=>rondAf(true)}),
-        h("button", {class:"btn-line", text:"Rond af zonder antwoorden te bewaren", onclick:()=>rondAf(false)})
+        h("button", {class:"btn-groen", text:t("Bewaar mijn kaart"), onclick:()=>rondAf(true)}),
+        h("button", {class:"btn-line", text:t("Rond af zonder antwoorden te bewaren"), onclick:()=>rondAf(false)})
       ]));
-      kids.push(h("p", {class:"w-klein soft midden", text:"Bewaren doe je alleen op dit apparaat. Je kunt je antwoorden later bekijken, aanpassen en wissen."}));
+      kids.push(h("p", {class:"w-klein soft midden", text:t("Bewaren doe je alleen op dit apparaat. Je kunt je antwoorden later bekijken, aanpassen en wissen.")}));
     }
     scherm(true, [balk(run), h("article", {class:"moment"}, kids)]);
     app.querySelectorAll("textarea.w-in").forEach(t=>{ if(t.value){ t.style.height = t.scrollHeight + 2 + "px"; } });
@@ -497,15 +499,15 @@
       const el = verstreken(), min = Math.floor(el / 60000), sec = Math.floor(el / 1000) % 60;
       boog.setAttribute("stroke-dashoffset", (C * (1 - Math.min(1, el / doel))).toFixed(1));
       groot.textContent = min + ":" + (sec < 10 ? "0" : "") + sec;
-      klein.textContent = "richttijd ± " + SEG[ST.duur] + " min";
-      pBtn.textContent = run.t0 ? "Pauze" : "Verder wandelen";
+      klein.textContent = t("richttijd ± ") + SEG[ST.duur] + t(" min");
+      pBtn.textContent = run.t0 ? t("Pauze") : t("Verder wandelen");
       ring.classList.toggle("stil", !run.t0);
       if(el >= doel){
-        status.textContent = "Je richttijd is om. Loop gerust nog even door, of kom terug voor het volgende moment.";
-        zakTekst.textContent = "Je richttijd is om. Kom verder wanneer je wilt.";
+        status.textContent = t("Je richttijd is om. Loop gerust nog even door, of kom terug voor het volgende moment.");
+        zakTekst.textContent = t("Je richttijd is om. Kom verder wanneer je wilt.");
         if(!run.gemeld){ run.gemeld = true; save(); sein(); }
       } else {
-        status.textContent = run.t0 ? "Wandel in je eigen tempo. Je hoeft niet op je scherm te kijken." : "Gepauzeerd. Ga verder wanneer het past.";
+        status.textContent = run.t0 ? t("Wandel in je eigen tempo. Je hoeft niet op je scherm te kijken.") : t("Gepauzeerd. Ga verder wanneer het past.");
         zakTekst.textContent = "";
       }
       if(run.t0 && Math.floor(el / 1000) % 10 === 0) bewaarTijd();
@@ -513,15 +515,15 @@
     scherm(true, [
       balk(run),
       h("article", {class:"moment loop"}, [
-        h("p", {class:"eyebrow", text:"Wandeling " + run.w + " · wandelstuk " + (run.i+1) + " van 5"}),
-        h("h1", {text:"Onderweg"}),
+        h("p", {class:"eyebrow", text:t("Wandeling ") + run.w + t(" · wandelstuk ") + (run.i+1) + t(" van 5")}),
+        h("h1", {text:t("Onderweg")}),
         ring, status,
-        h("section", {class:"opdracht"}, [h("p", {class:"eyebrow", text:"Je opdracht, als je hem nog eens wilt lezen"}), h("p", {text:m.op})]),
-        h("div", {class:"w-knoppen"}, [pBtn, h("button", {class:"btn-line", text:"Telefoon wegbergen", onclick:()=>{ zak.hidden = false; }})]),
-        h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:"Ik ben klaar voor het volgende moment", onclick:()=>{
+        h("section", {class:"opdracht"}, [h("p", {class:"eyebrow", text:t("Je opdracht, als je hem nog eens wilt lezen")}), h("p", {text:m.op})]),
+        h("div", {class:"w-knoppen"}, [pBtn, h("button", {class:"btn-line", text:t("Telefoon wegbergen"), onclick:()=>{ zak.hidden = false; }})]),
+        h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:t("Ik ben klaar voor het volgende moment"), onclick:()=>{
           stopKlok(); release(); run.i++; run.fase = "lees"; run.el = 0; run.t0 = null; run.gemeld = false; save(); momentScherm();
         }})]),
-        h("p", {class:"w-klein soft midden", text:"Je scherm blijft aan zolang deze pagina open is. Met ‘Telefoon wegbergen’ wordt het scherm donker en tik je niets per ongeluk aan."})
+        h("p", {class:"w-klein soft midden", text:t("Je scherm blijft aan zolang deze pagina open is. Met ‘Telefoon wegbergen’ wordt het scherm donker en tik je niets per ongeluk aan.")})
       ])
     ]);
     tik(); klok = setInterval(tik, 1000);
@@ -556,18 +558,18 @@
     scherm(true, [
       balk(null),
       h("article", {class:"moment"}, [
-        h("p", {class:"eyebrow", text:"Wandeling " + w + " · afgerond"}),
-        h("h1", {text:w === 7 ? "Je neemt jouw kaart mee" : "Je kaart ligt op tafel"}),
+        h("p", {class:"eyebrow", text:t("Wandeling ") + w + t(" · afgerond")}),
+        h("h1", {text:w === 7 ? t("Je neemt jouw kaart mee") : t("Je kaart ligt op tafel")}),
         bewaard.length
           ? h("div", {class:"w-kaart klein"}, [h("p", {class:"eyebrow", text:D.W[w-1].t})].concat(bewaard.map(k => h("div", {class:"rij"}, [h("span", {text:D.LABEL[k]}), h("p", {text:tekstVan(R.A[k] != null ? R.A[k] : run.D[k])})]))))
-          : h("p", {class:"scene", text:bewaar ? D.T.leeg : "Je hebt deze wandeling gelopen zonder antwoorden te bewaren. Wat je ontdekte, neem je zelf mee."}),
+          : h("p", {class:"scene", text:bewaar ? D.T.leeg : t("Je hebt deze wandeling gelopen zonder antwoorden te bewaren. Wat je ontdekte, neem je zelf mee.")}),
         tuinBlok(stage(), true),
         w === 7 ? h("p", {class:"w-slot", text:D.T.slot}) : null,
         h("div", {class:"w-knoppen"}, [
-          w === 7 ? h("button", {class:"btn-groen", text:"Bekijk mijn toekomstkaart", onclick:kaartScherm}) : h("button", {class:"btn-groen", text:"Naar het overzicht", onclick:thuis}),
-          w === 7 ? h("button", {class:"btn-line", text:"Bekijk mijn reis", onclick:boek}) : null
+          w === 7 ? h("button", {class:"btn-groen", text:t("Bekijk mijn toekomstkaart"), onclick:kaartScherm}) : h("button", {class:"btn-groen", text:t("Naar het overzicht"), onclick:thuis}),
+          w === 7 ? h("button", {class:"btn-line", text:t("Bekijk mijn reis"), onclick:boek}) : null
         ]),
-        w < 7 && nx ? h("p", {class:"w-klein soft midden", text:"De volgende wandeling ligt klaar wanneer jij er tijd voor hebt: “" + D.W[nx-1].t + "”. Er is geen haast en geen reeks om bij te houden."}) : null
+        w < 7 && nx ? h("p", {class:"w-klein soft midden", text:t("De volgende wandeling ligt klaar wanneer jij er tijd voor hebt: “") + D.W[nx-1].t + t("”. Er is geen haast en geen reeks om bij te houden.")}) : null
       ])
     ]);
   }
@@ -585,7 +587,7 @@
       save(); klaar();
     };
     inp.addEventListener("keydown", e=>{ if(e.key === "Enter") ok(); });
-    return h("div", {class:"w-bewerk"}, [inp, h("button", {class:"btn-line", text:"Klaar", onclick:ok})]);
+    return h("div", {class:"w-bewerk"}, [inp, h("button", {class:"btn-line", text:t("Klaar"), onclick:ok})]);
   }
   function kaartBlok(A, bewerkbaar, opnieuw){
     const R = reis(), rijen = [];
@@ -597,29 +599,29 @@
       const rij = h("div", {class:"rij"}, [h("span", {text:veld.l}), h("p", {text:tekstVan(A[k])})]);
       if(bewerkbaar){
         const acties = h("div", {class:"w-acties"});
-        if(veld.kies && beschikbaar.length > 1) acties.appendChild(h("button", {class:"linkish", text:"Kies een ander inzicht", onclick:()=>{ R.inzicht = beschikbaar[(beschikbaar.indexOf(k) + 1) % beschikbaar.length]; save(); opnieuw(); }}));
-        acties.appendChild(h("button", {class:"linkish", text:"Wijzig", onclick:()=>{ rij.replaceChild(bewerk(R, k, opnieuw), rij.children[1]); acties.remove(); rij.querySelector("input").focus(); }}));
-        acties.appendChild(h("button", {class:"linkish", text:"Wis", onclick:function(){ zeker(this, "Tik nog eens om te wissen", ()=>{ delete R.A[k]; save(); opnieuw(); }); }}));
+        if(veld.kies && beschikbaar.length > 1) acties.appendChild(h("button", {class:"linkish", text:t("Kies een ander inzicht"), onclick:()=>{ R.inzicht = beschikbaar[(beschikbaar.indexOf(k) + 1) % beschikbaar.length]; save(); opnieuw(); }}));
+        acties.appendChild(h("button", {class:"linkish", text:t("Wijzig"), onclick:()=>{ rij.replaceChild(bewerk(R, k, opnieuw), rij.children[1]); acties.remove(); rij.querySelector("input").focus(); }}));
+        acties.appendChild(h("button", {class:"linkish", text:t("Wis"), onclick:function(){ zeker(this, t("Tik nog eens om te wissen"), ()=>{ delete R.A[k]; save(); opnieuw(); }); }}));
         rij.appendChild(acties);
       }
       rijen.push(rij);
     });
-    const kids = [h("p", {class:"eyebrow", text:"Een kaart om op terug te komen"}), h("h2", {text:"Mijn leven, mijn richting"})];
+    const kids = [h("p", {class:"eyebrow", text:t("Een kaart om op terug te komen")}), h("h2", {text:t("Mijn leven, mijn richting")})];
     if(!rijen.length) kids.push(h("p", {text:D.T.leeg}));
     else {
       rijen.forEach(r => kids.push(r));
-      if(!leeg(A.startgevoel) && !leeg(A.slotgevoel)) kids.push(h("p", {class:"w-gevoel", text:"Bij de start: " + tekstVan(A.startgevoel) + ". Nu: " + tekstVan(A.slotgevoel) + "."}));
+      if(!leeg(A.startgevoel) && !leeg(A.slotgevoel)) kids.push(h("p", {class:"w-gevoel", text:t("Bij de start: ") + tekstVan(A.startgevoel) + t(". Nu: ") + tekstVan(A.slotgevoel) + "."}));
       kids.push(h("p", {class:"w-slot", text:D.T.slot}));
     }
     return h("div", {class:"w-kaart"}, kids);
   }
   function kaartScherm(){
     scherm(false, [
-      h("header", {class:"page-head"}, [h("p", {class:"eyebrow", text:"De weg naar morgen"}), h("h1", {text:"Mijn toekomstkaart"}),
-        h("p", {text:"Alleen wat je zelf hebt gekozen of ingevuld staat erop. Je kunt alles wijzigen of wissen."})]),
+      h("header", {class:"page-head"}, [h("p", {class:"eyebrow", text:t("De weg naar morgen")}), h("h1", {text:t("Mijn toekomstkaart")}),
+        h("p", {text:t("Alleen wat je zelf hebt gekozen of ingevuld staat erop. Je kunt alles wijzigen of wissen.")})]),
       h("div", {class:"w-smal"}, [
         kaartBlok(reis().A, true, kaartScherm),
-        h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:"Naar het overzicht", onclick:thuis}), h("button", {class:"btn-line", text:"Mijn wandelboek", onclick:boek})])
+        h("div", {class:"w-knoppen"}, [h("button", {class:"btn-groen", text:t("Naar het overzicht"), onclick:thuis}), h("button", {class:"btn-line", text:t("Mijn wandelboek"), onclick:boek})])
       ])
     ]);
   }
@@ -632,13 +634,13 @@
     D.W.forEach(W=>{
       if(R.gevolgd.indexOf(W.n) < 0) return;
       const b = R.blz[W.n], ks = sleutels(W.n).concat(W.n === 6 ? [] : ["terugkomst"]).filter(k => !leeg(R.A[k]) && (k !== "terugkomst" || W.n === 7));
-      const kids = [h("p", {class:"eyebrow", text:"Wandeling " + W.n + (b ? " · " + datum(b.datum) : "")}), h("h2", {text:W.t})];
-      if(!b || !ks.length) kids.push(h("p", {class:"soft", text:"Gelopen, zonder antwoorden te bewaren."}));
+      const kids = [h("p", {class:"eyebrow", text:t("Wandeling ") + W.n + (b ? " · " + datum(b.datum) : "")}), h("h2", {text:W.t})];
+      if(!b || !ks.length) kids.push(h("p", {class:"soft", text:t("Gelopen, zonder antwoorden te bewaren.")}));
       else ks.forEach(k=>{
         const rij = h("div", {class:"rij"}, [h("span", {text:D.LABEL[k]}), h("p", {text:tekstVan(R.A[k])})]);
         const acties = h("div", {class:"w-acties"}, [
-          h("button", {class:"linkish", text:"Wijzig", onclick:()=>{ rij.replaceChild(bewerk(R, k, boek), rij.children[1]); acties.remove(); rij.querySelector("input").focus(); }}),
-          h("button", {class:"linkish", text:"Wis", onclick:function(){ zeker(this, "Tik nog eens om te wissen", ()=>{ delete R.A[k]; save(); boek(); }); }})
+          h("button", {class:"linkish", text:t("Wijzig"), onclick:()=>{ rij.replaceChild(bewerk(R, k, boek), rij.children[1]); acties.remove(); rij.querySelector("input").focus(); }}),
+          h("button", {class:"linkish", text:t("Wis"), onclick:function(){ zeker(this, t("Tik nog eens om te wissen"), ()=>{ delete R.A[k]; save(); boek(); }); }})
         ]);
         rij.appendChild(acties); kids.push(rij);
       });
@@ -647,32 +649,32 @@
     const wensBox = h("div");
     const andere = ST.reizen.map((r, i)=>({r, i})).filter(x => x.i !== ST.actief);
     scherm(false, [
-      h("header", {class:"page-head"}, [h("p", {class:"eyebrow", text:"De weg naar morgen"}), h("h1", {text:"Mijn wandelboek"}),
-        h("p", {text:"Elke wandeling geeft een bladzijde. Dit boek laat zien welke weg je hebt afgelegd; het meet niets."})]),
+      h("header", {class:"page-head"}, [h("p", {class:"eyebrow", text:t("De weg naar morgen")}), h("h1", {text:t("Mijn wandelboek")}),
+        h("p", {text:t("Elke wandeling geeft een bladzijde. Dit boek laat zien welke weg je hebt afgelegd; het meet niets.")})]),
       h("div", {class:"w-smal"}, [
-        paginas.length ? null : h("p", {class:"scene midden", text:"Je boek is nog leeg. Na je eerste wandeling ligt hier een bladzijde."}),
+        paginas.length ? null : h("p", {class:"scene midden", text:t("Je boek is nog leeg. Na je eerste wandeling ligt hier een bladzijde.")}),
       ].concat(paginas, [
-        R.eerder.length ? h("div", {class:"w-kaart blz"}, [h("p", {class:"eyebrow", text:"Hoe mijn wens eerder klonk"})].concat(R.eerder.map(t => h("p", {class:"soft", text:t})))) : null,
+        R.eerder.length ? h("div", {class:"w-kaart blz"}, [h("p", {class:"eyebrow", text:t("Hoe mijn wens eerder klonk")})].concat(R.eerder.map(t => h("p", {class:"soft", text:t})))) : null,
         h("div", {class:"w-kaart blz"}, [
-          h("p", {class:"eyebrow", text:"Hoe wil je verder?"}),
+          h("p", {class:"eyebrow", text:t("Hoe wil je verder?")}),
           h("div", {class:"w-knoppen links"}, [
-            h("button", {class:"btn-groen", text:"Verder met mijn wens", onclick:thuis}),
-            h("button", {class:"btn-line", text:"Mijn wens aanpassen", onclick:()=>{ wensBox.textContent = ""; wensBox.appendChild(h("label", {class:"w-label", text:"Ik verlang naar…"})); wensBox.appendChild(bewerk(R, "verlangen", boek)); wensBox.querySelector("input").focus(); }}),
-            h("button", {class:"btn-line", text:"Een nieuwe wens verkennen", onclick:function(){ zeker(this, "Tik nog eens: je begint een nieuwe reis. Deze reis blijft apart bewaard.", ()=>{ ST.reizen.push(nieuweReis()); ST.actief = ST.reizen.length - 1; ST.run = null; save(); thuis(); }); }})
+            h("button", {class:"btn-groen", text:t("Verder met mijn wens"), onclick:thuis}),
+            h("button", {class:"btn-line", text:t("Mijn wens aanpassen"), onclick:()=>{ wensBox.textContent = ""; wensBox.appendChild(h("label", {class:"w-label", text:t("Ik verlang naar…")})); wensBox.appendChild(bewerk(R, "verlangen", boek)); wensBox.querySelector("input").focus(); }}),
+            h("button", {class:"btn-line", text:t("Een nieuwe wens verkennen"), onclick:function(){ zeker(this, t("Tik nog eens: je begint een nieuwe reis. Deze reis blijft apart bewaard."), ()=>{ ST.reizen.push(nieuweReis()); ST.actief = ST.reizen.length - 1; ST.run = null; save(); thuis(); }); }})
           ]),
           wensBox
         ]),
-        andere.length ? h("div", {class:"w-kaart blz"}, [h("p", {class:"eyebrow", text:"Andere reizen"})].concat(andere.map(x => h("div", {class:"rij"}, [
-          h("span", {text:"Begonnen op " + datum(x.r.start)}),
-          h("p", {text:x.r.A.wenstitel || x.r.A.verlangen || "Een reis zonder bewaarde wens"}),
+        andere.length ? h("div", {class:"w-kaart blz"}, [h("p", {class:"eyebrow", text:t("Andere reizen")})].concat(andere.map(x => h("div", {class:"rij"}, [
+          h("span", {text:t("Begonnen op ") + datum(x.r.start)}),
+          h("p", {text:x.r.A.wenstitel || x.r.A.verlangen || t("Een reis zonder bewaarde wens")}),
           h("div", {class:"w-acties"}, [
-            h("button", {class:"linkish", text:"Open deze reis", onclick:()=>{ ST.actief = x.i; ST.run = null; save(); boek(); }}),
-            h("button", {class:"linkish", text:"Wis deze reis", onclick:function(){ zeker(this, "Tik nog eens om deze reis te wissen", ()=>{ ST.reizen.splice(x.i, 1); if(ST.actief > x.i) ST.actief--; save(); boek(); }); }})
+            h("button", {class:"linkish", text:t("Open deze reis"), onclick:()=>{ ST.actief = x.i; ST.run = null; save(); boek(); }}),
+            h("button", {class:"linkish", text:t("Wis deze reis"), onclick:function(){ zeker(this, t("Tik nog eens om deze reis te wissen"), ()=>{ ST.reizen.splice(x.i, 1); if(ST.actief > x.i) ST.actief--; save(); boek(); }); }})
           ])
         ])))) : null,
         h("p", {class:"w-linkjes midden"}, [
-          h("button", {class:"linkish", text:"Wis alle antwoorden van deze reis", onclick:function(){ zeker(this, "Tik nog eens: alle antwoorden van deze reis worden gewist.", ()=>{ R.A = {}; R.eerder = []; R.blz = {}; delete R.inzicht; save(); boek(); }); }}),
-          h("button", {class:"linkish", text:"Naar het overzicht", onclick:thuis})
+          h("button", {class:"linkish", text:t("Wis alle antwoorden van deze reis"), onclick:function(){ zeker(this, t("Tik nog eens: alle antwoorden van deze reis worden gewist."), ()=>{ R.A = {}; R.eerder = []; R.blz = {}; delete R.inzicht; save(); boek(); }); }}),
+          h("button", {class:"linkish", text:t("Naar het overzicht"), onclick:thuis})
         ])
       ]))
     ]);

@@ -74,7 +74,8 @@ window.WANDEL = (function(){
   };
 
   /* ---------- kleine bouwstenen voor velden ---------- */
-  const wensAanpassen = (k, waarden) => ({t:"tekst", key:"verlangen", label:"Ik verlang naar…", nieuw:true,
+  /* waarden: keuzes die een nieuw wensveld tonen; vul: keuzes waarbij de oude wens er al in staat */
+  const wensAanpassen = (k, waarden, vul) => ({t:"tekst", key:"verlangen", label:"Ik verlang naar…", nieuw:true, vul:vul,
     als:A => waarden.indexOf(A[k]) >= 0});
 
   const W = [
@@ -133,7 +134,7 @@ window.WANDEL = (function(){
           "Vandaag onderzoek je hoe het leven waarnaar je verlangt zou aanvoelen tijdens een gewone dag."],
       r:[{t:"toon", keys:["verlangen"]},
          {t:"kies", key:"verlangen_bevestiging", opts:["mijn wens meenemen","mijn wens aanpassen","vandaag opnieuw beginnen"], als:heeft("verlangen")},
-         wensAanpassen("verlangen_bevestiging", ["mijn wens aanpassen","vandaag opnieuw beginnen"]),
+         wensAanpassen("verlangen_bevestiging", ["mijn wens aanpassen","vandaag opnieuw beginnen"], ["mijn wens aanpassen"]),
          {t:"tekst", key:"verlangen", label:"Ik verlang naar…", als:A=>!heeft("verlangen")(A) && !A.verlangen_bevestiging}],
       op:"Word je bewust van waar je nu bent. Laat vervolgens een mogelijke toekomstige dag in gedachten ontstaan, met je ogen open."},
     {id:"2.02", t:"De ochtend van later", img:"raam", beeld:true,
@@ -359,7 +360,7 @@ window.WANDEL = (function(){
           "Jij komt terug met wat je onderweg hebt ontdekt. Misschien is jouw wens duidelijker. Misschien is hij veranderd. Vandaag geef je jouw eigen richting woorden."],
       r:[{t:"toon", keys:["verlangen"]},
          {t:"kies", key:"slotrichting", opts:["deze wens past nog","ik wil hem aanpassen","ik wil vooral bewaren wat ik heb ontdekt"], als:heeft("verlangen")},
-         wensAanpassen("slotrichting", ["ik wil hem aanpassen"]),
+         wensAanpassen("slotrichting", ["ik wil hem aanpassen"], ["ik wil hem aanpassen"]),
          {t:"tekst", key:"verlangen", label:"Ik verlang naar…", als:A=>!heeft("verlangen")(A) && !A.slotrichting}],
       op:"Denk terug aan het begin van jouw reis. Wat zie je nu iets duidelijker? Wat mag nog openblijven?"},
     {id:"7.02", t:"Een dag die bij mij past", img:"tafel", beeld:true,
